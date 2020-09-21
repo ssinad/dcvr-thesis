@@ -1,4 +1,4 @@
-Filename,Number of Nodes,Value without Orienteering,Value with Orienteering,Integral Value,Number of Orienteering Iterations,Total Number of Iterations,Total Runtime,Total Orienteering Runtime,Average Orienteering Runtime,Bound
+Filename,Number of Nodes,Value without Orienteering,Value with Orienteering,Integral Value,Number of Orienteering Iterations,Total Number of Iterations,Total Runtime,Total Orienteering Runtime,Average Orienteering Runtime,Bound,First Orienteering Iteration
 F-n045-k4.txt-distance-limit-1000.result,45,1.66667,1.0,1,1,12,266.473,256.05,256.05,1,1.0
 F-n045-k4.txt-distance-limit-200.result,45,3.15137,2.71191,3,50,256,32862.8,32574.801000000003,651.49602,1.96866,85.0
 F-n045-k4.txt-distance-limit-500.result,45,1.55784,1.25,2,86,854,54000.9,52611.882,611.7660697674419,1,1.0
