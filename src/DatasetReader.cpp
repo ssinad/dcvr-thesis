@@ -13,6 +13,9 @@ void DatasetReader::read_file(std::string filename, bool read_rewards)
     file = &file_stream;
     // std::ifstream file file(filename);
   }
+  else{
+    std::cout << "Reading from standard input!" << std::endl;
+  }
   // std::string line;
   // while (file.good())
   // {
