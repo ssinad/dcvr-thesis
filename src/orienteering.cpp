@@ -1,5 +1,5 @@
 #include "orienteering.h"
-#include "iterPCA.h"
+#include "iterPCA.hpp"
 #include <stack>
 #include <unordered_set>
 #include "Our_Graph.h"

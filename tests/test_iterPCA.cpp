@@ -1,5 +1,5 @@
 #include <iostream>
-#include "iterPCA.h"
+#include "iterPCA.hpp"
 #include "PcaReader.h"
 
 int main(int argc, char const *argv[])
