@@ -611,6 +611,7 @@ std::unordered_map<int, PathWrapper> dcvr_fractional(const Vertices &vertices, c
         }
         // values[cnt] = vals[cnt];
     }
+    return paths;
 }
 
 std::list<Path> dcvr(const Vertices &vertices, const Node &root_node, const Matrix &distances, distance_t distance_limit_D, Dcvr_mode mode)
