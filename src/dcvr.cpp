@@ -1,6 +1,4 @@
-// #ifndef NDEBUG
 #include <iostream>
-// #endif
 #include <ilcplex/ilocplex.h>
 #include <numeric> // std::iota
 #include <algorithm>
@@ -10,16 +8,10 @@
 #include "Penalties.h"
 #include "orienteering.h"
 #include "dcvr.hpp"
-// #include <set>
-// #include <bitset>
 
-// TODO what is this?
 ILOSTLBEGIN
 using namespace std::chrono;
 
-// #include <iostream>
-// #include <vector>
-// const reward_t REWARD_EPSILON = 16 * std::numeric_limits<reward_t>::epsilon();
 const reward_t REWARD_EPSILON = 1e-6;
 const distance_t DISTANCE_EPSILON = 1e-6;
 // https://stackoverflow.com/questions/1577475/c-sorting-and-keeping-track-of-indexes
@@ -49,10 +41,8 @@ std::vector<Node> my_argsort(const Rewards &rewards)
     std::sort(pairs.begin(), pairs.end(), [&](const tmp_pair &a, const tmp_pair &b) { return a.first > b.first; });
 
     std::vector<Node> args;
-    // std:: cout << "<--------------------- Rewards ---------------------->" << endl;
     for (auto &kv : pairs)
     {
-        // std::cout << kv.first << " ";
         args.push_back(kv.second);
     }
     return args;
@@ -61,7 +51,6 @@ std::vector<Node> my_argsort(const Rewards &rewards)
 void get_event_count(std::vector<int> &s1, std::vector<int> &s2, std::unordered_map<int, int> &event_count)
 {
     std::vector<int> tmp;
-    // std::unordered_set<int>::iterator it, tb, s1b, s1e, s2b, s2e;
     tmp.clear();
 
     std::set_difference(s1.begin(), s1.end(), s2.begin(), s2.end(), std::inserter(tmp, tmp.end()));
@@ -79,7 +68,6 @@ void get_event_count(std::vector<int> &s1, std::vector<int> &s2, std::unordered_
 void get_event_log(std::vector<int> &old_basis, std::vector<int> &new_basis, int iteration, std::unordered_map<int, std::vector<BasisEvent>> &event_log, std::ofstream &out)
 {
     std::vector<int> tmp;
-    // std::unordered_set<int>::iterator it, tb, s1b, s1e, s2b, s2e;
     tmp.clear();
 
     std::set_difference(old_basis.begin(), old_basis.end(), new_basis.begin(), new_basis.end(), std::inserter(tmp, tmp.end()));
@@ -158,15 +146,11 @@ Path post_process(Path &path, const Rewards &rewards, const Matrix &distances, c
     {
         if (path_nodes.find(i) != path_nodes.end())
             continue;
-        // for (Node j: path){
-
-        // }
         distance_t new_distance;
         Path::iterator current_node_iterator = new_path.begin();
         while (current_node_iterator != new_path.end())
         {
             Node current_node = *current_node_iterator;
-            // std :: cout << current_node << " ";
             new_distance = path_distance + distances[current_node][i];
             Path::iterator next_node_iterator = std::next(current_node_iterator);
             if (next_node_iterator != new_path.end())

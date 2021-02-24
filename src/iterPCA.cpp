@@ -1,31 +1,14 @@
-// #include <vector>
-// TODO Define hash function for pairs so that we can replace this with hashset.
-#include <set>
-// #define MIN(A, B) ((A < B) ? A : B)
-// Which of the following is necessary?
-// #include <list>
 #include <unordered_set>
-// #include <map>
 #include <unordered_map>
 #include <stack> // Mostly for DFS
 #include <string>
-// #include <queue>
-// #include <iostream>
-// #include <array>
 #include <assert.h>
-// #include "PcaReader.h"
-// #include "Arborescence.h"
 #include "iterPCA.hpp"
 #include "Our_Graph.h"
-
-// class Node{
-//
-// };
 
 typedef std::pair<Node, Node> Edge;
 
 bool operator==(Edge const & a, Edge const & b){
-    // TODO Directed or undirected?
     return (a.first == b.first && a.second == b.second);
 }
 
@@ -37,9 +20,6 @@ struct EdgeHasher
       using std::hash;
       using std::string;
 
-      // Compute individual hash values for first,
-      // second and third and combine them using XOR
-      // and bit shifting:
       Node k1 = k.first;
       Node k2 = k.second;
 
@@ -49,7 +29,6 @@ struct EdgeHasher
 };
 
 const double EPS = 1e-8;
-// What should the types be? Use typedef so you can change 'em later
 // These two should preferably be the same
 // TODO Epsilon check
 
@@ -60,7 +39,6 @@ const double EPS = 1e-8;
 // Arborescence.. parent dictionary or set?
 
 // NOTE: The costs matrix and the penalties vector do not change in size.
-// TODO: Output Theta as a single penalty
 Arborescence iterPCA_with_check(Vertices &vertices, Matrix &costs, Penalties &penalties, penalty_t &sum_theta, Node last_node, const Node &root_node){
     assert (vertices.size() * 2 == penalties.size());
     return iterPCA(vertices, costs, penalties, sum_theta, last_node, root_node);
