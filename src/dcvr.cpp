@@ -459,27 +459,17 @@ std::unordered_map<int, PathWrapper> dcvr_fractional(const Vertices &vertices, c
 
         // TODO check path distance
 
-        // assert(get_path_reward(p, rewards) > 1);
 
         reward_t p_reward = get_path_reward(p, rewards);
-        // #ifndef NDEBUG
-        // std::cout << get_path_distance(p, distances, root_node) << " " << distance_limit_D << std::endl;
+        
         assert(get_path_distance(p, distances, root_node) <= distance_limit_D);
         std::cout << "Objective function value: " << solver.getObjValue() << std::endl;
-        // #endif
 
         if (p_reward - REWARD_EPSILON <= 1)
         {
             break;
         }
 
-        // TODO this should probably be uncommented later on
-        // if (best_upper == 0)
-        // {
-        //     break;
-        // }
-
-        // #ifndef NDEBUG
         if (apx_called && best_upper != 0)
         {
             apx = p_reward / best_upper;
@@ -500,10 +490,6 @@ std::unordered_map<int, PathWrapper> dcvr_fractional(const Vertices &vertices, c
         std::cout << "Best bound on LP value: " << best_lb << std::endl;
         std::cout << "Path reward: " << p_reward << std::endl;
         std::cout << "Reward residue: " << p_reward - 1 << std::endl;
-        // #endif
-        // std :: cout << p_reward - 1 << " " << REWARD_EPSILON << std::endl;
-
-        // {
 
         path_var.add(IloNumVar(env, 0.0, IloInfinity));
 #ifndef NDEBUG
