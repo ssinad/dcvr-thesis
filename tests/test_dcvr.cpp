@@ -55,7 +55,9 @@ void map_function(distance_t distance, std::string filename="", std::string file
     }
     
     std::string actual_filename = (filename_base != "")?(filename_base + "/" + filename):filename;
-    std::cout << actual_filename << std::endl;
+    if (filename != ""){
+        std::cout << filename << std::endl;
+    }
     dr.read_file(actual_filename);
     std::unordered_map<int, Path> path_map;
     std::unordered_map<int, double> values;
