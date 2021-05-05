@@ -35,7 +35,8 @@ int main(int argc, char ** argv)
     std::vector<std::string> filenames{
         "datasets/christofides-et-al-1979-set-m/M-n101-k10.txt",
         "datasets/christofides-et-al-1979-set-m/M-n151-k12.txt",
-        "datasets/christofides-et-al-1979-set-m/M-n121-k07.txt"};
+        "datasets/christofides-et-al-1979-set-m/M-n121-k07.txt"
+    };
     // for (filename : filenames)
     // {
     //     dr.read_file(filename, true);
