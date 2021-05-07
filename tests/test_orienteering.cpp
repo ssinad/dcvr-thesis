@@ -27,6 +27,10 @@ int main(int argc, char ** argv)
             std::cout << n << " ";
         }
         std::cout << std::endl;
+        penalty_t path_reward = get_path_reward(p, dr.get_penalties());
+        std::cout << "Path reward: " << path_reward << std::endl;
+        std::cout << "Path distance: " << get_path_distance(p, dr.get_matrix(), dr.get_root_node()) << std::endl;
+        std::cout << "Reward residue: " << path_reward - 1 << std::endl;
         return EXIT_SUCCESS;
     }
     
