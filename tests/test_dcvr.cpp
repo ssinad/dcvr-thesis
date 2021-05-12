@@ -20,15 +20,15 @@ std::vector<std::string> read_all_datasets_in_directory(std::string directory)
     struct dirent *ent;
     if ((dir = opendir(directory.c_str())) != NULL)
     {
-        /* print all the files and directories within directory */
+        
         while ((ent = readdir(dir)) != NULL)
         {
-            // printf("%s\n", ent->d_name);
+            
             std::string tmp(ent->d_name);
             int l = tmp.length();
             if (l < 4)
                 continue;
-            // std::cout << tmp.substr(l - 4, 4) << std::endl;
+            
             if (tmp.substr(l - 4, 4) == ".txt")
             {
                 filenames.push_back(tmp);
@@ -36,11 +36,6 @@ std::vector<std::string> read_all_datasets_in_directory(std::string directory)
         }
         closedir(dir);
     }
-    // else {
-    // /* could not open directory */
-    // perror ("");
-    // // return EXIT_FAILURE;
-    // }
     return filenames;
 }
 
@@ -123,9 +118,7 @@ int main(int argc, char* argv[])
                 double tmp = std::stod(std::string(argv[ind + 1]));
                 distance_limit = tmp;
             }
-            // if (current_arg == "-p"){
-            //     filename_base = std::string(argv[ind + 1]);
-            // }
+            
         }
         map_function(distance_limit, filename, "", false);
         return EXIT_SUCCESS;
@@ -134,8 +127,7 @@ int main(int argc, char* argv[])
     int c = 10;
     std::string euclidean_base = "datasets/euclidean";
     std::vector<std::string> euclidean_filenames = read_all_datasets_in_directory(euclidean_base);
-    // int cnt = 0;
-    // std::list <std::thread> all_threads;
+    
     for (std::string filename : euclidean_filenames)
     {
         int n;
@@ -143,10 +135,6 @@ int main(int argc, char* argv[])
         euclidean_file >> n;
         euclidean_file.close();
         distance_t distance_limit = std::max(0.7 * sqrt(n) / c, sqrt(2));
-        
-        // std::thread euclidean_thread(map_function, filename, distance_limit, euclidean_base);
-        // all_threads.push_back(std::move(euclidean_thread));
-
         map_function(distance_limit, filename, euclidean_base);
     }
     
@@ -158,10 +146,6 @@ int main(int argc, char* argv[])
         std::ifstream distance_limit_file(tsp_base + "/" + filename + ".opt.tour.len");
         distance_limit_file >> distance_limit;
         distance_limit_file.close();
-
-        // std::thread tsp_thread(map_function, filename + ".txt", distance_limit, tsp_base);
-        // all_threads.push_back(std::move(tsp_thread));
-
         map_function(distance_limit, filename + ".txt", tsp_base);
     }
 
@@ -181,24 +165,7 @@ int main(int argc, char* argv[])
     for (std::string filename : filenames)
     {
         map_function(distances[cnt], filename);
-        
-        // std::thread cvr(map_function, filename, distances[cnt]);
-        // all_threads.push_back(std::move(cvr));
-
         cnt++;
     }
-
-    // std::list<std::thread>::iterator it;
-    // for (it = all_threads.begin(); it != all_threads.end(); it++){
-    //     (*it).join();
-    // }
-    // for (std::thread& th: all_threads)
-    // {
-    //     if (th.joinable())
-    //     {
-    //         th.join();
-    //     }
-    // }
-
     return EXIT_SUCCESS;
 }
