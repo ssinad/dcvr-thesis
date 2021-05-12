@@ -86,8 +86,6 @@ void get_event_log(std::vector<int> &old_basis, std::vector<int> &new_basis, int
         event_log[n].push_back(be1);
     }
 
-    // std::vector<int> tmp;
-    // std::unordered_set<int>::iterator it, tb, s1b, s1e, s2b, s2e;
     tmp.clear();
 
     std::set_difference(new_basis.begin(), new_basis.end(), old_basis.begin(), old_basis.end(), std::inserter(tmp, tmp.end()));
@@ -131,14 +129,13 @@ void get_event_log(std::vector<int> &old_basis, std::vector<int> &new_basis, int
 
 Path post_process(Path &path, const Rewards &rewards, const Matrix &distances, const Node &root_node, const distance_t distance_limit_D)
 {
-    // TODO argsort rewards
     std::vector<Node> args = my_argsort(rewards);
     std::unordered_set<Node> path_nodes;
     for (Node j : path)
     {
         path_nodes.insert(j);
     }
-    // path_reward = get_path_reward(path, rewards);
+    
     distance_t path_distance = get_path_distance(path, distances, root_node);
 
     Path new_path = path;
@@ -383,10 +380,7 @@ std::unordered_map<int, PathWrapper> dcvr_fractional(const Vertices &vertices, c
         }
 
         solver.getDuals(vals, con);
-        // TODO What should the first path be?
-        // env.out() << "Rewards         = " << vals << std::endl;
-
-        // rewards.clear();
+        
         for (int cnt = 0; cnt < vertices.size(); ++cnt)
         {
             rewards[cnt] = vals[cnt];
@@ -394,10 +388,8 @@ std::unordered_map<int, PathWrapper> dcvr_fractional(const Vertices &vertices, c
 
 
 #ifndef NDEBUG
-        // IloCplex::BasisStatusArray cstat(env);
+        
         solver.getBasisStatuses(cstat, path_var);
-
-        // env.out() <<"Number of rows: "<<model.getNrows() << endl << "Basis statuses  = " << cstat << endl;
 
         old_basis = new_basis;
         new_basis.clear();
@@ -444,9 +436,7 @@ std::unordered_map<int, PathWrapper> dcvr_fractional(const Vertices &vertices, c
                 }
                 else
                 {
-                    // std::cout << "Orienteering called" << std::endl;
-                    // Path tmp_p = orienteering(vertices, root_node, distances, rewards, distance_limit_D);
-                    // p = post_process(tmp_p, rewards, distances, root_node, distance_limit_D);
+                    
                     b_path = path_generation_orienteering(vertices, rewards, distances, distance_limit_D, root_node);
                     p = b_path.second;
                     // #ifndef NDEBUG
@@ -503,24 +493,16 @@ std::unordered_map<int, PathWrapper> dcvr_fractional(const Vertices &vertices, c
         for (Node n : p)
         {
             con[n].setLinearCoef(path_var[path_cnt], 1.0);
-            // std::cout << n << " ";
         }
-        // env.out() << std::endl << "Path added" << std::endl;
         PathWrapper pw;
         pw.path = p;
 
-        // paths.push_back(p);
         paths[path_cnt] = pw;
         path_cnt++;
 
-        // profile << "\"iteration\": " << iter_cnt << ", " ;
-
-        // TODO check path distance
-        // assert (get_path_distance(p, distances, root_node) > distance_limit_D);
+        
         iter_cnt++;
-        // #ifndef NDEBUG
         std::cout << std::endl;
-        // #endif
     } while (get_path_reward(p, rewards) > 1 + REWARD_EPSILON);
     
     solver.getBasisStatuses(cstat, path_var);
@@ -535,7 +517,6 @@ std::unordered_map<int, PathWrapper> dcvr_fractional(const Vertices &vertices, c
     for (int cnt = 0; cnt < path_cnt; ++cnt)
     {
         paths[cnt].value = vals[cnt];
-        // env.out() << "Basis statuses  = " << cstat << endl;
         if (cstat[cnt] == IloCplex::Basic)
         {
             paths[cnt].is_basic = true;
@@ -544,15 +525,12 @@ std::unordered_map<int, PathWrapper> dcvr_fractional(const Vertices &vertices, c
         {
             paths[cnt].is_basic = false;
         }
-        // values[cnt] = vals[cnt];
     }
     return paths;
 }
 
 std::list<Path> dcvr(const Vertices &vertices, const Node &root_node, const Matrix &distances, distance_t distance_limit_D, Dcvr_mode mode)
 {
-    // std::unordered_map<int, Path> path_map;
-    // std::unordered_map<int, double> value_map;
     std::unordered_map<int, PathWrapper> path_map;
     std::vector<Path> nz_paths;
     std::list<Path> paths;

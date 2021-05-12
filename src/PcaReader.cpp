@@ -5,7 +5,6 @@
 PcaReader::PcaReader(std::string file_name)
 {
     std::ifstream input_file;
-    // input_file = std::ifstream();
     input_file.open(file_name);
 
     if (!input_file.good())

@@ -8,7 +8,6 @@
 
 Path get_path(const Arborescence &arb_T, const Node &root_node, const Node &t, bool triangle_inequality = true);
 distance_t edge_cost(const Arborescence &arb_T, const Matrix &costs);
-// void binary_search_recursive(Arborescence &a1, Arborescence &a2, Vertices &vertices, Matrix &costs, penalty_t lambda_1, penalty_t lambda_2, Penalties& penalties, int num_nodes, const Node &t, distance_t distance_limit_D);
 void binary_search(Arborescence &a1, Arborescence &a2, const Vertices &vertices, const Matrix &costs, const Penalties& penalties, int num_nodes, const Node &t, distance_t distance_limit_D);
 Path cut_path(const Path &p_i, const Matrix &costs, const Rewards &rewards, const Node &root_node, distance_t distance_limit_D);
 std::pair<Node, Path> orienteering(const Vertices &vertices, const Node &root_node, const Matrix &distances, const Rewards &rewards, distance_t distance_limit_D, std::unordered_map<Node, penalty_t>& upper_bounds);

@@ -46,7 +46,6 @@ void GraphReader::write_to_file(std::string file_name)
     }
     Penalties p(num_nodes, _lambda);
     p[root_node] = 0;
-    // for (int row = 0; row < num_nodes; row++)
     for (penalty_t _ : p)
     {
         output_file << _ << " ";
@@ -69,7 +68,6 @@ Penalties GraphReader::get_penalties()
 
 void GraphReader::apsp()
 {
-    // apsp_matrix = Matrix(num_nodes, std::vector<distance_t>(num_nodes, 0));
     apsp_matrix = matrix;
     for (int k = 0; k < num_nodes; k++)
     {
@@ -89,7 +87,6 @@ void GraphReader::apsp()
 
 int main()
 {
-    // std::cout << "Hello" ;
     GraphReader gr1("tests/graph1.txt", 1);
     gr1.write_to_file("tests/test1.txt");
     GraphReader gr2("tests/graph2.txt", 2);

@@ -11,14 +11,10 @@ void DatasetReader::read_file(std::string filename, bool read_rewards)
   if (filename != ""){
     file_stream.open(filename);
     file = &file_stream;
-    // std::ifstream file file(filename);
   }
   else{
     std::cout << "Reading from standard input!" << std::endl;
   }
-  // std::string line;
-  // while (file.good())
-  // {
   *file >> num_nodes >> root_node;
 
   distances = Matrix(num_nodes, std::vector<distance_t>(num_nodes));
@@ -39,7 +35,6 @@ void DatasetReader::read_file(std::string filename, bool read_rewards)
   }
   if (filename != ""){
     static_cast<std::ifstream*>(file) -> close();
-    // std::ifstream file file(filename);
   }
   
   // }
@@ -68,15 +63,3 @@ Node DatasetReader::get_root_node()
 {
   return root_node;
 }
-
-// int main()
-// {
-//   DatasetReader dr = DatasetReader();
-//   dr.read_file("datasets/fisher-1994-set-f/F-n045-k4.txt");
-//   for (penalty_t p : dr.get_penalties())
-//   {
-//     std::cout << p << " ";
-//   }
-//   cout << endl;
-//   return 0;
-// }

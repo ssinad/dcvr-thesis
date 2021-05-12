@@ -39,7 +39,7 @@ void binary_search_recursive(Arborescence &a1, Arborescence &a2, const Vertices 
     {
         return;
     }
-    // Matrix c1 = costs;
+
     Matrix c1 = Matrix(3 * num_nodes, std::vector<distance_t>(3 * num_nodes, 0));
     for (int row = 0; row < num_nodes; row++)
     {
@@ -56,7 +56,7 @@ void binary_search_recursive(Arborescence &a1, Arborescence &a2, const Vertices 
     {
         p1[cnt] = penalties[cnt];
     }
-    // Penalties p1 = penalties;
+    
     for (int cnt = 0; cnt < penalties.size(); cnt++)
     {
         p1[cnt] *= lambda;
@@ -66,9 +66,6 @@ void binary_search_recursive(Arborescence &a1, Arborescence &a2, const Vertices 
     penalty_t theta = 0; //, theta_1, theta_2;
     Arborescence a = iterPCA_with_check(v1, c1, p1, theta, num_nodes - 1, root_node);
 
-    // p1[root_node] = 0;
-    // p1[t] = costs[root_node][t] + 1;
-    // Arborescence a1 = iterPCA(v1, c1, p1, num_nodes - 1, root_node);
     distance_t tree_cost = edge_cost(a, costs);
     if (tree_cost - distance_limit_D <= EPS && tree_cost - distance_limit_D >= -EPS)
     {
@@ -114,7 +111,7 @@ void binary_search(Arborescence &a1, Arborescence &a2, const Vertices &vertices,
             }
         }
     }
-    // Matrix c1 = costs, c2 = costs;
+    
     Matrix c1 = Matrix(2 * num_nodes, std::vector<distance_t>(2 * num_nodes, 0));
     Matrix c2 = Matrix(2 * num_nodes, std::vector<distance_t>(2 * num_nodes, 0));
     for (int row = 0; row < num_nodes; row++)
@@ -175,7 +172,7 @@ void recursive_dfs_with_triangle_inequality(Graph &g, const std::unordered_set<N
         if (visited_so_far.find(_next) == visited_so_far.end() && r_t_set.find(_next) == r_t_set.end())
         {
             recursive_dfs_with_triangle_inequality(g, r_t_set, visited_so_far, _next, s_t_path, t);
-            // s_t_path.push_back(top);
+            
         }
     }
 }
@@ -195,7 +192,7 @@ Path get_path(const Arborescence &arb_T, const Node &root_node, const Node &t, b
     }
     r_t_nodes.push(root_node);
     r_t_set.insert(root_node);
-    // Path r_t_path;
+    
     // Turn arborescence into a graph
     for (std::pair<Node, Node> kv : arb_T)
     {
@@ -308,7 +305,7 @@ Path get_best_path(const Path &p, const Matrix &costs, const Rewards &rewards, c
         }
     }
     return best_path;
-    // std::for_each (std::next(p.begin(), 1), )
+    
 }
 
 Path get_best_path_between_the_two(const Arborescence &a1, const Arborescence &a2, const Matrix &costs, const Rewards &rewards, const Node &root_node, const Node &t, distance_t distance_limit_D)
@@ -359,7 +356,7 @@ Path cut_path(const Path &p, const Matrix &costs, const Rewards &rewards, const 
     {
         Node current_node = p_i.front();
         distance_t next_path_distance = current_path_distance + costs[previous_node][current_node];
-        // TODO I don't think the second condition is necessary but I put it there just for accuracy
+        // TODO I don't think the second condition is necessary, but I put it there just for accuracy
         if (next_path_distance > distance_limit_D && current_path_distance <= distance_limit_D)
         {
             // TODO what happens if they are equal?
@@ -462,11 +459,8 @@ std::pair<Node, Path> orienteering(const Vertices &vertices, const Node &root_no
                 new_distances[i][j] = distances[node_list[i]][node_list[j]];
             }
         }
-// binary_search(a1, a2, v_copy, distances, rewards, node_list.size(), root_node, t, distance_limit_D);
-// Path tmp = get_best_path_between_the_two(a1, a2, distances, rewards, root_node, t, distance_limit_D);
 
         Path new_tmp = orienteering(v_copy, root_node, node_map[t], new_distances, new_rewards, distance_limit_D, num_nodes, upper_bound);
-// R[t] = upper_bound;
 
         upper_bounds[t] = upper_bound;
         Path tmp;
