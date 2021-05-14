@@ -1,5 +1,4 @@
 # CCFLAGS = -std=c++11 -g
-CCOBJ = $(CCFLAGS) -c
 UNAME := $(shell uname)
 
 MAKEFLAGS += -r
@@ -41,10 +40,11 @@ CONCERTLIBDIR = $(CONCERTDIR)/lib/$(SYSTEM)/$(LIBFORMAT)
 CCLNDIRS  = -L $(CPLEXLIBDIR) -L $(CONCERTLIBDIR)
 CCLNFLAGS = -lconcert -lilocplex -lcplex -lm -lpthread -ldl
 CCFLAGS = $(CCOPT) -I $(CPPSRC)
+CCOBJ = $(CCFLAGS) -c
 
 dcvr.o: $(CPPSRC)/dcvr.cpp
-	# g++ -c $(CCFLAGS) -DIL_STD -I $(CPLEXINCDIR) -I $(CONCERTINCDIR) -o dcvr.o dcvr.cpp
-	g++ $(CCOBJ) -o dcvr.o $(CPPSRC)/dcvr.cpp
+	# g++ -c $(CCFLAGS)  -o dcvr.o dcvr.cpp
+	g++ $(CCOBJ) -DIL_STD -I $(CPLEXINCDIR) -I $(CONCERTINCDIR) -o dcvr.o $(CPPSRC)/dcvr.cpp
 iterPCA.o: $(CPPSRC)/iterPCA.cpp
 	g++ $(CCOBJ) -o iterPCA.o $(CPPSRC)/iterPCA.cpp
 PcaReader.o: $(CPPSRC)/PcaReader.cpp
