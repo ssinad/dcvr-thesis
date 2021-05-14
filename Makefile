@@ -22,7 +22,7 @@ endif
 
 CONCERTINCDIR = $(CONCERTDIR)/include
 CPLEXINCDIR   = $(CPLEXDIR)/include
-CCOPT = -m64 -O -std=c++11 -g -fPIC -fno-strict-aliasing -fexceptions -DIL_STD -DNDEBUG
+CCOPT = -m64 -O -std=c++11 -g -fPIC -fno-strict-aliasing -fexceptions -DNDEBUG
 
 # COPT  = -m64 -fPIC -fno-strict-aliasing
 # JOPT  = -classpath $(CPLEXDIR)/lib/cplex.jar -O
@@ -40,10 +40,10 @@ CONCERTLIBDIR = $(CONCERTDIR)/lib/$(SYSTEM)/$(LIBFORMAT)
 
 CCLNDIRS  = -L $(CPLEXLIBDIR) -L $(CONCERTLIBDIR)
 CCLNFLAGS = -lconcert -lilocplex -lcplex -lm -lpthread -ldl
-CCFLAGS = $(CCOPT) -I $(CPLEXINCDIR) -I $(CONCERTINCDIR) -I $(CPPSRC)
+CCFLAGS = $(CCOPT) -I $(CPPSRC)
 
 dcvr.o: $(CPPSRC)/dcvr.cpp
-	# g++ -c $(CCFLAGS) -o dcvr.o dcvr.cpp
+	# g++ -c $(CCFLAGS) -DIL_STD -I $(CPLEXINCDIR) -I $(CONCERTINCDIR) -o dcvr.o dcvr.cpp
 	g++ $(CCOBJ) -o dcvr.o $(CPPSRC)/dcvr.cpp
 iterPCA.o: $(CPPSRC)/iterPCA.cpp
 	g++ $(CCOBJ) -o iterPCA.o $(CPPSRC)/iterPCA.cpp
@@ -76,6 +76,6 @@ test_cut_path: iterPCA.o orienteering.o $(TESTS)/test_cut_path.cpp
 test_orienteering: iterPCA.o orienteering.o DatasetReader.o $(TESTS)/test_orienteering.cpp
 	g++ $(CCFLAGS) -o $(TESTS)/test_orienteering.out $(TESTS)/test_orienteering.cpp orienteering.o iterPCA.o  DatasetReader.o
 test_dcvr: dcvr.o orienteering.o iterPCA.o $(TESTS)/test_dcvr.cpp DatasetReader.o
-	g++ $(CCFLAGS) $(CCLNDIRS) -o $(TESTS)/test_dcvr.out $(TESTS)/test_dcvr.cpp dcvr.o orienteering.o iterPCA.o DatasetReader.o $(CCLNFLAGS)
+	g++ $(CCFLAGS) -DIL_STD $(CCLNDIRS) -o $(TESTS)/test_dcvr.out $(TESTS)/test_dcvr.cpp dcvr.o orienteering.o iterPCA.o DatasetReader.o $(CCLNFLAGS)
 clean:
 	rm -rf *.o $(TESTS)/*.dSYM $(TESTS)/*.out *.out *.dSYM **.log **.json
