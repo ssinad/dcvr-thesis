@@ -54,7 +54,7 @@ DatasetReader.o: $(CPPSRC)/DatasetReader.cpp
 orienteering.o: $(CPPSRC)/orienteering.cpp
 	g++ $(CCOBJ) -o orienteering.o $(CPPSRC)/orienteering.cpp
 dcvr_dry_run: $(CPPSRC)/dcvr.cpp
-	g++ $(CCOBJ) $(CPPSRC)/dcvr.cpp
+	g++ $(CCOBJ) -DIL_STD -I $(CPLEXINCDIR) -I $(CONCERTINCDIR) $(CPPSRC)/dcvr.cpp
 iterPCA_dry_run: $(CPPSRC)/iterPCA.cpp
 	g++ $(CCOBJ) $(CPPSRC)/iterPCA.cpp
 
