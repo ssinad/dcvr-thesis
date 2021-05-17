@@ -1,0 +1,43 @@
+name: CI
+
+on:
+  push:
+    branches: [ main ]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-20.04
+
+    steps:
+    - uses: actions/checkout@v2
+    - name: Login to Docker Container Registry
+      uses: docker/login-action@v1
+      with:
+        username: ${{ github.repository_owner }}
+        password: ${{ secrets.DOCKER_AT }}
+    - name: Login to GitHub Container Registry
+      uses: docker/login-action@v1
+      with:
+        registry: ghcr.io
+        username: ${{ github.repository_owner }}
+        password: ${{ secrets.CR_PAT }}
+    - name: Login to GitLab Container Registry
+      uses: docker/login-action@v1
+      with:
+        registry: registry.gitlab.com
+        username: "gitlab+deploy-token-github"
+        password: ${{ secrets.GL_CR_DT }}
+    - name: Make apps and publish containers
+      run: |
+        docker build -t orienteering-app  --target orienteering-stage .
+        docker build -t dvrp-app --target dvrp-stage .
+
+        for app in "orienteering-app" "dvrp-app"; do
+          for tag in "$GITHUB_SHA" "latest"; do
+            for repo in "dcvr-thesis"; do
+              docker tag "$app" ghcr.io/ssinad/"$repo"/"$app":"$tag" && docker push ghcr.io/ssinad/"$repo"/"$app":"$tag"
+            done
+            docker tag "$app" ssinad/"$app":"$tag" && docker push ssinad/"$app":"$tag"
+          done
+        done
