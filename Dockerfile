@@ -1,7 +1,5 @@
 FROM registry.gitlab.com/ssinad/column-generation/cplex AS builder
 
-ARG GCC_IMAGE
-
 COPY . /column-generation
 
 WORKDIR /column-generation
