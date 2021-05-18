@@ -24,7 +24,7 @@ LABEL org.opencontainers.image.source https://github.com/ssinad/dcvr-thesis
 
 ENTRYPOINT [ "./dcvr" ]
 
-FROM registry.gitlab.com/ssinad/column-generation/cplex AS testing-stage
+FROM builder AS testing-stage
 
 COPY .github/scripts/entrypoint.sh /entrypoint.sh
 
