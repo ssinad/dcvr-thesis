@@ -5,6 +5,7 @@ COPY . /column-generation
 WORKDIR /column-generation
 
 RUN ln -s /ibm ./ibm \
+    && make test_all \
     && make test_orienteering \
     && make test_dcvr 
 
@@ -25,8 +26,3 @@ COPY --from=builder /column-generation/tests/test_dcvr.out ./dcvr
 LABEL org.opencontainers.image.source https://github.com/ssinad/dcvr-thesis
 
 ENTRYPOINT [ "./dcvr" ]
-
-
-FROM builder AS testing-stage
-
-RUN make test_all
