@@ -1,0 +1,6 @@
+name: 'Run Tests'
+runs:
+  using: 'docker'
+  image: '.github/test.Dockerfile'
+  args:
+    - ${{ inputs.who-to-greet }}

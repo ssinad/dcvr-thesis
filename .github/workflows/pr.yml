@@ -1,0 +1,22 @@
+name: Pull Request
+
+on:
+  pull-request:
+    branches: [ main ]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-20.04
+
+    steps:
+    - uses: actions/checkout@v2
+    - name: Login to GitLab Container Registry
+      uses: docker/login-action@v1
+      with:
+        registry: registry.gitlab.com
+        username: "gitlab+deploy-token-github-2"
+        password: ${{ secrets.GL_CR_DT }}
+    - name: Run Tests
+      run: |
+        
