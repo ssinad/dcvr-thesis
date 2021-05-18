@@ -33,4 +33,6 @@ FROM builder AS testing-stage
 
 # COPY .github/scripts/entrypoint.sh /column-generation/entrypoint.sh
 
-ENTRYPOINT ["make", "test_all"]
+RUN make test_all
+
+# ENTRYPOINT ["make", "test_all"]
