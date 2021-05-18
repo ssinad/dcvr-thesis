@@ -20,5 +20,5 @@ jobs:
         username: "gitlab+deploy-token-github-2"
         password: ${{ secrets.GL_CR_DT }}
     - name: Run Tests
-      uses: ./
+      uses: ./test.Dockerfile
         
