@@ -1,2 +1,2 @@
-ln -s /ibm ./ibm
+#!/bin/sh -l
 make test_all
