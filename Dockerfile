@@ -26,6 +26,6 @@ ENTRYPOINT [ "./dcvr" ]
 
 FROM builder AS testing-stage
 
-COPY .github/scripts/entrypoint.sh /entrypoint.sh
+COPY .github/scripts/entrypoint.sh ./entrypoint.sh
 
-ENTRYPOINT ["/entrypoint.sh"]
+ENTRYPOINT ["./entrypoint.sh"]
