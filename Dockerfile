@@ -29,8 +29,8 @@ ENTRYPOINT [ "./dcvr" ]
 
 FROM builder AS testing-stage
 
-WORKDIR /column-generation
+# WORKDIR /column-generation
 
-COPY .github/scripts/entrypoint.sh /column-generation/entrypoint.sh
+# COPY .github/scripts/entrypoint.sh /column-generation/entrypoint.sh
 
-ENTRYPOINT ["./entrypoint.sh"]
+ENTRYPOINT ["make", "test_all"]
