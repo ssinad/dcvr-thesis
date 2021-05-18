@@ -26,3 +26,8 @@ COPY --from=builder /column-generation/tests/test_dcvr.out ./dcvr
 LABEL org.opencontainers.image.source https://github.com/ssinad/dcvr-thesis
 
 ENTRYPOINT [ "./dcvr" ]
+
+
+FROM builder AS testing-stage
+
+RUN make test_all
