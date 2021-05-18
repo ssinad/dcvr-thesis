@@ -8,6 +8,7 @@ RUN ln -s /ibm ./ibm \
     && make test_orienteering \
     && make test_dcvr 
 
+
 FROM debian:buster-20210111-slim AS orienteering-stage
 
 COPY --from=builder /column-generation/tests/test_orienteering.out ./orienteering
@@ -15,6 +16,7 @@ COPY --from=builder /column-generation/tests/test_orienteering.out ./orienteerin
 LABEL org.opencontainers.image.source https://github.com/ssinad/dcvr-thesis
 
 ENTRYPOINT [ "./orienteering" ]
+
 
 FROM debian:buster-20210111-slim AS dvrp-stage
 
@@ -24,8 +26,11 @@ LABEL org.opencontainers.image.source https://github.com/ssinad/dcvr-thesis
 
 ENTRYPOINT [ "./dcvr" ]
 
+
 FROM builder AS testing-stage
 
-COPY .github/scripts/entrypoint.sh ./entrypoint.sh
+WORKDIR /column-generation
+
+COPY .github/scripts/entrypoint.sh /column-generation/entrypoint.sh
 
 ENTRYPOINT ["./entrypoint.sh"]
