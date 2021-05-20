@@ -63,8 +63,12 @@ iterPCA: iterPCA.o
 orienteering: orienteering.o iterPCA.o
 	g++ $(CCFLAGS) -o orienteering.out orienteering.o iterPCA.o 
 
-test_all: test_iterPCA test_get_path test_cut_path test_orienteering test_dcvr
 
+run_tests: test_all
+	$(TESTS)/test_dcvr.out -D 4 < datasets/small-sample.txt
+
+
+test_all: test_iterPCA test_get_path test_cut_path test_orienteering test_dcvr
 
 test_iterPCA: iterPCA.o PcaReader.o $(TESTS)/test_iterPCA.cpp
 	g++ $(CCFLAGS) -o $(TESTS)/test_iterPCA.out $(TESTS)/test_iterPCA.cpp iterPCA.o PcaReader.o
