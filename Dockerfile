@@ -5,7 +5,6 @@ COPY . /column-generation
 WORKDIR /column-generation
 
 RUN ln -s /ibm ./ibm \
-    && make test_all \
     && make test_orienteering \
     && make test_dcvr 
 
