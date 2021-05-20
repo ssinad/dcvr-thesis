@@ -30,8 +30,8 @@ jobs:
         password: ${{ secrets.GL_CR_DT }}
     - name: Make apps and publish containers
       run: |
-        docker build -t orienteering-app  --target orienteering-stage .
-        docker build -t dvrp-app --target dvrp-stage .
+        docker build --build-arg REPO=$GITHUB_SERVER_URL/$GITHUB_REPOSITORY -t orienteering-app  --target orienteering-stage .
+        docker build --build-arg REPO=$GITHUB_SERVER_URL/$GITHUB_REPOSITORY -t dvrp-app --target dvrp-stage .
 
         for app in "orienteering-app" "dvrp-app"; do
           for tag in "$GITHUB_SHA" "latest"; do

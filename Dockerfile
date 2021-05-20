@@ -1,3 +1,5 @@
+ARG  REPO=https://github.com/ssinad/dcvr-thesis
+
 FROM registry.gitlab.com/ssinad/column-generation/cplex AS builder
 
 COPY . /column-generation
@@ -13,7 +15,7 @@ FROM debian:buster-20210111-slim AS orienteering-stage
 
 COPY --from=builder /column-generation/tests/test_orienteering.out ./orienteering
 
-LABEL org.opencontainers.image.source https://github.com/ssinad/dcvr-thesis
+LABEL org.opencontainers.image.source ${REPO}
 
 ENTRYPOINT [ "./orienteering" ]
 
@@ -22,7 +24,7 @@ FROM debian:buster-20210111-slim AS dvrp-stage
 
 COPY --from=builder /column-generation/tests/test_dcvr.out ./dcvr
 
-LABEL org.opencontainers.image.source https://github.com/ssinad/dcvr-thesis
+LABEL org.opencontainers.image.source ${REPO}
 
 ENTRYPOINT [ "./dcvr" ]
 
