@@ -3,7 +3,7 @@
 
 #include "Path.h"
 #include "Penalties.h"
-#include "Our_Graph.h"
+#include "Matrix.h"
 #include "Vertices.h"
 
 const reward_t REWARD_EPSILON = 1e-6;
