@@ -47,6 +47,8 @@ dcvr.o: $(CPPSRC)/dcvr.cpp
 	g++ $(CCOBJ) -DIL_STD -I $(CPLEXINCDIR) -I $(CONCERTINCDIR) -o dcvr.o $(CPPSRC)/dcvr.cpp
 iterPCA.o: $(CPPSRC)/iterPCA.cpp
 	g++ $(CCOBJ) -o iterPCA.o $(CPPSRC)/iterPCA.cpp
+heuristics.o: $(CPPSRC)/heuristics.cpp
+	g++ $(CCOBJ) -o heuristics.o $(CPPSRC)/heuristics.cpp
 PcaReader.o: $(CPPSRC)/PcaReader.cpp
 	g++ $(CCOBJ) -o PcaReader.o $(CPPSRC)/PcaReader.cpp
 DatasetReader.o: $(CPPSRC)/DatasetReader.cpp
@@ -77,9 +79,9 @@ test_get_path: iterPCA.o orienteering.o $(TESTS)/test_get_path.cpp
 test_cut_path: iterPCA.o orienteering.o $(TESTS)/test_cut_path.cpp
 	g++ $(CCFLAGS) -o $(TESTS)/test_cut_path.out $(TESTS)/test_cut_path.cpp orienteering.o iterPCA.o
 
-test_orienteering: iterPCA.o orienteering.o DatasetReader.o $(TESTS)/test_orienteering.cpp
-	g++ $(CCFLAGS) -o $(TESTS)/test_orienteering.out $(TESTS)/test_orienteering.cpp orienteering.o iterPCA.o  DatasetReader.o
-test_dcvr: dcvr.o orienteering.o iterPCA.o $(TESTS)/test_dcvr.cpp DatasetReader.o
-	g++ $(CCFLAGS) -DIL_STD $(CCLNDIRS) -o $(TESTS)/test_dcvr.out $(TESTS)/test_dcvr.cpp dcvr.o orienteering.o iterPCA.o DatasetReader.o $(CCLNFLAGS)
+test_orienteering: iterPCA.o orienteering.o DatasetReader.o heuristics.o $(TESTS)/test_orienteering.cpp
+	g++ $(CCFLAGS) -o $(TESTS)/test_orienteering.out $(TESTS)/test_orienteering.cpp orienteering.o iterPCA.o  DatasetReader.o heuristics.o
+test_dcvr: dcvr.o orienteering.o iterPCA.o heuristics.o $(TESTS)/test_dcvr.cpp DatasetReader.o
+	g++ $(CCFLAGS) -DIL_STD $(CCLNDIRS) -o $(TESTS)/test_dcvr.out $(TESTS)/test_dcvr.cpp dcvr.o orienteering.o iterPCA.o DatasetReader.o heuristics.o $(CCLNFLAGS)
 clean:
 	rm -rf *.o $(TESTS)/*.dSYM $(TESTS)/*.out *.out *.dSYM **.log **.json
