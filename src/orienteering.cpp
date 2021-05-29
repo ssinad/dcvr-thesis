@@ -315,12 +315,6 @@ Path get_best_path_dp(
     //     best_path.push_back(tmp);
     // }
     return best_path;
-    // dp_previous_node[root_node] = root_node;
-    // dp_reward[root_node] = rewards[root_node];
-    // dp_distance[root_node] = costs[root_node][root_node];
-
-
-
 }
 
 Path get_best_path(const Path &p, const Matrix &costs, const Rewards &rewards, const Node &root_node, distance_t distance_limit_D)
