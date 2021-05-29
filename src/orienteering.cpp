@@ -288,7 +288,7 @@ Path get_best_path_dp(
         dp_previous_node[n] = max_node;
         dp_reward[n] = max_reward;
         dp_distance[n] = max_distance;
-        visited_nodes.append(n);
+        visited_nodes.push_back(n);
     }
     Node optimal_node = root_node;
     reward_t max_reward = 0;
