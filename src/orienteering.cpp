@@ -262,6 +262,7 @@ Path get_best_path_dp(
             dp_previous_node[n] = root_node;
             dp_reward[n] = 0;
             dp_distance[n] = 0;
+            visited_nodes.push_back(n);
             continue;
         }
         reward_t max_reward = 0;
