@@ -2,3 +2,4 @@ datasets/
 .git/
 .github/
 .vscode/
+!datasets/small-sample.txt
