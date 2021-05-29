@@ -67,6 +67,7 @@ orienteering: orienteering.o iterPCA.o
 
 
 run_tests: test_all
+	$(TESTS)/test_orienteering.out -D 4 < datasets/small-sample.txt
 	$(TESTS)/test_dcvr.out -D 4 < datasets/small-sample.txt
 
 
