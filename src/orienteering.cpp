@@ -61,7 +61,7 @@ void binary_search_recursive(Arborescence &a1, Arborescence &a2, const Vertices 
         p1[cnt] *= lambda;
     }
     p1[t] = 1 + costs[root_node][t];
-    assert( DISTANCE_EPSILON >= distance_limit_D - costs[root_node][t]);
+    assert( costs[root_node][t] + DISTANCE_EPSILON <= distance_limit_D);
     penalty_t theta = 0; //, theta_1, theta_2;
     Arborescence a = iterPCA_with_check(v1, c1, p1, theta, num_nodes - 1, root_node);
 
@@ -77,7 +77,7 @@ void binary_search_recursive(Arborescence &a1, Arborescence &a2, const Vertices 
     }
     else
     {
-        if (tree_cost >= distance_limit_D + DISTANCE_EPSILON)
+        if (tree_cost > distance_limit_D + DISTANCE_EPSILON)
         {
             a2 = a;
             theta_2 = theta;
@@ -270,7 +270,7 @@ Path get_best_path_dp(
         for (Node previous_node: visited_nodes){
             reward_t current_reward = dp_reward[previous_node] + rewards[n];
             distance_t current_distance = dp_distance[previous_node] + costs[previous_node][n];
-            if (distance_limit_D - current_distance > DISTANCE_EPSILON){
+            if (distance_limit_D - current_distance >= DISTANCE_EPSILON){
                 if (max_reward < current_reward){
                     max_node = previous_node;
                     max_reward = current_reward;
@@ -430,7 +430,7 @@ Path cut_path(const Path &p, const Matrix &costs, const Rewards &rewards, const 
         Node current_node = p_i.front();
         distance_t next_path_distance = current_path_distance + costs[previous_node][current_node];
         // TODO I don't think the second condition is necessary, but I put it there just for accuracy
-        if (next_path_distance - distance_limit_D > DISTANCE_EPSILON  && DISTANCE_EPSILON >= distance_limit_D - current_path_distance)
+        if (next_path_distance - distance_limit_D > DISTANCE_EPSILON  && current_path_distance + DISTANCE_EPSILON <= distance_limit_D)
         {
             // TODO what happens if they are equal?
             if (current_path_reward > best_path_reward)

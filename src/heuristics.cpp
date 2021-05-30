@@ -50,7 +50,7 @@ Path post_process(Path &path, const Rewards &rewards, const Matrix &distances, c
                 Node next_node = *next_node_iterator;
                 new_distance += distances[i][next_node] - distances[current_node][next_node];
             }
-            if (new_distance <= distance_limit_D)
+            if (new_distance + DISTANCE_EPSILON <= distance_limit_D)
             {
                 new_path.insert(next_node_iterator, i);
                 path_distance = new_distance;
@@ -90,7 +90,7 @@ std::pair<bool, Path> path_generation_heuristic_2(const Vertices &vertices, cons
                 continue;
             if (rewards[i] + rewards[j] - REWARD_EPSILON <= 1)
                 continue;
-            if (distances[root_node][i] + distances[i][j] > distance_limit_D)
+            if (distances[root_node][i] + distances[i][j] > distance_limit_D + DISTANCE_EPSILON)
                 continue;
             Path initial_path;
             initial_path.push_back(root_node);
@@ -135,7 +135,7 @@ std::pair<bool, Path> path_generation_heuristic_3(const Vertices &vertices, cons
             if (path_nodes.find(i) != path_nodes.end())
                 continue;
             new_distance = path_distance + distances[previous_node][i];
-            if (new_distance > distance_limit_D)
+            if (new_distance - distance_limit_D > DISTANCE_EPSILON)
                 continue;
             can_add_nodes = true;
             // Pay attention to the datatypes when doing the division
