@@ -28,7 +28,6 @@ struct EdgeHasher
     }
 };
 
-const double EPS = 1e-8;
 // These two should preferably be the same
 // TODO Epsilon check
 
@@ -98,7 +97,7 @@ Arborescence iterPCA(Vertices &vertices, Matrix &costs, Penalties &penalties, pe
                 if (tmp_arb.find(_next) != tmp_arb.end()) continue;
 
                 // Epsilon check Not equal to 0 but some threshold
-                if (-EPS < costs[_node][_next] && costs[_node][_next] < EPS)
+                if (-DISTANCE_EPSILON < costs[_node][_next] && costs[_node][_next] < DISTANCE_EPSILON)
                 { // E0
                     container.push(_next);
                     tmp_arb[_next] = _node;
@@ -125,7 +124,7 @@ Arborescence iterPCA(Vertices &vertices, Matrix &costs, Penalties &penalties, pe
         // Epsilon check
         if (v == root_node)
             continue;
-        if (-EPS < penalties[v] && penalties[v] < EPS)
+        if (-DISTANCE_EPSILON < penalties[v] && penalties[v] < DISTANCE_EPSILON)
         {
             // std::cout << "Major case 2: zero-penalty node\n";
             std::unordered_set<Edge, EdgeHasher> A;
@@ -235,7 +234,7 @@ Arborescence iterPCA(Vertices &vertices, Matrix &costs, Penalties &penalties, pe
         for (Node _ : vertices)
         {
             // Epsilon check
-            if (_ != vi && -EPS < costs[_][vi] && costs[_][vi] < EPS)
+            if (_ != vi && -DISTANCE_EPSILON < costs[_][vi] && costs[_][vi] < DISTANCE_EPSILON)
             {
                 cycle_map[vi] = _;
                 vi = _;

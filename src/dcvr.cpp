@@ -14,7 +14,7 @@ ILOSTLBEGIN
 using namespace std::chrono;
 
 
-const distance_t DISTANCE_EPSILON = 1e-6;
+
 // https://stackoverflow.com/questions/1577475/c-sorting-and-keeping-track-of-indexes
 template <typename T>
 vector<size_t> sort_indexes(const vector<T> &v)
@@ -158,7 +158,7 @@ std::unordered_map<int, PathWrapper> dcvr_fractional(const Vertices &vertices, c
     int path_cnt = 0;
     for (Node v : vertices)
     {
-        if (distances[root_node][path_cnt] > distance_limit_D)
+        if (distances[root_node][path_cnt] - distance_limit_D > DISTANCE_EPSILON)
         {
             env.out() << "No solution possible" << endl;
             return paths; // No solutions
@@ -236,7 +236,7 @@ std::unordered_map<int, PathWrapper> dcvr_fractional(const Vertices &vertices, c
 
         reward_t p_reward = get_path_reward(p, rewards);
         
-        assert(get_path_distance(p, distances, root_node) <= distance_limit_D);
+        assert(get_path_distance(p, distances, root_node) + DISTANCE_EPSILON <= distance_limit_D);
         std::cout << "Objective function value: " << solver.getObjValue() << std::endl;
 
         if (p_reward - REWARD_EPSILON <= 1)

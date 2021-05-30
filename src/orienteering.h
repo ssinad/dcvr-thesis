@@ -6,6 +6,8 @@
 #include "Penalties.h"
 #include "Path.h"
 
+const double LAMBDA_EPSILON = 1e-6;
+
 Path get_path(  
                 const Arborescence &arb_T,
                 const Node &root_node,

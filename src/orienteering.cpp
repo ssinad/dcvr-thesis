@@ -9,7 +9,6 @@
 #include <iostream>
 #endif
 
-const double EPS = 1e-6;
 
 distance_t edge_cost(const Arborescence &arb_T, const Matrix &costs)
 {
@@ -35,7 +34,7 @@ penalty_t total_reward(const Arborescence &arb_T, const Penalties &penalties)
 
 void binary_search_recursive(Arborescence &a1, Arborescence &a2, const Vertices &vertices, const Matrix &costs, penalty_t &lambda_1, penalty_t &lambda_2, penalty_t &theta_1, penalty_t &theta_2, const Penalties &penalties, int num_nodes, const Node &root_node, const Node &t, distance_t distance_limit_D)
 {
-    if (lambda_1 + EPS >= lambda_2)
+    if (lambda_1 + LAMBDA_EPSILON >= lambda_2)
     {
         return;
     }
@@ -62,12 +61,12 @@ void binary_search_recursive(Arborescence &a1, Arborescence &a2, const Vertices 
         p1[cnt] *= lambda;
     }
     p1[t] = 1 + costs[root_node][t];
-    assert(costs[root_node][t] <= distance_limit_D);
+    assert( DISTANCE_EPSILON >= distance_limit_D - costs[root_node][t]);
     penalty_t theta = 0; //, theta_1, theta_2;
     Arborescence a = iterPCA_with_check(v1, c1, p1, theta, num_nodes - 1, root_node);
 
     distance_t tree_cost = edge_cost(a, costs);
-    if (tree_cost - distance_limit_D <= EPS && tree_cost - distance_limit_D >= -EPS)
+    if (tree_cost - distance_limit_D <= DISTANCE_EPSILON && tree_cost - distance_limit_D >= -DISTANCE_EPSILON)
     {
         theta_1 = theta;
         theta_2 = theta;
@@ -78,7 +77,7 @@ void binary_search_recursive(Arborescence &a1, Arborescence &a2, const Vertices 
     }
     else
     {
-        if (tree_cost >= distance_limit_D + EPS)
+        if (tree_cost >= distance_limit_D + DISTANCE_EPSILON)
         {
             a2 = a;
             theta_2 = theta;
@@ -103,7 +102,7 @@ void binary_search(Arborescence &a1, Arborescence &a2, const Vertices &vertices,
     lambda_1 = lambda_2 = 0;
     for (Node v : vertices)
     {
-        if (penalties[v] > EPS)
+        if (penalties[v] > REWARD_EPSILON)
         {
             if (lambda_2 < costs[root_node][v] / penalties[v] + 1)
             {
@@ -271,7 +270,7 @@ Path get_best_path_dp(
         for (Node previous_node: visited_nodes){
             reward_t current_reward = dp_reward[previous_node] + rewards[n];
             distance_t current_distance = dp_distance[previous_node] + costs[previous_node][n];
-            if (distance_limit_D - current_distance >= EPS){
+            if (distance_limit_D - current_distance > DISTANCE_EPSILON){
                 if (max_reward < current_reward){
                     max_node = previous_node;
                     max_reward = current_reward;
@@ -294,7 +293,7 @@ Path get_best_path_dp(
     Node optimal_node = root_node;
     reward_t max_reward = 0;
     for (Node n: p){
-        if (dp_distance[n] <= distance_limit_D && max_reward < dp_reward[n]){
+        if ( DISTANCE_EPSILON < distance_limit_D - dp_distance[n] && max_reward + REWARD_EPSILON < dp_reward[n]){
             optimal_node = n;
             max_reward = dp_reward[n];
         }
@@ -359,7 +358,7 @@ Path get_best_path(const Path &p, const Matrix &costs, const Rewards &rewards, c
                 #endif
                 next_path_distance += costs[previous_node][*node_iterator];
 
-                if (next_path_distance > distance_limit_D)
+                if (next_path_distance - distance_limit_D > DISTANCE_EPSILON)
                 {
                     break;
                 }
@@ -431,7 +430,7 @@ Path cut_path(const Path &p, const Matrix &costs, const Rewards &rewards, const 
         Node current_node = p_i.front();
         distance_t next_path_distance = current_path_distance + costs[previous_node][current_node];
         // TODO I don't think the second condition is necessary, but I put it there just for accuracy
-        if (next_path_distance > distance_limit_D && current_path_distance <= distance_limit_D)
+        if (next_path_distance - distance_limit_D > DISTANCE_EPSILON  && DISTANCE_EPSILON >= distance_limit_D - current_path_distance)
         {
             // TODO what happens if they are equal?
             if (current_path_reward > best_path_reward)
@@ -499,7 +498,7 @@ std::pair<Node, Path> orienteering(const Vertices &vertices, const Node &root_no
         #ifndef NDEBUG
         std::cout << "Current Node: " << t << std::endl;
         #endif
-        if (t == root_node || distances[root_node][t] > distance_limit_D)
+        if (t == root_node || distances[root_node][t] - distance_limit_D > DISTANCE_EPSILON)
             continue;
         Arborescence a1, a2;
         // TODO why do I have number_of_nodes?
