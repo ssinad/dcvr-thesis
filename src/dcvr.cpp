@@ -148,10 +148,7 @@ std::unordered_map<int, PathWrapper> dcvr_fractional(const Vertices &vertices, c
     IloObjective obj = IloMinimize(env);
     IloCplex::BasisStatusArray cstat(env);
     std::vector<Path> tmp_paths;
-#ifndef NDEBUG
-    std::unordered_map<int, int> event_count;
-    std::unordered_map<int, std::vector<BasisEvent>> event_log;
-#endif
+
     double apx;
     for (Node v : vertices)
     {
@@ -176,10 +173,10 @@ std::unordered_map<int, PathWrapper> dcvr_fractional(const Vertices &vertices, c
         obj.setLinearCoef(path_var[path_cnt], 1.0);
         con[root_node].setLinearCoef(path_var[path_cnt], 1.0);
         con[path_cnt].setLinearCoef(path_var[path_cnt], 1.0);
-#ifndef NDEBUG
-        event_count[path_cnt] = 0;
-        event_log[path_cnt];
-#endif
+// #ifndef NDEBUG
+//         event_count[path_cnt] = 0;
+//         event_log[path_cnt];
+// #endif
         path_cnt++;
     }
 
@@ -191,14 +188,14 @@ std::unordered_map<int, PathWrapper> dcvr_fractional(const Vertices &vertices, c
     Rewards rewards(vertices.size());
     IloNumArray vals(env);
     Path p;
-#ifndef NDEBUG
-    std::vector<int> old_basis, new_basis;
+// #ifndef NDEBUG
+//     std::vector<int> old_basis, new_basis;
 
-    std::ofstream profile("profile_activity.json");
-    std::ofstream logger("log.json");
-    profile << "[ ";
-    logger << "[ ";
-#endif
+//     std::ofstream profile("profile_activity.json");
+//     std::ofstream logger("log.json");
+//     profile << "[ ";
+//     logger << "[ ";
+// #endif
     int iter_cnt = 0;
     bool apx_called = false;
     do
@@ -219,34 +216,6 @@ std::unordered_map<int, PathWrapper> dcvr_fractional(const Vertices &vertices, c
         {
             rewards[cnt] = vals[cnt];
         }
-
-
-#ifndef NDEBUG
-        
-        solver.getBasisStatuses(cstat, path_var);
-
-        old_basis = new_basis;
-        new_basis.clear();
-        for (int cnt = 0; cnt < path_cnt; ++cnt)
-        {
-            if (cstat[cnt] == IloCplex::Basic)
-            {
-                new_basis.push_back(cnt);
-            }
-        }
-
-        get_event_count(old_basis, new_basis, event_count);
-        get_event_count(new_basis, old_basis, event_count);
-        profile << "{ ";
-        for (auto &kv : event_count)
-        {
-            profile << "\"" << kv.first << "\": " << kv.second << ", ";
-        }
-        profile << "}, \n";
-        profile.flush();
-
-        get_event_log(old_basis, new_basis, iter_cnt, event_log, logger);
-#endif
         
 
         auto b_path = path_generation_heuristic_1(vertices, rewards, distances, distance_limit_D, root_node);
@@ -316,10 +285,6 @@ std::unordered_map<int, PathWrapper> dcvr_fractional(const Vertices &vertices, c
         std::cout << "Reward residue: " << p_reward - 1 << std::endl;
 
         path_var.add(IloNumVar(env, 0.0, IloInfinity));
-#ifndef NDEBUG
-        event_count[path_cnt] = 0;
-        event_log[path_cnt];
-#endif
         char path_var_name[10];
         sprintf(path_var_name, "X_p_%d", path_cnt);
         path_var[path_cnt].setName(path_var_name);
@@ -340,12 +305,6 @@ std::unordered_map<int, PathWrapper> dcvr_fractional(const Vertices &vertices, c
     } while (get_path_reward(p, rewards) > 1 + REWARD_EPSILON);
     
     solver.getBasisStatuses(cstat, path_var);
-    #ifndef NDEBUG
-    env.out() << "Number of rows: " << solver.getNrows() << " Number of columns: " << solver.getNcols() << std::endl;
-    env.out() << "Basis statuses  = " << cstat << endl;
-    solver.getSlacks(vals, con);
-    env.out() << "Slack variables are    " << vals << std::endl;
-    #endif
     solver.getValues(vals, path_var);
     env.out() << "Values are    " << vals << std::endl;
     for (int cnt = 0; cnt < path_cnt; ++cnt)

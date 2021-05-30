@@ -1,3 +1,4 @@
+CCOPT = -m64 -O -std=c++11 -g -fPIC -fno-strict-aliasing -fexceptions $DEBUG_FLAG
 # CCFLAGS = -std=c++11 -g
 UNAME := $(shell uname)
 
@@ -21,7 +22,7 @@ endif
 
 CONCERTINCDIR = $(CONCERTDIR)/include
 CPLEXINCDIR   = $(CPLEXDIR)/include
-CCOPT = -m64 -O -std=c++11 -g -fPIC -fno-strict-aliasing -fexceptions -DNDEBUG
+#  -DNDEBUG
 
 # COPT  = -m64 -fPIC -fno-strict-aliasing
 # JOPT  = -classpath $(CPLEXDIR)/lib/cplex.jar -O
