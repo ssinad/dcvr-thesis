@@ -77,7 +77,7 @@ void binary_search_recursive(Arborescence &a1, Arborescence &a2, const Vertices 
     }
     else
     {
-        if (tree_cost > distance_limit_D + DISTANCE_EPSILON)
+        if (tree_cost + DISTANCE_EPSILON > distance_limit_D)
         {
             a2 = a;
             theta_2 = theta;
@@ -293,7 +293,7 @@ Path get_best_path_dp(
     Node optimal_node = root_node;
     reward_t max_reward = 0;
     for (Node n: p){
-        if ( DISTANCE_EPSILON < distance_limit_D - dp_distance[n] && max_reward + REWARD_EPSILON < dp_reward[n]){
+        if ( DISTANCE_EPSILON <= distance_limit_D - dp_distance[n] && max_reward + REWARD_EPSILON < dp_reward[n]){
             optimal_node = n;
             max_reward = dp_reward[n];
         }
@@ -358,7 +358,7 @@ Path get_best_path(const Path &p, const Matrix &costs, const Rewards &rewards, c
                 #endif
                 next_path_distance += costs[previous_node][*node_iterator];
 
-                if (next_path_distance - distance_limit_D > DISTANCE_EPSILON)
+                if (next_path_distance + DISTANCE_EPSILON > distance_limit_D)
                 {
                     break;
                 }
@@ -430,7 +430,7 @@ Path cut_path(const Path &p, const Matrix &costs, const Rewards &rewards, const 
         Node current_node = p_i.front();
         distance_t next_path_distance = current_path_distance + costs[previous_node][current_node];
         // TODO I don't think the second condition is necessary, but I put it there just for accuracy
-        if (next_path_distance - distance_limit_D > DISTANCE_EPSILON  && current_path_distance + DISTANCE_EPSILON <= distance_limit_D)
+        if (next_path_distance + DISTANCE_EPSILON > distance_limit_D  && current_path_distance + DISTANCE_EPSILON <= distance_limit_D)
         {
             // TODO what happens if they are equal?
             if (current_path_reward > best_path_reward)
@@ -498,7 +498,7 @@ std::pair<Node, Path> orienteering(const Vertices &vertices, const Node &root_no
         #ifndef NDEBUG
         std::cout << "Current Node: " << t << std::endl;
         #endif
-        if (t == root_node || distances[root_node][t] - distance_limit_D > DISTANCE_EPSILON)
+        if (t == root_node || distances[root_node][t] + DISTANCE_EPSILON > distance_limit_D)
             continue;
         Arborescence a1, a2;
         // TODO why do I have number_of_nodes?
