@@ -135,7 +135,7 @@ std::pair<bool, Path> path_generation_heuristic_3(const Vertices &vertices, cons
             if (path_nodes.find(i) != path_nodes.end())
                 continue;
             new_distance = path_distance + distances[previous_node][i];
-            if (new_distance - distance_limit_D > DISTANCE_EPSILON)
+            if (new_distance + DISTANCE_EPSILON > distance_limit_D)
                 continue;
             can_add_nodes = true;
             // Pay attention to the datatypes when doing the division
