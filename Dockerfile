@@ -31,4 +31,4 @@ ENTRYPOINT [ "./dcvr" ]
 
 FROM builder AS testing-stage
 
-RUN make run_tests
+RUN make clean && make run_tests
