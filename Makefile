@@ -1,4 +1,4 @@
-CCOPT = -m64 -O -std=c++11 -g -fPIC -fno-strict-aliasing -fexceptions $DEBUG_FLAG
+CCOPT = -m64 -O -std=c++11 -g -fPIC -fno-strict-aliasing -fexceptions $(DEBUG_FLAG)
 # CCFLAGS = -std=c++11 -g
 UNAME := $(shell uname)
 
