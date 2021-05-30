@@ -3,6 +3,6 @@
 #include <vector>
 typedef double distance_t;
 typedef std::vector<std::vector<distance_t> > Matrix;
-const distance_t DISTANCE_EPSILON = 1e-6;
+const distance_t DISTANCE_EPSILON = 1e-9;
 
 #endif
