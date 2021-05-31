@@ -275,12 +275,16 @@ Path get_best_path_dp(
         // }
         
         max_reward = 0;
-        distance_t max_distance = 4 * distance_limit_D;
+        // distance_t max_distance = 4 * distance_limit_D;
         Node max_node = root_node;
         dp_reward[n][0] = 0;
         dp_previous_node[n][0] = root_node;
         for (Node previous_node: visited_nodes){
             auto it = dp_reward[previous_node].lower_bound(distance_limit_D - costs[previous_node][n]);
+            #ifndef NDEBUG
+                std::cout << distance_limit_D - costs[previous_node][n]
+                << "closest" << it -> first << std::endl;
+            #endif
             distance_t current_distance = it -> first + costs[previous_node][n];
             reward_t current_reward = it -> second + rewards[n];
             auto lb = dp_reward[n].lower_bound(current_distance);
@@ -300,7 +304,7 @@ Path get_best_path_dp(
             }
         }
         #ifndef NDEBUG
-            std::cout << "Node# " << n << std::endl;
+            std::cout << "Node #" << n << std::endl;
             for (auto tmp: dp_reward[n]){
                 std::cout << tmp.first << ": " << tmp.second << std::endl;
             }
