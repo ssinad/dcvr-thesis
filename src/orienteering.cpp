@@ -279,12 +279,12 @@ Path get_best_path_dp(
             if (lb -> second >= current_reward) continue;
             dp_reward[n][current_distance] = current_reward;
             dp_previous_node[n][current_distance] = previous_node;
-            auto lb = ++(dp_reward[n].find(current_distance));
-            while (lb != dp_reward[n].end()){
-                if (lb -> second < current_reward){
-                    dp_reward[n][lb -> first] = current_reward; // lb -> second = current_reward; ?
-                    dp_previous_node[n][lb -> first] = previous_node;
-                    ++lb;
+            auto ub = ++(dp_reward[n].find(current_distance));
+            while (ub != dp_reward[n].end()){
+                if (ub -> second < current_reward){
+                    dp_reward[n][ub -> first] = current_reward; // ub -> second = current_reward; ?
+                    dp_previous_node[n][ub -> first] = previous_node;
+                    ++ub;
                 }
                 else{
                     break;
