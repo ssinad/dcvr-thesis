@@ -244,6 +244,12 @@ distance_t get_path_distance(const Path &p, const Matrix &distances, const Node 
     return path_distance;
 }
 
+// struct compareDistances {
+//     bool operator()(const distance_t& a, const distance_t& b) const {
+//         return a > b;
+//     }
+// };
+
 Path get_best_path_dp(
     const Path &p,
     const Matrix &costs,
@@ -252,13 +258,13 @@ Path get_best_path_dp(
     distance_t distance_limit_D
     )
 {
-    #ifndef NDEBUG
-            std::cout << "DP algorithm" << std::endl;
-            for (Node n: p){
-                std::cout << n << " ";
-            }
-            std::cout << std::endl;
-    #endif
+    // #ifndef NDEBUG
+    //         std::cout << "DP algorithm" << std::endl;
+    //         for (Node n: p){
+    //             std::cout << n << " ";
+    //         }
+    //         std::cout << std::endl;
+    // #endif
     std::vector<Node> visited_nodes;
     // std::unordered_map<Node, Node> dp_previous_node;
     std::unordered_map<Node, std::map<distance_t, Node> > dp_previous_node;
@@ -280,14 +286,19 @@ Path get_best_path_dp(
         dp_reward[n][0] = 0;
         dp_previous_node[n][0] = root_node;
         for (Node previous_node: visited_nodes){
-            auto it = dp_reward[previous_node].lower_bound(distance_limit_D - costs[previous_node][n]);
-            #ifndef NDEBUG
-                std::cout << distance_limit_D - costs[previous_node][n]
-                << "closest" << it -> first << std::endl;
-            #endif
+            auto it = dp_reward[previous_node].upper_bound(distance_limit_D - costs[previous_node][n]);
+            --it;
+            // #ifndef NDEBUG
+            //     for (auto kv: dp_reward[previous_node]){
+            //         std :: cout << "Distance: " << kv.first << std::endl;
+            //     }
+            //     std::cout << distance_limit_D - costs[previous_node][n]
+            //     << " closest to " << it -> first << std::endl;
+            // #endif
             distance_t current_distance = it -> first + costs[previous_node][n];
             reward_t current_reward = it -> second + rewards[n];
-            auto lb = dp_reward[n].lower_bound(current_distance);
+            auto lb = dp_reward[n].upper_bound(current_distance);
+            --lb;
             if (lb -> second >= current_reward) continue;
             dp_reward[n][current_distance] = current_reward;
             dp_previous_node[n][current_distance] = previous_node;
@@ -303,13 +314,13 @@ Path get_best_path_dp(
                 }
             }
         }
-        #ifndef NDEBUG
-            std::cout << "Node #" << n << std::endl;
-            for (auto tmp: dp_reward[n]){
-                std::cout << tmp.first << ": " << tmp.second << std::endl;
-            }
-            std::cout << "---------------------" << std::endl;
-        #endif
+        // #ifndef NDEBUG
+        //     std::cout << "Node #" << n << std::endl;
+        //     for (auto tmp: dp_reward[n]){
+        //         std::cout << tmp.first << ": " << tmp.second << std::endl;
+        //     }
+        //     std::cout << "---------------------" << std::endl;
+        // #endif
         visited_nodes.push_back(n);
     }
     Node optimal_node = root_node;
