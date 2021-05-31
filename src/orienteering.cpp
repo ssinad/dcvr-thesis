@@ -283,19 +283,18 @@ Path get_best_path_dp(
                 }
             }
             // if (distance_limit_D - current_distance >= DISTANCE_EPSILON){
-                if (max_reward < current_reward){
+            if (max_reward < current_reward){
+                max_node = previous_node;
+                max_reward = current_reward;
+                max_distance = current_distance;
+            }
+            else{
+                if (max_reward == current_reward && max_distance > current_distance){
                     max_node = previous_node;
                     max_reward = current_reward;
                     max_distance = current_distance;
                 }
-                else{
-                    if (max_reward == current_reward && max_distance > current_distance){
-                        max_node = previous_node;
-                        max_reward = current_reward;
-                        max_distance = current_distance;
-                    }
-            //     }
-            // }
+            }
         }
         dp_previous_node[n] = max_node;
         // dp_reward[n] = max_reward;
@@ -310,11 +309,6 @@ Path get_best_path_dp(
             max_reward = it -> second;
             optimal_node = n;
         }
-        // if ( DISTANCE_EPSILON <= distance_limit_D - dp_distance[n] && max_reward + REWARD_EPSILON < dp_reward[n]){
-        //     optimal_node = n;
-        //     max_reward = dp_reward[n];
-        // }
-        
     }
     // std::stack<Node> reverse_path;
     Path best_path;
