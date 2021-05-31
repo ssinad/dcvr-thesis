@@ -256,6 +256,7 @@ Path get_best_path_dp(
     std::unordered_map<Node, Node> dp_previous_node;
     std::unordered_map<Node, std::map<distance_t, reward_t> > dp_reward;
     // std::unordered_map<Node, distance_t> dp_distance;
+    reward_t max_reward = 0;
     for (Node n: p){
         if (n == root_node) 
         {
@@ -264,7 +265,7 @@ Path get_best_path_dp(
             visited_nodes.push_back(n);
             continue;
         }
-        reward_t max_reward = 0;
+        max_reward = 0;
         distance_t max_distance = 4 * distance_limit_D;
         Node max_node = root_node;
         dp_reward[n][0] = 0;
@@ -302,7 +303,7 @@ Path get_best_path_dp(
         visited_nodes.push_back(n);
     }
     Node optimal_node = root_node;
-    reward_t max_reward = 0;
+    max_reward = 0;
     for (Node n: p){
         auto it = dp_reward[n].lower_bound(distance_limit_D);
         if (max_reward < *it.second){
