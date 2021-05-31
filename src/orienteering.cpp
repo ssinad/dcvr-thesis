@@ -573,6 +573,9 @@ std::pair<Node, Path> orienteering(const Vertices &vertices, const Node &root_no
             // std::cout <<node_list[_] << " ";
             tmp.push_back(node_list[_]);
         }
+        #ifndef NDEBUG
+            std::cout << std::endl;
+        #endif
         // exit(1);
         
         // Mapping complete
