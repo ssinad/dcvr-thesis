@@ -271,8 +271,8 @@ Path get_best_path_dp(
         dp_reward[n][0] = 0;
         for (Node previous_node: visited_nodes){
             auto it = dp_reward[previous_node].lower_bound(distance_limit_D - costs[previous_node][n]);
-            distance_t current_distance = *(it).first + costs[previous_node][n];
-            reward_t current_reward = *(it).second + rewards[n];
+            distance_t current_distance = it -> first + costs[previous_node][n];
+            reward_t current_reward = it -> second + rewards[n];
             if (dp_reward[n].find(current_distance) == dp_reward[n].end()){
                 dp_reward[n][current_distance] = current_reward;
             }
@@ -306,8 +306,8 @@ Path get_best_path_dp(
     max_reward = 0;
     for (Node n: p){
         auto it = dp_reward[n].lower_bound(distance_limit_D);
-        if (max_reward < *it.second){
-            max_reward = *it.second;
+        if (max_reward < it -> second){
+            max_reward = it -> second;
             optimal_node = n;
         }
         // if ( DISTANCE_EPSILON <= distance_limit_D - dp_distance[n] && max_reward + REWARD_EPSILON < dp_reward[n]){
