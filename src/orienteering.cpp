@@ -404,9 +404,9 @@ Path get_best_path_between_the_two(const Arborescence &a1, const Arborescence &a
     Path p2 = get_path(a2, root_node, t, true);
     // Replace cut_path with get_best_path
 
-    Path best_path = get_best_path(p1, costs, rewards, root_node, distance_limit_D);
+    Path best_path = get_best_path_dp(p1, costs, rewards, root_node, distance_limit_D);
 
-    Path tmp = get_best_path(p2, costs, rewards, root_node, distance_limit_D);
+    Path tmp = get_best_path_dp(p2, costs, rewards, root_node, distance_limit_D);
 
     if (get_path_reward(tmp, rewards) > get_path_reward(best_path, rewards))
     {
