@@ -286,7 +286,7 @@ Path get_best_path_dp(
         dp_reward[n][0] = 0;
         dp_previous_node[n][0] = root_node;
         for (Node previous_node: visited_nodes){
-            auto it = dp_reward[previous_node].upper_bound(distance_limit_D - costs[previous_node][n]);
+            auto it = dp_reward[previous_node].upper_bound(distance_limit_D - DISTANCE_EPSILON - costs[previous_node][n]);
             --it;
             // #ifndef NDEBUG
             //     for (auto kv: dp_reward[previous_node]){
@@ -302,7 +302,7 @@ Path get_best_path_dp(
             if (lb -> second >= current_reward) continue;
             dp_reward[n][current_distance] = current_reward;
             dp_previous_node[n][current_distance] = previous_node;
-            auto ub = ++(dp_reward[n].find(current_distance));
+            auto ub = dp_reward[n].upper_bound(current_distance);
             while (ub != dp_reward[n].end()){
                 if (ub -> second < current_reward){
                     dp_reward[n][ub -> first] = current_reward; // ub -> second = current_reward; ?
@@ -326,7 +326,8 @@ Path get_best_path_dp(
     Node optimal_node = root_node;
     max_reward = 0;
     for (Node n: p){
-        auto it = dp_reward[n].lower_bound(distance_limit_D);
+        auto it = dp_reward[n].upper_bound(distance_limit_D);
+        --it;
         if (max_reward < it -> second){
             max_reward = it -> second;
             optimal_node = n;
@@ -338,7 +339,8 @@ Path get_best_path_dp(
     distance_t path_distance = distance_limit_D;
     while (current_node != root_node){
         best_path.push_front(current_node);
-        auto it = dp_previous_node[current_node].lower_bound(path_distance);
+        auto it = dp_previous_node[current_node].upper_bound(path_distance);
+        --it;
         Node tmp = it -> second;
         path_distance -= costs[tmp][current_node];
         current_node = tmp;
