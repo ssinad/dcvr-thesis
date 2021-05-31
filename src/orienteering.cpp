@@ -252,6 +252,13 @@ Path get_best_path_dp(
     distance_t distance_limit_D
     )
 {
+    #ifndef NDEBUG
+            std::cout << "DP algorithm" << std::endl;
+            for (Node n: p){
+                std::cout << n << " ";
+            }
+            std::cout << std::endl;
+    #endif
     std::vector<Node> visited_nodes;
     // std::unordered_map<Node, Node> dp_previous_node;
     std::unordered_map<Node, std::map<distance_t, Node> > dp_previous_node;
@@ -266,13 +273,7 @@ Path get_best_path_dp(
         //     visited_nodes.push_back(n);
         //     continue;
         // }
-        #ifndef NDEBUG
-            std::cout << "DP algorithm" << std::endl;
-            for (Node n: p){
-                std::cout << n << " ";
-            }
-            std::cout << std::endl;
-        #endif
+        
         max_reward = 0;
         distance_t max_distance = 4 * distance_limit_D;
         Node max_node = root_node;
