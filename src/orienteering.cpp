@@ -293,7 +293,7 @@ Path get_best_path_dp(
         }
         #ifndef NDEBUG
             std::cout << n << std::endl;
-            for (auto tmp: dp_reward){
+            for (auto tmp: dp_reward[n]){
                 std::cout << tmp.first << ": " << tmp.second << std::endl;
             }
             std::cout << "---------------------" << std::endl;
