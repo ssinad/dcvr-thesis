@@ -266,6 +266,13 @@ Path get_best_path_dp(
         //     visited_nodes.push_back(n);
         //     continue;
         // }
+        #ifndef NDEBUG
+            std::cout << "DP algorithm" << std::endl;
+            for (Node n: p){
+                std::cout << n << " ";
+            }
+            std::cout << std::endl;
+        #endif
         max_reward = 0;
         distance_t max_distance = 4 * distance_limit_D;
         Node max_node = root_node;
@@ -292,7 +299,7 @@ Path get_best_path_dp(
             }
         }
         #ifndef NDEBUG
-            std::cout << n << std::endl;
+            std::cout << "Node# " << n << std::endl;
             for (auto tmp: dp_reward[n]){
                 std::cout << tmp.first << ": " << tmp.second << std::endl;
             }
