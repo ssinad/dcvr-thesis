@@ -4,6 +4,7 @@
 #include <unordered_set>
 #include "Our_Graph.h"
 #include <assert.h>
+#include <map>
 
 #ifndef NDEBUG
 #include <iostream>
@@ -253,24 +254,34 @@ Path get_best_path_dp(
 {
     std::vector<Node> visited_nodes;
     std::unordered_map<Node, Node> dp_previous_node;
-    std::unordered_map<Node, reward_t> dp_reward;
-    std::unordered_map<Node, distance_t> dp_distance;
+    std::unordered_map<Node, std::map<distance_t, reward_t> > dp_reward;
+    // std::unordered_map<Node, distance_t> dp_distance;
     for (Node n: p){
         if (n == root_node) 
         {
             dp_previous_node[n] = root_node;
-            dp_reward[n] = 0;
-            dp_distance[n] = 0;
+            dp_reward[n][0] = 0;
             visited_nodes.push_back(n);
             continue;
         }
         reward_t max_reward = 0;
         distance_t max_distance = 4 * distance_limit_D;
         Node max_node = root_node;
+        dp_reward[n][0] = 0;
         for (Node previous_node: visited_nodes){
-            reward_t current_reward = dp_reward[previous_node] + rewards[n];
-            distance_t current_distance = dp_distance[previous_node] + costs[previous_node][n];
-            if (distance_limit_D - current_distance >= DISTANCE_EPSILON){
+            auto it = dp_reward[previous_node].lower_bound(distance_limit_D - costs[previous_node][n]);
+            distance_t current_distance = *(it).first + costs[previous_node][n];
+            reward_t current_reward = *(it).second + rewards[n];
+            if (dp_reward[n].find(current_distance) == dp_reward[n].end()){
+                dp_reward[n][current_distance] = current_reward;
+            }
+            else{
+                if (current_reward > dp_reward[n][current_distance])
+                {
+                    dp_reward[n][current_distance] = current_reward;
+                }
+            }
+            // if (distance_limit_D - current_distance >= DISTANCE_EPSILON){
                 if (max_reward < current_reward){
                     max_node = previous_node;
                     max_reward = current_reward;
@@ -282,21 +293,27 @@ Path get_best_path_dp(
                         max_reward = current_reward;
                         max_distance = current_distance;
                     }
-                }
-            }
+            //     }
+            // }
         }
         dp_previous_node[n] = max_node;
-        dp_reward[n] = max_reward;
-        dp_distance[n] = max_distance;
+        // dp_reward[n] = max_reward;
+        // dp_distance[n] = max_distance;
         visited_nodes.push_back(n);
     }
     Node optimal_node = root_node;
     reward_t max_reward = 0;
     for (Node n: p){
-        if ( DISTANCE_EPSILON <= distance_limit_D - dp_distance[n] && max_reward + REWARD_EPSILON < dp_reward[n]){
+        auto it = dp_reward[n].lower_bound(distance_limit_D);
+        if (max_reward < *it.second){
+            max_reward = *.it.second;
             optimal_node = n;
-            max_reward = dp_reward[n];
         }
+        // if ( DISTANCE_EPSILON <= distance_limit_D - dp_distance[n] && max_reward + REWARD_EPSILON < dp_reward[n]){
+        //     optimal_node = n;
+        //     max_reward = dp_reward[n];
+        // }
+        
     }
     // std::stack<Node> reverse_path;
     Path best_path;
