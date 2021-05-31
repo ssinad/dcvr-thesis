@@ -306,7 +306,7 @@ Path get_best_path_dp(
     for (Node n: p){
         auto it = dp_reward[n].lower_bound(distance_limit_D);
         if (max_reward < *it.second){
-            max_reward = *.it.second;
+            max_reward = *it.second;
             optimal_node = n;
         }
         // if ( DISTANCE_EPSILON <= distance_limit_D - dp_distance[n] && max_reward + REWARD_EPSILON < dp_reward[n]){
