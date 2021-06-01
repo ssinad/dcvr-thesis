@@ -283,7 +283,9 @@ Path get_best_path_dp(
         max_reward = 0;
         // distance_t max_distance = 4 * distance_limit_D;
         Node max_node = root_node;
-        dp_reward[n][0] = 0;
+        std::map<distance_t, reward_t> tmp;
+        // dp_reward[n][0] = 0;
+        tmp[0]= 0;
         dp_previous_node[n][0] = root_node;
         for (Node previous_node: visited_nodes){
             auto it = dp_reward[previous_node].upper_bound(distance_limit_D - DISTANCE_EPSILON - costs[previous_node][n]);
@@ -299,21 +301,19 @@ Path get_best_path_dp(
             // #endif
             distance_t current_distance = it -> first + costs[previous_node][n];
             reward_t current_reward = it -> second + rewards[n];
-            auto lb = dp_reward[n].upper_bound(current_distance);
+            // auto lb = dp_reward[n].upper_bound(current_distance);
+            auto lb = tmp.upper_bound(current_distance);
             --lb;
             if (lb -> second >= current_reward) continue;
-            dp_reward[n][current_distance] = current_reward;
+            // dp_reward[n][current_distance] = current_reward;
+            tmp[current_distance] = current_reward;
             dp_previous_node[n][current_distance] = previous_node;
-            auto ub = dp_reward[n].upper_bound(current_distance);
-            while (ub != dp_reward[n].end()){
-                if (ub -> second < current_reward){
-                    dp_reward[n][ub -> first] = current_reward; // ub -> second = current_reward; ?
-                    dp_previous_node[n][ub -> first] = previous_node;
-                    ++ub;
-                }
-                else{
-                    break;
-                }
+        }
+        reward_t highest_reward = -1;
+        for (auto kv: tmp){
+            if (highest_reward < kv.second){
+                highest_reward = kv.second;
+                dp_reward[n][kv.first] = kv.second;
             }
         }
         // #ifndef NDEBUG
