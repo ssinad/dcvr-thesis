@@ -271,6 +271,7 @@ Path get_best_path_dp(
         std::map<distance_t, Node> tmp_previous_node;
         // dp_reward[n][0] = 0;
         tmp_reward.clear();
+        tmp_previous_node.clear();
         tmp_reward[0]= 0;
         tmp_previous_node[0] = root_node;
         for (Node previous_node: visited_nodes){
