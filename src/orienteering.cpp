@@ -288,6 +288,8 @@ Path get_best_path_dp(
         for (Node previous_node: visited_nodes){
             auto it = dp_reward[previous_node].upper_bound(distance_limit_D - DISTANCE_EPSILON - costs[previous_node][n]);
             --it;
+            // BOOST_LOG_TRIVIAL(debug) << distance_limit_D - costs[previous_node][n]
+            //     << " closest to " << it -> first << std::endl;
             // #ifndef NDEBUG
             //     for (auto kv: dp_reward[previous_node]){
             //         std :: cout << "Distance: " << kv.first << std::endl;
