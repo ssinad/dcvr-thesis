@@ -27,13 +27,18 @@ void binary_search(
                 );
 Path cut_path(const Path &p_i, const Matrix &costs, const Rewards &rewards, const Node &root_node, distance_t distance_limit_D);
 std::pair<Node, Path> orienteering(
-                                    const Vertices &vertices,
-                                    const Node &root_node,
-                                    const Matrix &distances,
-                                    const Rewards &rewards,
-                                    distance_t distance_limit_D,
-                                    std::unordered_map<Node, penalty_t>& upper_bounds
+                                    const Vertices &,
+                                    const Node &,
+                                    const Matrix &,
+                                    const Rewards &,
+                                    distance_t,
+                                    std::unordered_map<Node, OrienteeringInfo>&
                                 );
 penalty_t get_path_reward(const Path &p, const Rewards &rewards);
 distance_t get_path_distance(const Path &p, const Matrix &distances, const Node& root_node);
+
+struct OrienteeringInfo{
+    duration<double> running_time;
+    penalty_t upper_bound;
+};
 #endif

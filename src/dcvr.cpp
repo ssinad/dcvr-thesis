@@ -113,9 +113,9 @@ void get_event_log(std::vector<int> &old_basis, std::vector<int> &new_basis, int
 penalty_t best_upper;
 std::pair<bool, Path> path_generation_orienteering(const Vertices &vertices, const Rewards &rewards, const Matrix &distances, const distance_t distance_limit_D, const Node &root_node)
 {
-    std::unordered_map<Node, penalty_t> upper_bounds;
+    std::unordered_map<Node, OrienteeringInfo> info;
     auto start_orienteering = clock();
-    auto tmp_p = orienteering(vertices, root_node, distances, rewards, distance_limit_D, upper_bounds);
+    auto tmp_p = orienteering(vertices, root_node, distances, rewards, distance_limit_D, info);
     auto end_orienteering = clock();
     
     auto orienteering_duration = 1000.0 * (end_orienteering - start_orienteering) / CLOCKS_PER_SEC;
@@ -123,11 +123,11 @@ std::pair<bool, Path> path_generation_orienteering(const Vertices &vertices, con
     Path p = post_process(tmp_p.second, rewards, distances, root_node, distance_limit_D);
     std::cout << "Upper Bounds:" << std::endl;
     best_upper = 0;
-    for (auto &kv : upper_bounds)
+    for (auto &kv : info)
     {
-        std::cout << kv.second << ", ";
-        if (isfinite(kv.second) && kv.second > best_upper)
-            best_upper = kv.second;
+        std::cout << kv.second.upper_bound << ", ";
+        if (isfinite(kv.second.upper_bound) && kv.second.upper_bound > best_upper)
+            best_upper = kv.second.upper_bound;
     }
     std::cout << std::endl;
     Node best_node = tmp_p.first;

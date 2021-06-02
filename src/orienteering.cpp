@@ -5,11 +5,10 @@
 #include "Our_Graph.h"
 #include <assert.h>
 #include <map>
-
-#ifndef NDEBUG
+#include <chrono>
 #include <iostream>
-#endif
 
+using namespace std::chrono;
 
 distance_t edge_cost(const Arborescence &arb_T, const Matrix &costs)
 {
@@ -345,7 +344,7 @@ Path get_best_path(const Path &p, const Matrix &costs, const Rewards &rewards, c
         Node initial_node = *initial_node_iterator;
 
         #ifndef NDEBUG
-        std::cout << "Initial Node " << initial_node << " ";
+        std::clog << "Initial Node " << initial_node << " ";
         #endif
         current_path.push_back(initial_node);
         current_path_distance = costs[root_node][initial_node];
@@ -357,7 +356,7 @@ Path get_best_path(const Path &p, const Matrix &costs, const Rewards &rewards, c
             for (Path::iterator node_iterator = std::next(initial_node_iterator, 1); node_iterator != p_i.end(); ++node_iterator)
             {
                 #ifndef NDEBUG
-                std::cout << *node_iterator << " ";
+                std::clog << *node_iterator << " ";
                 #endif
                 next_path_distance += costs[previous_node][*node_iterator];
 
@@ -372,7 +371,7 @@ Path get_best_path(const Path &p, const Matrix &costs, const Rewards &rewards, c
             }
         }
         #ifndef NDEBUG
-        std::cout << std::endl;
+        std::clog << std::endl;
         #endif
         if (current_path_reward > best_path_reward)
         {
@@ -400,16 +399,16 @@ Path get_best_path_between_the_two(const Arborescence &a1, const Arborescence &a
     }
     #ifndef NDEBUG
     for (Node n: best_path){
-        std::cout << n << ": " << rewards[n] << " ";
+        std::clog << n << ": " << rewards[n] << " ";
     }
-    std::cout << std::endl;
+    std::clog << std::endl;
     reward_t brute_force_reward = get_path_reward(best_path, rewards);
 
     Path tmp1 = cut_path(p1, costs, rewards, root_node, distance_limit_D);
 
     Path tmp2 = cut_path(p2, costs, rewards, root_node, distance_limit_D);
     reward_t old_alg_reward = std::max(get_path_reward(tmp1, rewards), get_path_reward(tmp2, rewards));
-    std::cout << "Old algorithm reward: " << old_alg_reward << std::endl
+    std::clog << "Old algorithm reward: " << old_alg_reward << std::endl
               << "Brute force reward: " << brute_force_reward << std::endl;
     #endif
     
@@ -466,7 +465,16 @@ Path cut_path(const Path &p, const Matrix &costs, const Rewards &rewards, const 
     return best_path;
 }
 
-Path orienteering(Vertices &vertices, const Node &root_node, Node &t, const Matrix &distances, const Rewards &rewards, distance_t distance_limit_D, int number_of_nodes, penalty_t &upper_bound)
+Path orienteering(
+    Vertices &vertices,
+    const Node &root_node,
+    Node &t,
+    const Matrix &distances,
+    const Rewards &rewards,
+    distance_t distance_limit_D,
+    int number_of_nodes,
+    penalty_t &upper_bound
+    )
 {
     Arborescence a1, a2;
     penalty_t lambda_1, lambda_2;
@@ -490,7 +498,14 @@ Path orienteering(Vertices &vertices, const Node &root_node, Node &t, const Matr
 }
 
 // TODO this function may be parallelized
-std::pair<Node, Path> orienteering(const Vertices &vertices, const Node &root_node, const Matrix &distances, const Rewards &rewards, distance_t distance_limit_D, std::unordered_map<Node, penalty_t> &upper_bounds)
+std::pair<Node, Path> orienteering(
+    const Vertices &vertices,
+    const Node &root_node,
+    const Matrix &distances,
+    const Rewards &rewards,
+    distance_t distance_limit_D, 
+    std::unordered_map<Node, OrienteeringInfo> &info
+    )
 {
     penalty_t best_path_reward = -1, upper_bound;
     // penalty_t best_upper;
@@ -536,31 +551,37 @@ std::pair<Node, Path> orienteering(const Vertices &vertices, const Node &root_no
             }
         }
 
+        high_resolution_clock::time_point t1 = high_resolution_clock::now();
         Path new_tmp = orienteering(v_copy, root_node, node_map[t], new_distances, new_rewards, distance_limit_D, num_nodes, upper_bound);
-
-        upper_bounds[t] = upper_bound;
+        high_resolution_clock::time_point t2 = high_resolution_clock::now();
+        duration<double> time_span = duration_cast<duration<double>>(t2 - t1);
+        OrienteeringInfo node_info;
+        node_info.running_time = time_span;
+        node_info.upper_bound = upper_bound;
+        info[t] = node_info;
+        
         Path tmp;
         #ifndef NDEBUG
-        std::cout << rewards.size() << std::endl;
+        std::clog << rewards.size() << std::endl;
         #endif
 
         #ifndef NDEBUG
             for (Node n: node_list){
-                std::cout << n << " ";
+                std::clog << n << " ";
             }
-            std::cout << std::endl;
+            std::clog << std::endl;
         #endif
         for (Node _ : new_tmp)
         {
             #ifndef NDEBUG
-            std::cout << _ << " "; 
+            std::clog << _ << " "; 
             #endif
             
             // std::cout <<node_list[_] << " ";
             tmp.push_back(node_list[_]);
         }
         #ifndef NDEBUG
-            std::cout << std::endl;
+            std::clog << std::endl;
         #endif
         // exit(1);
         
