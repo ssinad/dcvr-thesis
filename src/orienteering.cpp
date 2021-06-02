@@ -5,10 +5,8 @@
 #include "Our_Graph.h"
 #include <assert.h>
 #include <map>
-#include <chrono>
-#include <iostream>
 
-using namespace std::chrono;
+#include <iostream>
 
 distance_t edge_cost(const Arborescence &arb_T, const Matrix &costs)
 {
@@ -559,7 +557,7 @@ std::pair<Node, Path> orienteering(
         node_info.running_time = time_span;
         node_info.upper_bound = upper_bound;
         info[t] = node_info;
-        
+
         Path tmp;
         #ifndef NDEBUG
         std::clog << rewards.size() << std::endl;

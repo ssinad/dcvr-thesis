@@ -5,6 +5,9 @@
 #include "Vertices.h"
 #include "Penalties.h"
 #include "Path.h"
+#include <chrono>
+
+using namespace std::chrono;
 
 const double LAMBDA_EPSILON = 1e-6;
 
