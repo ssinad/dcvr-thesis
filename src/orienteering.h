@@ -11,6 +11,11 @@ using namespace std::chrono;
 
 const double LAMBDA_EPSILON = 1e-6;
 
+struct OrienteeringInfo{
+    duration<double> running_time;
+    penalty_t upper_bound;
+};
+
 Path get_path(  
                 const Arborescence &arb_T,
                 const Node &root_node,
@@ -40,8 +45,5 @@ std::pair<Node, Path> orienteering(
 penalty_t get_path_reward(const Path &p, const Rewards &rewards);
 distance_t get_path_distance(const Path &p, const Matrix &distances, const Node& root_node);
 
-struct OrienteeringInfo{
-    duration<double> running_time;
-    penalty_t upper_bound;
-};
+
 #endif

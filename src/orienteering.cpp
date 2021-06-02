@@ -5,7 +5,6 @@
 #include "Our_Graph.h"
 #include <assert.h>
 #include <map>
-
 #include <iostream>
 
 distance_t edge_cost(const Arborescence &arb_T, const Matrix &costs)
