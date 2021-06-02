@@ -548,10 +548,18 @@ std::pair<Node, Path> orienteering(
             }
         }
 
+        #ifndef NDEBUG
+            std::clog << "Running orienteering with guess: " << t << std::end;
+        #endif
         high_resolution_clock::time_point t1 = high_resolution_clock::now();
         Path new_tmp = orienteering(v_copy, root_node, node_map[t], new_distances, new_rewards, distance_limit_D, num_nodes, upper_bound);
         high_resolution_clock::time_point t2 = high_resolution_clock::now();
+
         duration<double> time_span = duration_cast<duration<double>>(t2 - t1);
+        #ifndef NDEBUG
+            std::clog << time_span.count() << " seconds"<< std::end;
+        #endif
+        
         OrienteeringInfo node_info;
         node_info.running_time = time_span;
         node_info.upper_bound = upper_bound;
