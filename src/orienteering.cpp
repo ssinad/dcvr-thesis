@@ -511,7 +511,7 @@ std::pair<Node, Path> orienteering(
     for (Node t : vertices)
     {
         #ifndef NDEBUG
-        std::cout << "Current Node: " << t << std::endl;
+        std::clog << "Current Node: " << t << std::endl;
         #endif
         if (t == root_node || distances[root_node][t] + DISTANCE_EPSILON > distance_limit_D)
             continue;
