@@ -557,7 +557,7 @@ std::pair<Node, Path> orienteering(
 
         duration<double> time_span = duration_cast<duration<double> >(t2 - t1);
         #ifndef NDEBUG
-            std::clog << time_span.count() << " seconds"<< std::endl;
+            std::clog << time_span.count() * 1000.0 << " ms"<< std::endl;
         #endif
         
         OrienteeringInfo node_info;
