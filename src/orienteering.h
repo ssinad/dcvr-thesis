@@ -14,6 +14,8 @@ const double LAMBDA_EPSILON = 1e-6;
 struct OrienteeringInfo{
     duration<double> running_time;
     penalty_t upper_bound;
+    reward_t a1_reward;
+    reward_t a2_reward;
 };
 
 Path get_path(  

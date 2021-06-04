@@ -470,7 +470,7 @@ Path orienteering(
     const Rewards &rewards,
     distance_t distance_limit_D,
     int number_of_nodes,
-    penalty_t &upper_bound
+    OrienteeringInfo &info
     )
 {
     Arborescence a1, a2;
@@ -487,7 +487,10 @@ Path orienteering(
     penalty_t theta_1, theta_2;
     binary_search(a1, a2, vertices, distances, rewards, number_of_nodes, root_node, t, distance_limit_D, lambda_1, lambda_2, theta_1, theta_2);
     penalty_t alpha = (distance_limit_D - edge_cost(a2, distances)) / (edge_cost(a1, distances) - edge_cost(a2, distances));
-    upper_bound = R_t - (alpha * theta_1 + (1 - alpha) * theta_2 - distance_limit_D) / lambda_1;
+    penalty_t upper_bound = R_t - (alpha * theta_1 + (1 - alpha) * theta_2 - distance_limit_D) / lambda_1;
+    info.upper_bound = upper_bound;
+    info.a1_reward = total_reward(a1, rewards);
+    info.a2_reward = total_reward(a2, rewards);
 
     Path tmp = get_best_path_between_the_two(a1, a2, distances, rewards, root_node, t, distance_limit_D);
     
@@ -551,8 +554,9 @@ std::pair<Node, Path> orienteering(
         #ifndef NDEBUG
             std::clog << "Running orienteering with guess: " << t << std::endl;
         #endif
+        OrienteeringInfo node_info;
         high_resolution_clock::time_point t1 = high_resolution_clock::now();
-        Path new_tmp = orienteering(v_copy, root_node, node_map[t], new_distances, new_rewards, distance_limit_D, num_nodes, upper_bound);
+        Path new_tmp = orienteering(v_copy, root_node, node_map[t], new_distances, new_rewards, distance_limit_D, num_nodes, node_info);
         high_resolution_clock::time_point t2 = high_resolution_clock::now();
 
         duration<double> time_span = duration_cast<duration<double> >(t2 - t1);
@@ -560,9 +564,9 @@ std::pair<Node, Path> orienteering(
             std::clog << time_span.count() * 1000.0 << " ms"<< std::endl;
         #endif
         
-        OrienteeringInfo node_info;
+
         node_info.running_time = time_span;
-        node_info.upper_bound = upper_bound;
+        // node_info.upper_bound = upper_bound;
         info[t] = node_info;
 
         Path tmp;
