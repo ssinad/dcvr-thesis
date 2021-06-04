@@ -16,6 +16,8 @@ struct OrienteeringInfo{
     penalty_t upper_bound;
     reward_t a1_reward;
     reward_t a2_reward;
+    distance_t a1_cost;
+    distance_t a2_cost;
 };
 
 Path get_path(  

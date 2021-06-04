@@ -490,7 +490,9 @@ Path orienteering(
     penalty_t upper_bound = R_t - (alpha * theta_1 + (1 - alpha) * theta_2 - distance_limit_D) / lambda_1;
     info.upper_bound = upper_bound;
     info.a1_reward = total_reward(a1, rewards);
+    info.a1_cost = edge_cost(a1, distances);
     info.a2_reward = total_reward(a2, rewards);
+    info.a2_cost = edge_cost(a2, distances);
 
     Path tmp = get_best_path_between_the_two(a1, a2, distances, rewards, root_node, t, distance_limit_D);
     
