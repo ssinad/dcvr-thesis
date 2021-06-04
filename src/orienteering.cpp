@@ -465,7 +465,7 @@ Path cut_path(const Path &p, const Matrix &costs, const Rewards &rewards, const 
 Path orienteering(
     Vertices &vertices,
     const Node &root_node,
-    Node &t,
+    Node &furthest_node_guess,
     const Matrix &distances,
     const Rewards &rewards,
     distance_t distance_limit_D,
@@ -485,7 +485,7 @@ Path orienteering(
     }
 
     penalty_t theta_1, theta_2;
-    binary_search(a1, a2, vertices, distances, rewards, number_of_nodes, root_node, t, distance_limit_D, lambda_1, lambda_2, theta_1, theta_2);
+    binary_search(a1, a2, vertices, distances, rewards, number_of_nodes, root_node, furthest_node_guess, distance_limit_D, lambda_1, lambda_2, theta_1, theta_2);
     penalty_t alpha = (distance_limit_D - edge_cost(a2, distances)) / (edge_cost(a1, distances) - edge_cost(a2, distances));
     penalty_t upper_bound = R_t - (alpha * theta_1 + (1 - alpha) * theta_2 - distance_limit_D) / lambda_1;
     info.upper_bound = upper_bound;
@@ -494,7 +494,7 @@ Path orienteering(
     info.a2_reward = total_reward(a2, rewards);
     info.a2_cost = edge_cost(a2, distances);
 
-    Path tmp = get_best_path_between_the_two(a1, a2, distances, rewards, root_node, t, distance_limit_D);
+    Path tmp = get_best_path_between_the_two(a1, a2, distances, rewards, root_node, furthest_node_guess, distance_limit_D);
     
     return tmp;
 }
