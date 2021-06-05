@@ -271,15 +271,18 @@ Path get_best_path_dp(
         tmp_reward[0]= 0;
         tmp_previous_node[0] = root_node;
         for (Node previous_node: visited_nodes){
-            auto it = dp_reward[previous_node].upper_bound(distance_limit_D - DISTANCE_EPSILON - costs[previous_node][n]);
-            --it;
-            distance_t current_distance = it -> first + costs[previous_node][n];
-            reward_t current_reward = it -> second + rewards[n];
-            auto lb = tmp_reward.upper_bound(current_distance);
-            --lb;
-            if (lb -> second >= current_reward) continue;
-            tmp_reward[current_distance] = current_reward;
-            tmp_previous_node[current_distance] = previous_node;
+            for (auto it: dp_reward[previous_node]){
+                // auto it = dp_reward[previous_node].upper_bound(distance_limit_D - DISTANCE_EPSILON - costs[previous_node][n]);
+                if (it.first > distance_limit_D - DISTANCE_EPSILON - costs[previous_node][n]) break;
+                // --it;
+                distance_t current_distance = it.first + costs[previous_node][n];
+                reward_t current_reward = it.second + rewards[n];
+                auto lb = tmp_reward.upper_bound(current_distance);
+                --lb;
+                if (lb -> second >= current_reward) continue;
+                tmp_reward[current_distance] = current_reward;
+                tmp_previous_node[current_distance] = previous_node;
+            }
         }
         reward_t highest_reward = -1;
         for (auto kv: tmp_reward){
