@@ -292,6 +292,11 @@ Path get_best_path_dp(
                 dp_previous_node[n][kv.first] = tmp_previous_node[kv.first];
             }
         }
+        #ifndef NDEBUG
+            for (auto kv: dp_reward[n]){
+                std::clog << kv.first << ": " << kv.second << std::endl;
+            }
+        #endif
         visited_nodes.push_back(n);
     }
     Node optimal_node = root_node;
