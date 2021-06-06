@@ -374,16 +374,16 @@ Path get_best_path_dp(
         auto it = dp_previous_node[current_node].upper_bound(path_distance - DISTANCE_EPSILON);
         --it;
         Node tmp = it -> second;
-        #ifndef NDEBUG
-            std :: clog << path_distance << ": " << tmp << " -> " << current_node << std::endl;
-        #endif
+        // #ifndef NDEBUG
+        //     std :: clog << path_distance << ": " << tmp << " -> " << current_node << std::endl;
+        // #endif
         // path_distance -= (costs[tmp][current_node] + DISTANCE_EPSILON);
         path_distance = it -> first - costs[tmp][current_node];
         current_node = tmp;
     }
-    #ifndef NDEBUG
-    std::clog << "Backtracking done" << std::endl;
-    #endif
+    // #ifndef NDEBUG
+    // std::clog << "Backtracking done" << std::endl;
+    // #endif
     best_path.push_front(root_node);
     return best_path;
 }
