@@ -171,7 +171,13 @@ void binary_search(
     // assert whether t is in a1 and a2
 }
 
-void recursive_dfs(Graph &g, const std::unordered_set<Node> &r_t_set, std::unordered_set<Node> &visited_so_far, Node top, Path &s_t_path)
+void recursive_dfs(
+    Graph &g,
+    const std::unordered_set<Node> &r_t_set,
+    std::unordered_set<Node> &visited_so_far,
+    Node top,
+    Path &s_t_path
+    )
 {
     visited_so_far.insert(top);
     s_t_path.push_back(top);
@@ -185,7 +191,14 @@ void recursive_dfs(Graph &g, const std::unordered_set<Node> &r_t_set, std::unord
     }
 }
 
-void recursive_dfs_with_triangle_inequality(Graph &g, const std::unordered_set<Node> &r_t_set, std::unordered_set<Node> &visited_so_far, Node top, Path &s_t_path, const Node &t)
+void recursive_dfs_with_triangle_inequality(
+    Graph &g,
+    const std::unordered_set<Node> &r_t_set,
+    std::unordered_set<Node> &visited_so_far,
+    Node top,
+    Path &s_t_path,
+    const Node &t
+    )
 {
     visited_so_far.insert(top);
     if (top != t)
@@ -288,8 +301,12 @@ Path get_best_path_dp(
     std::unordered_map<Node, std::map<distance_t, Node> > dp_previous_node;
     std::unordered_map<Node, std::map<distance_t, reward_t> > dp_reward;
     // std::unordered_map<Node, distance_t> dp_distance;
+    dp_previous_node[root_node][0] = root_node;
+    dp_reward[root_node][0] = 0;
     reward_t max_reward = 0;
+    Node previous_node = root_node;
     for (Node n: p){
+        if (n == root_node) continue;
         max_reward = 0;
         Node max_node = root_node;
         std::map<distance_t, reward_t> tmp_reward;
@@ -299,20 +316,27 @@ Path get_best_path_dp(
         tmp_previous_node.clear();
         tmp_reward[0]= 0;
         tmp_previous_node[0] = root_node;
-        for (Node previous_node: visited_nodes){
+        // for (Node previous_node: visited_nodes){
+            for (auto it: dp_reward[previous_node]){
+                distance_t current_distance = it.first;
+                reward_t current_reward = it.second;
+                tmp_reward[current_distance] = current_reward;
+                tmp_previous_node[current_distance] = dp_previous_node[previous_node][current_distance];
+            }
+
             for (auto it: dp_reward[previous_node]){
                 // auto it = dp_reward[previous_node].upper_bound(distance_limit_D - DISTANCE_EPSILON - costs[previous_node][n]);
-                if (it.first > distance_limit_D - DISTANCE_EPSILON - costs[previous_node][n]) break;
+                if (it.first + DISTANCE_EPSILON + costs[previous_node][n] > distance_limit_D ) break;
                 // --it;
                 distance_t current_distance = it.first + costs[previous_node][n] + DISTANCE_EPSILON;
                 reward_t current_reward = it.second + rewards[n];
-                auto lb = tmp_reward.upper_bound(current_distance);
+                auto lb = tmp_reward.upper_bound(current_distance - DISTANCE_EPSILON);
                 --lb;
                 if (lb -> second >= current_reward) continue;
                 tmp_reward[current_distance] = current_reward;
-                tmp_previous_node[current_distance] = previous_node;
+                tmp_previous_node[current_distance] = n;
             }
-        }
+        // }
         reward_t highest_reward = -1;
         for (auto kv: tmp_reward){
             if (highest_reward < kv.second){
@@ -326,7 +350,8 @@ Path get_best_path_dp(
                 std::clog << kv.first << ": " << kv.second << ", " << dp_previous_node[n][kv.first] << std::endl;
             }
         #endif
-        visited_nodes.push_back(n);
+        // visited_nodes.push_back(n);
+        previous_node = n;
     }
     Node optimal_node = root_node;
     max_reward = 0;
@@ -341,14 +366,24 @@ Path get_best_path_dp(
     Path best_path;
     Node current_node = optimal_node;
     distance_t path_distance = distance_limit_D;
+    #ifndef NDEBUG
+    std::clog << "Backtracking" << std::endl;
+    #endif
     while (current_node != root_node){
         best_path.push_front(current_node);
         auto it = dp_previous_node[current_node].upper_bound(path_distance - DISTANCE_EPSILON);
         --it;
         Node tmp = it -> second;
-        path_distance -= (costs[tmp][current_node] + DISTANCE_EPSILON);
+        #ifndef NDEBUG
+            std :: clog << path_distance << ": " << tmp << " -> " << current_node << std::endl;
+        #endif
+        // path_distance -= (costs[tmp][current_node] + DISTANCE_EPSILON);
+        path_distance = it -> first - costs[tmp][current_node];
         current_node = tmp;
     }
+    #ifndef NDEBUG
+    std::clog << "Backtracking done" << std::endl;
+    #endif
     best_path.push_front(root_node);
     return best_path;
 }
