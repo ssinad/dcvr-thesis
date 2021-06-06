@@ -6,6 +6,7 @@
 #include <assert.h>
 #include <map>
 #include <iostream>
+#include <cmath>
 
 distance_t edge_cost(const Arborescence &arb_T, const Matrix &costs)
 {
@@ -29,7 +30,21 @@ penalty_t total_reward(const Arborescence &arb_T, const Penalties &penalties)
     return tot;
 }
 
-void binary_search_recursive(Arborescence &a1, Arborescence &a2, const Vertices &vertices, const Matrix &costs, penalty_t &lambda_1, penalty_t &lambda_2, penalty_t &theta_1, penalty_t &theta_2, const Penalties &penalties, int num_nodes, const Node &root_node, const Node &t, distance_t distance_limit_D)
+void binary_search_recursive(
+    Arborescence &a1,
+    Arborescence &a2,
+    const Vertices &vertices,
+    const Matrix &costs,
+    penalty_t &lambda_1,
+    penalty_t &lambda_2,
+    penalty_t &theta_1,
+    penalty_t &theta_2,
+    const Penalties &penalties,
+    int num_nodes,
+    const Node &root_node,
+    const Node &t,
+    distance_t distance_limit_D
+    )
 {
     if (lambda_1 + LAMBDA_EPSILON >= lambda_2)
     {
@@ -94,7 +109,21 @@ void binary_search_recursive(Arborescence &a1, Arborescence &a2, const Vertices 
     }
 }
 
-void binary_search(Arborescence &a1, Arborescence &a2, const Vertices &vertices, const Matrix &costs, const Penalties &penalties, int num_nodes, const Node &root_node, const Node &t, distance_t distance_limit_D, penalty_t &lambda_1, penalty_t &lambda_2, penalty_t &theta_1, penalty_t &theta_2)
+void binary_search(
+    Arborescence &a1,
+    Arborescence &a2,
+    const Vertices &vertices,
+    const Matrix &costs,
+    const Penalties &penalties,
+    int num_nodes,
+    const Node &root_node,
+    const Node &t,
+    distance_t distance_limit_D,
+    penalty_t &lambda_1,
+    penalty_t &lambda_2,
+    penalty_t &theta_1,
+    penalty_t &theta_2
+    )
 {
     lambda_1 = lambda_2 = 0;
     for (Node v : vertices)
@@ -275,7 +304,7 @@ Path get_best_path_dp(
                 // auto it = dp_reward[previous_node].upper_bound(distance_limit_D - DISTANCE_EPSILON - costs[previous_node][n]);
                 if (it.first > distance_limit_D - DISTANCE_EPSILON - costs[previous_node][n]) break;
                 // --it;
-                distance_t current_distance = it.first + costs[previous_node][n];
+                distance_t current_distance = it.first + costs[previous_node][n] + DISTANCE_EPSILON;
                 reward_t current_reward = it.second + rewards[n];
                 auto lb = tmp_reward.upper_bound(current_distance);
                 --lb;
@@ -294,7 +323,7 @@ Path get_best_path_dp(
         }
         #ifndef NDEBUG
             for (auto kv: dp_reward[n]){
-                std::clog << kv.first << ": " << kv.second << std::endl;
+                std::clog << kv.first << ": " << kv.second << ", " << dp_previous_node[n][kv.first] << std::endl;
             }
         #endif
         visited_nodes.push_back(n);
@@ -302,7 +331,7 @@ Path get_best_path_dp(
     Node optimal_node = root_node;
     max_reward = 0;
     for (Node n: p){
-        auto it = dp_reward[n].upper_bound(distance_limit_D);
+        auto it = dp_reward[n].upper_bound(distance_limit_D - DISTANCE_EPSILON);
         --it;
         if (max_reward < it -> second){
             max_reward = it -> second;
@@ -314,10 +343,10 @@ Path get_best_path_dp(
     distance_t path_distance = distance_limit_D;
     while (current_node != root_node){
         best_path.push_front(current_node);
-        auto it = dp_previous_node[current_node].upper_bound(path_distance);
+        auto it = dp_previous_node[current_node].upper_bound(path_distance - DISTANCE_EPSILON);
         --it;
         Node tmp = it -> second;
-        path_distance -= costs[tmp][current_node];
+        path_distance -= (costs[tmp][current_node] + DISTANCE_EPSILON);
         current_node = tmp;
     }
     best_path.push_front(root_node);
@@ -388,7 +417,15 @@ Path get_best_path(const Path &p, const Matrix &costs, const Rewards &rewards, c
     
 }
 
-Path get_best_path_between_the_two(const Arborescence &a1, const Arborescence &a2, const Matrix &costs, const Rewards &rewards, const Node &root_node, const Node &t, distance_t distance_limit_D)
+Path get_best_path_between_the_two(
+    const Arborescence &a1,
+    const Arborescence &a2,
+    const Matrix &costs,
+    const Rewards &rewards,
+    const Node &root_node,
+    const Node &t,
+    distance_t distance_limit_D
+    )
 {
     Path p1 = get_path(a1, root_node, t, true);
     Path p2 = get_path(a2, root_node, t, true);
@@ -403,9 +440,10 @@ Path get_best_path_between_the_two(const Arborescence &a1, const Arborescence &a
         best_path = tmp;
     }
     #ifndef NDEBUG
-    for (Node n: best_path){
-        std::clog << n << ": " << rewards[n] << " ";
-    }
+    // std::clog << "Best path" << std::endl;
+    // for (Node n: best_path){
+    //     std::clog << n << ": " << rewards[n] << " ";
+    // }
     std::clog << std::endl;
     reward_t brute_force_reward = get_path_reward(best_path, rewards);
 
