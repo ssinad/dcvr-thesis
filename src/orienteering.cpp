@@ -495,6 +495,7 @@ Path get_best_path_between_the_two(
     reward_t old_alg_reward = std::max(get_path_reward(tmp1, rewards), get_path_reward(tmp2, rewards));
     std::clog << "Old algorithm reward: " << old_alg_reward << std::endl
               << "Brute force reward: " << brute_force_reward << std::endl;
+    assert(old_alg_reward + REWARD_EPSILON <= brute_force_reward);
     #endif
     
     return best_path;
