@@ -13,7 +13,7 @@ RUN ln -s /ibm ./ibm \
 
 FROM debian:buster-20210111-slim AS orienteering-stage
 
-COPY --from=builder /column-generation/tests/test_orienteering.out ./orienteering
+COPY --from=builder /column-generation/tests/test_rooted_orienteering.out ./orienteering
 
 LABEL org.opencontainers.image.source ${REPO}
 
