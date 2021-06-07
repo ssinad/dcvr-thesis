@@ -81,8 +81,8 @@ test_get_path: iterPCA.o rooted_orienteering.o $(TESTS)/test_get_path.cpp
 test_cut_path: iterPCA.o rooted_orienteering.o $(TESTS)/test_cut_path.cpp
 	g++ $(CCFLAGS) -o $(TESTS)/test_cut_path.out $(TESTS)/test_cut_path.cpp rooted_orienteering.o iterPCA.o
 
-test_rooted_orienteering: iterPCA.o rooted_orienteering.o DatasetReader.o heuristics.o $(TESTS)/test_orienteering.cpp
-	g++ $(CCFLAGS) -o $(TESTS)/test_rooted_orienteering.out $(TESTS)/test_orienteering.cpp rooted_orienteering.o iterPCA.o  DatasetReader.o heuristics.o
+test_rooted_orienteering: iterPCA.o rooted_orienteering.o DatasetReader.o heuristics.o $(TESTS)/test_rooted_orienteering.cpp
+	g++ $(CCFLAGS) -o $(TESTS)/test_rooted_orienteering.out $(TESTS)/test_rooted_orienteering.cpp rooted_orienteering.o iterPCA.o  DatasetReader.o heuristics.o
 test_dcvr: dcvr.o rooted_orienteering.o iterPCA.o heuristics.o $(TESTS)/test_dcvr.cpp DatasetReader.o
 	g++ $(CCFLAGS) -DIL_STD $(CCLNDIRS) -o $(TESTS)/test_dcvr.out $(TESTS)/test_dcvr.cpp dcvr.o rooted_orienteering.o iterPCA.o DatasetReader.o heuristics.o $(CCLNFLAGS)
 clean:

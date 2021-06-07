@@ -466,16 +466,17 @@ Path get_best_path_between_the_two(
     const Rewards &rewards,
     const Node &root_node,
     const Node &furthest_node_guess,
-    distance_t distance_limit_D
+    distance_t distance_limit_D,
+    FeasiblePathExtractor get_feasible_path
     )
 {
     Path p1 = get_path(a1, root_node, furthest_node_guess, true);
     Path p2 = get_path(a2, root_node, furthest_node_guess, true);
     // Replace cut_path with get_best_path
 
-    Path best_path = get_best_path(p1, costs, rewards, root_node, distance_limit_D);
+    Path best_path = get_feasible_path(p1, costs, rewards, root_node, distance_limit_D);
 
-    Path tmp = get_best_path(p2, costs, rewards, root_node, distance_limit_D);
+    Path tmp = get_feasible_path(p2, costs, rewards, root_node, distance_limit_D);
 
     if (get_path_reward(tmp, rewards) > get_path_reward(best_path, rewards))
     {
@@ -583,7 +584,7 @@ Path rooted_orienteering_with_guess(
     info.a2_reward = total_reward(a2, rewards);
     info.a2_cost = edge_cost(a2, distances);
 
-    Path tmp = get_best_path_between_the_two(a1, a2, distances, rewards, root_node, furthest_node_guess, distance_limit_D);
+    Path tmp = get_best_path_between_the_two(a1, a2, distances, rewards, root_node, furthest_node_guess, distance_limit_D, get_best_path);
     
     return tmp;
 }
