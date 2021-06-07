@@ -419,9 +419,9 @@ Path get_best_path(
 
         Node initial_node = *initial_node_iterator;
 
-        #ifndef NDEBUG
-        std::clog << "Initial Node " << initial_node << " ";
-        #endif
+        // #ifndef NDEBUG
+        // std::clog << "Initial Node " << initial_node << " ";
+        // #endif
         current_path.push_back(initial_node);
         current_path_distance = costs[root_node][initial_node];
         Node previous_node = initial_node;
@@ -431,9 +431,9 @@ Path get_best_path(
         {
             for (Path::iterator node_iterator = std::next(initial_node_iterator, 1); node_iterator != p_i.end(); ++node_iterator)
             {
-                #ifndef NDEBUG
-                std::clog << *node_iterator << " ";
-                #endif
+                // #ifndef NDEBUG
+                // std::clog << *node_iterator << " ";
+                // #endif
                 next_path_distance += costs[previous_node][*node_iterator];
 
                 if (next_path_distance + DISTANCE_EPSILON > distance_limit_D)
@@ -446,9 +446,9 @@ Path get_best_path(
                 previous_node = *node_iterator;
             }
         }
-        #ifndef NDEBUG
-        std::clog << std::endl;
-        #endif
+        // #ifndef NDEBUG
+        // std::clog << std::endl;
+        // #endif
         if (current_path_reward > best_path_reward)
         {
             best_path = current_path;
@@ -551,7 +551,7 @@ Path cut_path(const Path &p, const Matrix &costs, const Rewards &rewards, const 
     return best_path;
 }
 
-Path orienteering(
+Path rooted_orienteering_with_guess(
     Vertices &vertices,
     const Node &root_node,
     Node &furthest_node_guess,
@@ -589,7 +589,7 @@ Path orienteering(
 }
 
 // TODO this function may be parallelized
-std::pair<Node, Path> orienteering(
+std::pair<Node, Path> rooted_orienteering(
     const Vertices &vertices,
     const Node &root_node,
     const Matrix &distances,
@@ -602,12 +602,12 @@ std::pair<Node, Path> orienteering(
     // penalty_t best_upper;
     Path best_path;
     Node best_t = root_node;
-    for (Node t : vertices)
+    for (Node furthest_node_guess : vertices)
     {
         #ifndef NDEBUG
-        std::clog << "Current Node: " << t << std::endl;
+        std::clog << "Current Node: " << furthest_node_guess << std::endl;
         #endif
-        if (t == root_node || distances[root_node][t] + DISTANCE_EPSILON > distance_limit_D)
+        if (furthest_node_guess == root_node || distances[root_node][furthest_node_guess] + DISTANCE_EPSILON > distance_limit_D)
             continue;
         Arborescence a1, a2;
         // TODO why do I have number_of_nodes?
@@ -621,7 +621,7 @@ std::pair<Node, Path> orienteering(
         node_map[root_node] = root_node;
         for (Node _ : vertices)
         {
-            if (root_node != _ && distances[root_node][_] <= distances[root_node][t])
+            if (root_node != _ && distances[root_node][_] <= distances[root_node][furthest_node_guess])
             {
                 // v_copy.insert(_);
                 node_list.push_back(_);
@@ -643,11 +643,11 @@ std::pair<Node, Path> orienteering(
         }
 
         #ifndef NDEBUG
-            std::clog << "Running orienteering with guess: " << t << std::endl;
+            std::clog << "Running orienteering with guess: " << furthest_node_guess << std::endl;
         #endif
         OrienteeringInfo node_info;
         high_resolution_clock::time_point t1 = high_resolution_clock::now();
-        Path new_tmp = orienteering(v_copy, root_node, node_map[t], new_distances, new_rewards, distance_limit_D, num_nodes, node_info);
+        Path new_tmp = rooted_orienteering_with_guess(v_copy, root_node, node_map[furthest_node_guess], new_distances, new_rewards, distance_limit_D, num_nodes, node_info);
         high_resolution_clock::time_point t2 = high_resolution_clock::now();
 
         duration<double> time_span = duration_cast<duration<double> >(t2 - t1);
@@ -658,7 +658,7 @@ std::pair<Node, Path> orienteering(
 
         node_info.running_time = time_span;
         // node_info.upper_bound = upper_bound;
-        info[t] = node_info;
+        info[furthest_node_guess] = node_info;
 
         Path tmp;
         #ifndef NDEBUG
@@ -692,7 +692,7 @@ std::pair<Node, Path> orienteering(
         {
             best_path_reward = path_reward;
             best_path = tmp;
-            best_t = t;
+            best_t = furthest_node_guess;
         }
     }
     

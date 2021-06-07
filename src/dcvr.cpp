@@ -121,7 +121,7 @@ std::pair<bool, Path> path_generation_orienteering(
 {
     std::unordered_map<Node, OrienteeringInfo> info;
     auto start_orienteering = clock();
-    auto tmp_p = orienteering(vertices, root_node, distances, rewards, distance_limit_D, info);
+    auto tmp_p = rooted_orienteering(vertices, root_node, distances, rewards, distance_limit_D, info);
     auto end_orienteering = clock();
     
     auto orienteering_duration = 1000.0 * (end_orienteering - start_orienteering) / CLOCKS_PER_SEC;

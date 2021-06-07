@@ -38,7 +38,7 @@ void binary_search(
                     distance_t distance_limit_D
                 );
 Path cut_path(const Path &p_i, const Matrix &costs, const Rewards &rewards, const Node &root_node, distance_t distance_limit_D);
-std::pair<Node, Path> orienteering(
+std::pair<Node, Path> rooted_orienteering(
                                     const Vertices &,
                                     const Node &,
                                     const Matrix &,
