@@ -4,5 +4,5 @@
 #include <unordered_set>
 #include "Node.hpp"
 
-typedef std::unordered_map<Node, std::unordered_set<Node>> Graph;
+using Graph = std::unordered_map<Node, std::unordered_set<Node>>;
 #endif

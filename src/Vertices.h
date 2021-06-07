@@ -2,5 +2,5 @@
 #define __VERTICES__
 #include "Node.hpp"
 #include <unordered_set>
-typedef std::unordered_set<Node> Vertices;
+using Vertices = std::unordered_set<Node>;
 #endif

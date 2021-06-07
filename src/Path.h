@@ -3,7 +3,7 @@
 #include <list>
 #include "Node.hpp"
 
-typedef std::list<Node> Path;
+using Path = std::list<Node>;
 
 struct PathWrapper
 {

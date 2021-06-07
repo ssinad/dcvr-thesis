@@ -6,7 +6,7 @@
 #include "iterPCA.hpp"
 #include "Our_Graph.h"
 
-typedef std::pair<Node, Node> Edge;
+using Edge = std::pair<Node, Node>;
 
 bool operator==(Edge const & a, Edge const & b){
     return (a.first == b.first && a.second == b.second);

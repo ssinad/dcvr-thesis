@@ -11,6 +11,14 @@ using namespace std::chrono;
 
 const double LAMBDA_EPSILON = 1e-6;
 
+using FeasiblePathExtractor = Path (&)(
+    const Path &,
+    const Matrix &,
+    const Rewards &,
+    const Node &,
+    distance_t
+    );
+
 struct OrienteeringInfo{
     duration<double> running_time;
     penalty_t upper_bound;

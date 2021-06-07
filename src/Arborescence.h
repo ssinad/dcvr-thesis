@@ -3,5 +3,5 @@
 #include <unordered_map>
 #include "Node.hpp"
 
-typedef std::unordered_map<Node, Node> Arborescence;
+using Arborescence = std::unordered_map<Node, Node>;
 #endif
