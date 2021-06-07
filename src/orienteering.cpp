@@ -42,7 +42,7 @@ void binary_search_recursive(
     const Penalties &penalties,
     int num_nodes,
     const Node &root_node,
-    const Node &t,
+    const Node &furthest_node_guess,
     distance_t distance_limit_D
     )
 {
@@ -72,8 +72,8 @@ void binary_search_recursive(
     {
         p1[cnt] *= lambda;
     }
-    p1[t] = 1 + costs[root_node][t];
-    assert( costs[root_node][t] + DISTANCE_EPSILON <= distance_limit_D);
+    p1[furthest_node_guess] = 1 + costs[root_node][furthest_node_guess];
+    assert( costs[root_node][furthest_node_guess] + DISTANCE_EPSILON <= distance_limit_D);
     penalty_t theta = 0; //, theta_1, theta_2;
     Arborescence a = iterPCA_with_check(v1, c1, p1, theta, num_nodes - 1, root_node);
 
@@ -95,7 +95,7 @@ void binary_search_recursive(
             theta_2 = theta;
             lambda_2 = lambda;
             // TODO Should this be the original penalties, costs, vertices?
-            binary_search_recursive(a1, a2, vertices, costs, lambda_1, lambda_2, theta_1, theta_2, penalties, num_nodes, root_node, t, distance_limit_D);
+            binary_search_recursive(a1, a2, vertices, costs, lambda_1, lambda_2, theta_1, theta_2, penalties, num_nodes, root_node, furthest_node_guess, distance_limit_D);
             return;
         }
         else
@@ -103,7 +103,7 @@ void binary_search_recursive(
             a1 = a;
             theta_1 = theta;
             lambda_1 = lambda;
-            binary_search_recursive(a1, a2, vertices, costs, lambda_1, lambda_2, theta_1, theta_2, penalties, num_nodes, root_node, t, distance_limit_D);
+            binary_search_recursive(a1, a2, vertices, costs, lambda_1, lambda_2, theta_1, theta_2, penalties, num_nodes, root_node, furthest_node_guess, distance_limit_D);
             return;
         }
     }
@@ -117,7 +117,7 @@ void binary_search(
     const Penalties &penalties,
     int num_nodes,
     const Node &root_node,
-    const Node &t,
+    const Node &furthest_node_guess,
     distance_t distance_limit_D,
     penalty_t &lambda_1,
     penalty_t &lambda_2,
@@ -160,14 +160,14 @@ void binary_search(
         p1[cnt] *= lambda_1;
         p2[cnt] *= lambda_2;
     }
-    p1[t] = 1 + costs[root_node][t];
-    p2[t] = 1 + costs[root_node][t];
+    p1[furthest_node_guess] = 1 + costs[root_node][furthest_node_guess];
+    p2[furthest_node_guess] = 1 + costs[root_node][furthest_node_guess];
     theta_1 = 0, theta_2 = 0;
 
     a1 = iterPCA_with_check(v1, c1, p1, theta_1, num_nodes - 1, root_node);
     a2 = iterPCA_with_check(v2, c2, p2, theta_2, num_nodes - 1, root_node);
-    binary_search_recursive(a1, a2, vertices, costs, lambda_1, lambda_2, theta_1, theta_2, penalties, num_nodes, root_node, t, distance_limit_D);
-    assert(a1.find(t) != a1.end() && a2.find(t) != a2.end());
+    binary_search_recursive(a1, a2, vertices, costs, lambda_1, lambda_2, theta_1, theta_2, penalties, num_nodes, root_node, furthest_node_guess, distance_limit_D);
+    assert(a1.find(furthest_node_guess) != a1.end() && a2.find(furthest_node_guess) != a2.end());
     // assert whether t is in a1 and a2
 }
 
@@ -197,11 +197,11 @@ void recursive_dfs_with_triangle_inequality(
     std::unordered_set<Node> &visited_so_far,
     Node top,
     Path &s_t_path,
-    const Node &t
+    const Node &furthest_node_guess
     )
 {
     visited_so_far.insert(top);
-    if (top != t)
+    if (top != furthest_node_guess)
     {
         s_t_path.push_back(top);
     }
@@ -209,17 +209,17 @@ void recursive_dfs_with_triangle_inequality(
     {
         if (visited_so_far.find(_next) == visited_so_far.end() && r_t_set.find(_next) == r_t_set.end())
         {
-            recursive_dfs_with_triangle_inequality(g, r_t_set, visited_so_far, _next, s_t_path, t);
+            recursive_dfs_with_triangle_inequality(g, r_t_set, visited_so_far, _next, s_t_path, furthest_node_guess);
             
         }
     }
 }
 
-Path get_path(const Arborescence &arb_T, const Node &root_node, const Node &t, bool triangle_inequality)
+Path get_path(const Arborescence &arb_T, const Node &root_node, const Node &furthest_node_guess, bool triangle_inequality)
 {
     std::stack<Node> r_t_nodes;
     std::unordered_set<Node> r_t_set;
-    Node tmp = t;
+    Node tmp = furthest_node_guess;
     Path s_t_path;
     Graph g;
     while (tmp != root_node)
@@ -250,10 +250,10 @@ Path get_path(const Arborescence &arb_T, const Node &root_node, const Node &t, b
         }
         else
         {
-            recursive_dfs_with_triangle_inequality(g, r_t_set, visited_so_far, top, s_t_path, t);
-            if (top == t)
+            recursive_dfs_with_triangle_inequality(g, r_t_set, visited_so_far, top, s_t_path, furthest_node_guess);
+            if (top == furthest_node_guess)
             {
-                s_t_path.push_back(t);
+                s_t_path.push_back(furthest_node_guess);
             }
         }
     }
@@ -389,7 +389,13 @@ Path get_best_path_dp(
     return best_path;
 }
 
-Path get_best_path(const Path &p, const Matrix &costs, const Rewards &rewards, const Node &root_node, distance_t distance_limit_D)
+Path get_best_path(
+    const Path &p,
+    const Matrix &costs,
+    const Rewards &rewards,
+    const Node &root_node,
+    distance_t distance_limit_D
+    )
 {
     Path best_path, p_i = p;
     reward_t best_path_reward = -1;
@@ -459,12 +465,12 @@ Path get_best_path_between_the_two(
     const Matrix &costs,
     const Rewards &rewards,
     const Node &root_node,
-    const Node &t,
+    const Node &furthest_node_guess,
     distance_t distance_limit_D
     )
 {
-    Path p1 = get_path(a1, root_node, t, true);
-    Path p2 = get_path(a2, root_node, t, true);
+    Path p1 = get_path(a1, root_node, furthest_node_guess, true);
+    Path p2 = get_path(a2, root_node, furthest_node_guess, true);
     // Replace cut_path with get_best_path
 
     Path best_path = get_best_path(p1, costs, rewards, root_node, distance_limit_D);
