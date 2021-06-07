@@ -1,5 +1,5 @@
 #include "DatasetReader.h"
-#include "orienteering.h"
+#include "rooted_orienteering.h"
 #include <iostream>
 
 int main(int argc, char ** argv)

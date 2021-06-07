@@ -1,7 +1,7 @@
 #include <iostream>
 #include <algorithm>
 #include "heuristics.hpp"
-#include "orienteering.h"
+#include "rooted_orienteering.h"
 
 
 std::vector<Node> my_argsort(const Rewards &rewards)
