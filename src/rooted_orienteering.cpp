@@ -557,7 +557,7 @@ Path cut_path(const Path &p, const Matrix &costs, const Rewards &rewards, const 
         Node current_node = p_i.front();
         distance_t next_path_distance = current_path_distance + costs[previous_node][current_node];
         // TODO I don't think the second condition is necessary, but I put it there just for accuracy
-        if (next_path_distance + DISTANCE_EPSILON > distance_limit_D  && current_path_distance + DISTANCE_EPSILON <= distance_limit_D)
+        if (next_path_distance + DISTANCE_EPSILON > distance_limit_D && current_path_distance <= distance_limit_D + DISTANCE_EPSILON)
         {
             // TODO what happens if they are equal?
             if (current_path_reward > best_path_reward)
