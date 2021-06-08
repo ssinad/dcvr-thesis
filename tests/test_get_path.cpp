@@ -1,4 +1,4 @@
-#include "rooted_orienteering.h"
+#include "orienteering.h"
 #include <iostream>
 
 using namespace std;

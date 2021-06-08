@@ -11,4 +11,5 @@ struct PathWrapper
   double value;
   bool is_basic = false;
 };
+
 #endif

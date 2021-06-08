@@ -1,4 +1,4 @@
-#include "rooted_orienteering.h"
+#include "orienteering.h"
 #include "iterPCA.hpp"
 #include <stack>
 #include <unordered_set>
@@ -497,49 +497,6 @@ Path get_best_path(
     
 }
 
-Path get_best_path_between_the_two(
-    const Arborescence &a1,
-    const Arborescence &a2,
-    const Matrix &costs,
-    const Rewards &rewards,
-    const Node &root_node,
-    const Node &furthest_node_guess,
-    distance_t distance_limit_D,
-    FeasiblePathExtractor get_feasible_path
-    )
-{
-    Path p1 = get_path(a1, root_node, furthest_node_guess, true);
-    Path p2 = get_path(a2, root_node, furthest_node_guess, true);
-    // Replace cut_path with get_best_path
-
-    Path best_path = get_feasible_path(p1, costs, rewards, root_node, distance_limit_D);
-
-    Path tmp = get_feasible_path(p2, costs, rewards, root_node, distance_limit_D);
-
-    if (get_path_reward(tmp, rewards) > get_path_reward(best_path, rewards))
-    {
-        best_path = tmp;
-    }
-    #ifndef NDEBUG
-    // std::clog << "Best path" << std::endl;
-    // for (Node n: best_path){
-    //     std::clog << n << ": " << rewards[n] << " ";
-    // }
-    std::clog << std::endl;
-    reward_t brute_force_reward = get_path_reward(best_path, rewards);
-
-    Path tmp1 = cut_path(p1, costs, rewards, root_node, distance_limit_D);
-
-    Path tmp2 = cut_path(p2, costs, rewards, root_node, distance_limit_D);
-    reward_t old_alg_reward = std::max(get_path_reward(tmp1, rewards), get_path_reward(tmp2, rewards));
-    std::clog << "Old algorithm reward: " << old_alg_reward << std::endl
-              << "Brute force reward: " << brute_force_reward << std::endl;
-    assert(old_alg_reward <= brute_force_reward + REWARD_EPSILON);
-    #endif
-    
-    return best_path;
-}
-
 Path cut_path(const Path &p, const Matrix &costs, const Rewards &rewards, const Node &root_node, distance_t distance_limit_D)
 {
     Path best_path, p_i = p;
@@ -587,6 +544,49 @@ Path cut_path(const Path &p, const Matrix &costs, const Rewards &rewards, const 
         best_path = current_path;
         best_path_reward = current_path_reward;
     }
+    return best_path;
+}
+
+Path get_best_path_between_the_two(
+    const Arborescence &a1,
+    const Arborescence &a2,
+    const Matrix &costs,
+    const Rewards &rewards,
+    const Node &root_node,
+    const Node &furthest_node_guess,
+    distance_t distance_limit_D,
+    FeasiblePathExtractor get_feasible_path
+    )
+{
+    Path p1 = get_path(a1, root_node, furthest_node_guess, true);
+    Path p2 = get_path(a2, root_node, furthest_node_guess, true);
+    // Replace cut_path with get_best_path
+
+    Path best_path = get_feasible_path(p1, costs, rewards, root_node, distance_limit_D);
+
+    Path tmp = get_feasible_path(p2, costs, rewards, root_node, distance_limit_D);
+
+    if (get_path_reward(tmp, rewards) > get_path_reward(best_path, rewards))
+    {
+        best_path = tmp;
+    }
+    #ifndef NDEBUG
+    // std::clog << "Best path" << std::endl;
+    // for (Node n: best_path){
+    //     std::clog << n << ": " << rewards[n] << " ";
+    // }
+    std::clog << std::endl;
+    reward_t brute_force_reward = get_path_reward(best_path, rewards);
+
+    Path tmp1 = cut_path(p1, costs, rewards, root_node, distance_limit_D);
+
+    Path tmp2 = cut_path(p2, costs, rewards, root_node, distance_limit_D);
+    reward_t old_alg_reward = std::max(get_path_reward(tmp1, rewards), get_path_reward(tmp2, rewards));
+    std::clog << "Old algorithm reward: " << old_alg_reward << std::endl
+              << "Brute force reward: " << brute_force_reward << std::endl;
+    assert(old_alg_reward <= brute_force_reward + REWARD_EPSILON);
+    #endif
+    
     return best_path;
 }
 

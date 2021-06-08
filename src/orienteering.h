@@ -9,8 +9,6 @@
 
 using namespace std::chrono;
 
-const double LAMBDA_EPSILON = 1e-6;
-
 using FeasiblePathExtractor = Path (&)(
     const Path &,
     const Matrix &,
@@ -18,6 +16,8 @@ using FeasiblePathExtractor = Path (&)(
     const Node &,
     distance_t
     );
+
+const double LAMBDA_EPSILON = 1e-6;
 
 struct OrienteeringInfo{
     duration<double> running_time;
@@ -28,6 +28,9 @@ struct OrienteeringInfo{
     distance_t a2_cost;
 };
 
+penalty_t get_path_reward(const Path &p, const Rewards &rewards);
+distance_t get_path_distance(const Path &p, const Matrix &distances, const Node& root_node);
+
 Path get_path(  
                 const Arborescence &arb_T,
                 const Node &root_node,
@@ -35,17 +38,21 @@ Path get_path(
                 bool triangle_inequality = true
             );
 distance_t edge_cost(const Arborescence &arb_T, const Matrix &costs);
-void binary_search(
-                    Arborescence &a1,
-                    Arborescence &a2,
-                    const Vertices &vertices,
-                    const Matrix &costs,
-                    const Penalties& penalties,
-                    int num_nodes,
-                    const Node &t,
-                    distance_t distance_limit_D
-                );
-Path cut_path(const Path &p_i, const Matrix &costs, const Rewards &rewards, const Node &root_node, distance_t distance_limit_D);
+
+
+
+
+// void binary_search(
+                //     Arborescence &a1,
+                //     Arborescence &a2,
+                //     const Vertices &vertices,
+                //     const Matrix &costs,
+                //     const Penalties& penalties,
+                //     int num_nodes,
+                //     const Node &t,
+                //     distance_t distance_limit_D
+                // );
+// Path cut_path(const Path &p_i, const Matrix &costs, const Rewards &rewards, const Node &root_node, distance_t distance_limit_D);
 std::pair<Node, Path> rooted_orienteering(
                                     const Vertices &,
                                     const Node &,
@@ -54,8 +61,15 @@ std::pair<Node, Path> rooted_orienteering(
                                     distance_t,
                                     std::unordered_map<Node, OrienteeringInfo>&
                                 );
-penalty_t get_path_reward(const Path &p, const Rewards &rewards);
-distance_t get_path_distance(const Path &p, const Matrix &distances, const Node& root_node);
+                                
+std::pair<Node, Path> cycle_orienteering(
+                                    const Vertices &,
+                                    const Node &,
+                                    const Matrix &,
+                                    const Rewards &,
+                                    distance_t,
+                                    std::unordered_map<Node, OrienteeringInfo>&
+                                );
 
 
 #endif
