@@ -80,7 +80,7 @@ void binary_search_recursive(
 
     Arborescence a = iterPCA_with_check(v1, c1, p1, theta, num_nodes - 1, root_node);
     Path tmp = get_path(a, root_node, furthest_node_guess, true);
-    Path tmp_p = get_feasible_path(tmp, costs, penalties, furthest_node_guess, distance_limit_D);
+    Path tmp_p = get_feasible_path(tmp, costs, penalties, root_node, distance_limit_D);
     if (get_path_reward(tmp_p, penalties) > get_path_reward(best_path, penalties)){
         best_path = tmp_p;
     }
@@ -278,6 +278,9 @@ Path get_path(const Arborescence &arb_T, const Node &root_node, const Node &furt
         }
     }
     assert(*(s_t_path.begin()) == root_node);
+    #ifndef NDEBUG
+        std::clog << "Root node is " << root_node << " and first node is " << *(s_t_path.begin()) << std::endl;
+    #endif
     return s_t_path;
 }
 
@@ -477,6 +480,9 @@ Path get_best_path(
         }
     }
     assert(*(best_path.begin()) == root_node);
+    #ifndef NDEBUG
+        std::clog << "Root node is " << root_node << " and first node is " << *(best_path.begin()) << std::endl;
+    #endif
     return best_path;
     
 }
