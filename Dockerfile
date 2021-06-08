@@ -7,7 +7,7 @@ COPY . /column-generation
 WORKDIR /column-generation
 
 RUN ln -s /ibm ./ibm \
-    && make test_rooted_orienteering \
+    && make DEBUG_FLAG=-DNDEBUG test_rooted_orienteering \
     && make DEBUG_FLAG=-DNDEBUG test_dcvr 
 
 
