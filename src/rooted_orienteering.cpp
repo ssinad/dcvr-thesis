@@ -75,7 +75,7 @@ void binary_search_recursive(
         p1[cnt] *= lambda;
     }
     p1[furthest_node_guess] = 1 + costs[root_node][furthest_node_guess];
-    assert( costs[root_node][furthest_node_guess] + DISTANCE_EPSILON <= distance_limit_D);
+    assert( costs[root_node][furthest_node_guess] <= distance_limit_D + DISTANCE_EPSILON);
     penalty_t theta = 0; //, theta_1, theta_2;
 
     Arborescence a = iterPCA_with_check(v1, c1, p1, theta, num_nodes - 1, root_node);
@@ -278,9 +278,6 @@ Path get_path(const Arborescence &arb_T, const Node &root_node, const Node &furt
         }
     }
     assert(*(s_t_path.begin()) == root_node);
-    #ifndef NDEBUG
-        std::clog << "Root node is " << root_node << " and first node is " << *(s_t_path.begin()) << std::endl;
-    #endif
     return s_t_path;
 }
 
@@ -460,7 +457,7 @@ Path get_best_path(
                 // #endif
                 next_path_distance += costs[previous_node][*node_iterator];
 
-                if (next_path_distance + DISTANCE_EPSILON > distance_limit_D)
+                if (next_path_distance > distance_limit_D + DISTANCE_EPSILON)
                 {
                     break;
                 }
@@ -480,9 +477,7 @@ Path get_best_path(
         }
     }
     assert(*(best_path.begin()) == root_node);
-    #ifndef NDEBUG
-        std::clog << "Root node is " << root_node << " and first node is " << *(best_path.begin()) << std::endl;
-    #endif
+    assert(get_path_distance(best_path, costs, root_node) <= distance_limit_D + DISTANCE_EPSILON);
     return best_path;
     
 }

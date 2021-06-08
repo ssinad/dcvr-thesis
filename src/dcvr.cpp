@@ -247,7 +247,7 @@ std::unordered_map<int, PathWrapper> dcvr_fractional(
 
         reward_t p_reward = get_path_reward(p, rewards);
         
-        assert(get_path_distance(p, distances, root_node) + DISTANCE_EPSILON <= distance_limit_D);
+        assert(get_path_distance(p, distances, root_node) <= distance_limit_D + DISTANCE_EPSILON);
         std::clog << "Objective function value: " << solver.getObjValue() << std::endl;
 
         if (p_reward - REWARD_EPSILON <= 1)
