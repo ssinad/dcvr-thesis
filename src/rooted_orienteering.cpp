@@ -135,7 +135,7 @@ void binary_search(
     penalty_t &lambda_1,
     penalty_t &lambda_2,
     Path& best_path,
-    penalty_t& best_bound,
+    penalty_t &best_bound,
     FeasiblePathExtractor get_feasible_path
     )
 {
@@ -617,7 +617,8 @@ Path rooted_orienteering_with_guess(
     Path best_path;
     penalty_t best_bound = 0;
     binary_search(a1, a2, vertices, distances, rewards, number_of_nodes, root_node, furthest_node_guess, distance_limit_D, lambda_1, lambda_2, best_path, best_bound, get_feasible_path);
-    penalty_t alpha = (distance_limit_D - edge_cost(a2, distances)) / (edge_cost(a1, distances) - edge_cost(a2, distances));
+    // penalty_t alpha = (distance_limit_D - edge_cost(a2, distances)) / (edge_cost(a1, distances) - edge_cost(a2, distances));
+    // std::clog << best_bound << std::endl;
     penalty_t upper_bound = R_t + best_bound;
     info.upper_bound = upper_bound;
     info.a1_reward = total_reward(a1, rewards);

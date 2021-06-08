@@ -21,6 +21,7 @@ int main(int argc, char ** argv)
         }
         dr.read_file(filename, true);
         std::unordered_map<Node, OrienteeringInfo> info;
+        std::cout << "Number of nodes: " << dr.get_vertices().size() << std::endl;
         auto p = rooted_orienteering(dr.get_vertices(), dr.get_root_node(), dr.get_matrix(), dr.get_penalties(), distance_limit, info);
         std::cout << "Nodes: " << std::endl;
         for (Node n: p.second)
