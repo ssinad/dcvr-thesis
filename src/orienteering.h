@@ -9,14 +9,6 @@
 
 using namespace std::chrono;
 
-using FeasiblePathExtractor = Path (&)(
-    const Path &,
-    const Matrix &,
-    const Rewards &,
-    const Node &,
-    distance_t
-    );
-
 const double LAMBDA_EPSILON = 1e-6;
 
 struct OrienteeringInfo{
@@ -28,16 +20,13 @@ struct OrienteeringInfo{
     distance_t a2_cost;
 };
 
-penalty_t get_path_reward(const Path &p, const Rewards &rewards);
-distance_t get_path_distance(const Path &p, const Matrix &distances, const Node& root_node);
-
-Path get_path(  
-                const Arborescence &arb_T,
-                const Node &root_node,
-                const Node &t,
-                bool triangle_inequality = true
-            );
-distance_t edge_cost(const Arborescence &arb_T, const Matrix &costs);
+// Path get_path(  
+//                 const Arborescence &arb_T,
+//                 const Node &root_node,
+//                 const Node &t,
+//                 bool triangle_inequality = true
+//             );
+// distance_t edge_cost(const Arborescence &arb_T, const Matrix &costs);
 
 
 
@@ -61,7 +50,7 @@ std::pair<Node, Path> rooted_orienteering(
                                     distance_t,
                                     std::unordered_map<Node, OrienteeringInfo>&
                                 );
-                                
+
 std::pair<Node, Path> cycle_orienteering(
                                     const Vertices &,
                                     const Node &,

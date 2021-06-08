@@ -37,7 +37,7 @@ int main(int argc, char ** argv)
         }
         penalty_t path_reward = get_path_reward(p.second, dr.get_penalties());
         std::cout << "Path reward: " << path_reward << std::endl;
-        std::cout << "Path distance: " << get_path_distance(p.second, dr.get_matrix(), dr.get_root_node()) << std::endl;
+        std::cout << "Path distance: " << get_path_distance(p.second, dr.get_matrix()) << std::endl;
         std::cout << "Upper bound: " << bound << std::endl;
         std::cout << "Reward residue: " << path_reward - 1 << std::endl;
         return EXIT_SUCCESS;

@@ -43,8 +43,10 @@ CCLNFLAGS = -lconcert -lilocplex -lcplex -lm -lpthread -ldl
 CCFLAGS = $(CCOPT) -I $(CPPSRC)
 CCOBJ = $(CCFLAGS) -c
 
+
+Path.o: $(CPPSRC)/Path.cpp
+	g++ -c $(CCFLAGS)  -o Path.o $(CPPSRC)/Path.cpp
 dcvr.o: $(CPPSRC)/dcvr.cpp
-	# g++ -c $(CCFLAGS)  -o dcvr.o dcvr.cpp
 	g++ $(CCOBJ) -DIL_STD -I $(CPLEXINCDIR) -I $(CONCERTINCDIR) -o dcvr.o $(CPPSRC)/dcvr.cpp
 iterPCA.o: $(CPPSRC)/iterPCA.cpp
 	g++ $(CCOBJ) -o iterPCA.o $(CPPSRC)/iterPCA.cpp
@@ -63,8 +65,8 @@ iterPCA_dry_run: $(CPPSRC)/iterPCA.cpp
 
 iterPCA: iterPCA.o
 	g++ $(CCFLAGS) -o iterPCA.out iterPCA.o
-rooted_orienteering: rooted_orienteering.o iterPCA.o
-	g++ $(CCFLAGS) -o rooted_orienteering.out rooted_orienteering.o iterPCA.o 
+rooted_orienteering: rooted_orienteering.o iterPCA.o Path.o
+	g++ $(CCFLAGS) -o rooted_orienteering.out rooted_orienteering.o iterPCA.o  Path.o
 
 
 run_tests: test_all
@@ -72,7 +74,7 @@ run_tests: test_all
 	$(TESTS)/test_dcvr.out -D 4 < datasets/small-sample.txt
 
 
-test_all: test_iterPCA test_get_path test_rooted_orienteering test_dcvr
+test_all: test_iterPCA test_rooted_orienteering test_dcvr
 
 test_iterPCA: iterPCA.o PcaReader.o $(TESTS)/test_iterPCA.cpp
 	g++ $(CCFLAGS) -o $(TESTS)/test_iterPCA.out $(TESTS)/test_iterPCA.cpp iterPCA.o PcaReader.o
@@ -81,9 +83,9 @@ test_get_path: iterPCA.o rooted_orienteering.o $(TESTS)/test_get_path.cpp
 test_cut_path: iterPCA.o rooted_orienteering.o $(TESTS)/test_cut_path.cpp
 	g++ $(CCFLAGS) -o $(TESTS)/test_cut_path.out $(TESTS)/test_cut_path.cpp rooted_orienteering.o iterPCA.o
 
-test_rooted_orienteering: iterPCA.o rooted_orienteering.o DatasetReader.o heuristics.o $(TESTS)/test_rooted_orienteering.cpp
-	g++ $(CCFLAGS) -o $(TESTS)/test_rooted_orienteering.out $(TESTS)/test_rooted_orienteering.cpp rooted_orienteering.o iterPCA.o  DatasetReader.o heuristics.o
-test_dcvr: dcvr.o rooted_orienteering.o iterPCA.o heuristics.o $(TESTS)/test_dcvr.cpp DatasetReader.o
-	g++ $(CCFLAGS) -DIL_STD $(CCLNDIRS) -o $(TESTS)/test_dcvr.out $(TESTS)/test_dcvr.cpp dcvr.o rooted_orienteering.o iterPCA.o DatasetReader.o heuristics.o $(CCLNFLAGS)
+test_rooted_orienteering: iterPCA.o rooted_orienteering.o DatasetReader.o heuristics.o Path.o $(TESTS)/test_rooted_orienteering.cpp
+	g++ $(CCFLAGS) -o $(TESTS)/test_rooted_orienteering.out $(TESTS)/test_rooted_orienteering.cpp rooted_orienteering.o iterPCA.o  DatasetReader.o heuristics.o Path.o
+test_dcvr: dcvr.o rooted_orienteering.o iterPCA.o heuristics.o $(TESTS)/test_dcvr.cpp DatasetReader.o Path.o
+	g++ $(CCFLAGS) -DIL_STD $(CCLNDIRS) -o $(TESTS)/test_dcvr.out $(TESTS)/test_dcvr.cpp dcvr.o rooted_orienteering.o iterPCA.o DatasetReader.o heuristics.o Path.o $(CCLNFLAGS)
 clean:
 	rm -rf *.o $(TESTS)/*.dSYM $(TESTS)/*.out *.out *.dSYM **.log **.json

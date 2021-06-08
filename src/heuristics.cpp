@@ -31,7 +31,7 @@ Path post_process(Path &path, const Rewards &rewards, const Matrix &distances, c
         path_nodes.insert(j);
     }
     
-    distance_t path_distance = get_path_distance(path, distances, root_node);
+    distance_t path_distance = get_path_distance(path, distances);
 
     Path new_path = path;
     for (Node i : args)

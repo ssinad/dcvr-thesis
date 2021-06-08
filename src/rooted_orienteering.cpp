@@ -8,6 +8,15 @@
 #include <iostream>
 #include <cmath>
 
+using FeasiblePathExtractor = Path (&)(
+    const Path &,
+    const Matrix &,
+    const Rewards &,
+    const Node &,
+    distance_t
+    );
+
+
 distance_t edge_cost(const Arborescence &arb_T, const Matrix &costs)
 {
     distance_t sum = 0;
@@ -28,6 +37,96 @@ penalty_t total_reward(const Arborescence &arb_T, const Penalties &penalties)
         tot += penalties[kv.first];
     }
     return tot;
+}
+
+void recursive_dfs(
+    Graph &g,
+    const std::unordered_set<Node> &r_t_set,
+    std::unordered_set<Node> &visited_so_far,
+    Node top,
+    Path &s_t_path
+    )
+{
+    visited_so_far.insert(top);
+    s_t_path.push_back(top);
+    for (Node _next : g[top])
+    {
+        if (visited_so_far.find(_next) == visited_so_far.end() && r_t_set.find(_next) == r_t_set.end())
+        {
+            recursive_dfs(g, r_t_set, visited_so_far, _next, s_t_path);
+            s_t_path.push_back(top);
+        }
+    }
+}
+
+void recursive_dfs_with_triangle_inequality(
+    Graph &g,
+    const std::unordered_set<Node> &r_t_set,
+    std::unordered_set<Node> &visited_so_far,
+    Node top,
+    Path &s_t_path,
+    const Node &furthest_node_guess
+    )
+{
+    visited_so_far.insert(top);
+    if (top != furthest_node_guess)
+    {
+        s_t_path.push_back(top);
+    }
+    for (Node _next : g[top])
+    {
+        if (visited_so_far.find(_next) == visited_so_far.end() && r_t_set.find(_next) == r_t_set.end())
+        {
+            recursive_dfs_with_triangle_inequality(g, r_t_set, visited_so_far, _next, s_t_path, furthest_node_guess);
+            
+        }
+    }
+}
+
+Path get_path(const Arborescence &arb_T, const Node &root_node, const Node &furthest_node_guess, bool triangle_inequality)
+{
+    std::stack<Node> r_t_nodes;
+    std::unordered_set<Node> r_t_set;
+    Node tmp = furthest_node_guess;
+    Path s_t_path;
+    Graph g;
+    while (tmp != root_node)
+    {
+        r_t_nodes.push(tmp);
+        r_t_set.insert(tmp);
+        tmp = arb_T.at(tmp);
+    }
+    r_t_nodes.push(root_node);
+    r_t_set.insert(root_node);
+    
+    // Turn arborescence into a graph
+    for (std::pair<Node, Node> kv : arb_T)
+    {
+        Node _u = kv.second, _w = kv.first;
+        g[_u].insert(_w);
+    }
+    while (!r_t_nodes.empty())
+    {
+        Node top = r_t_nodes.top();
+        r_t_nodes.pop();
+        // DFS
+        // TODO can it be done without recursion?
+        std::unordered_set<Node> visited_so_far;
+        if (!triangle_inequality)
+        {
+            recursive_dfs(g, r_t_set, visited_so_far, top, s_t_path);
+        }
+        else
+        {
+            recursive_dfs_with_triangle_inequality(g, r_t_set, visited_so_far, top, s_t_path, furthest_node_guess);
+            if (top == furthest_node_guess)
+            {
+                s_t_path.push_back(furthest_node_guess);
+            }
+        }
+    }
+    assert(*(s_t_path.begin()) == root_node);
+    return s_t_path;
 }
 
 void binary_search_recursive(
@@ -206,117 +305,7 @@ void binary_search(
     // assert whether t is in a1 and a2
 }
 
-void recursive_dfs(
-    Graph &g,
-    const std::unordered_set<Node> &r_t_set,
-    std::unordered_set<Node> &visited_so_far,
-    Node top,
-    Path &s_t_path
-    )
-{
-    visited_so_far.insert(top);
-    s_t_path.push_back(top);
-    for (Node _next : g[top])
-    {
-        if (visited_so_far.find(_next) == visited_so_far.end() && r_t_set.find(_next) == r_t_set.end())
-        {
-            recursive_dfs(g, r_t_set, visited_so_far, _next, s_t_path);
-            s_t_path.push_back(top);
-        }
-    }
-}
 
-void recursive_dfs_with_triangle_inequality(
-    Graph &g,
-    const std::unordered_set<Node> &r_t_set,
-    std::unordered_set<Node> &visited_so_far,
-    Node top,
-    Path &s_t_path,
-    const Node &furthest_node_guess
-    )
-{
-    visited_so_far.insert(top);
-    if (top != furthest_node_guess)
-    {
-        s_t_path.push_back(top);
-    }
-    for (Node _next : g[top])
-    {
-        if (visited_so_far.find(_next) == visited_so_far.end() && r_t_set.find(_next) == r_t_set.end())
-        {
-            recursive_dfs_with_triangle_inequality(g, r_t_set, visited_so_far, _next, s_t_path, furthest_node_guess);
-            
-        }
-    }
-}
-
-Path get_path(const Arborescence &arb_T, const Node &root_node, const Node &furthest_node_guess, bool triangle_inequality)
-{
-    std::stack<Node> r_t_nodes;
-    std::unordered_set<Node> r_t_set;
-    Node tmp = furthest_node_guess;
-    Path s_t_path;
-    Graph g;
-    while (tmp != root_node)
-    {
-        r_t_nodes.push(tmp);
-        r_t_set.insert(tmp);
-        tmp = arb_T.at(tmp);
-    }
-    r_t_nodes.push(root_node);
-    r_t_set.insert(root_node);
-    
-    // Turn arborescence into a graph
-    for (std::pair<Node, Node> kv : arb_T)
-    {
-        Node _u = kv.second, _w = kv.first;
-        g[_u].insert(_w);
-    }
-    while (!r_t_nodes.empty())
-    {
-        Node top = r_t_nodes.top();
-        r_t_nodes.pop();
-        // DFS
-        // TODO can it be done without recursion?
-        std::unordered_set<Node> visited_so_far;
-        if (!triangle_inequality)
-        {
-            recursive_dfs(g, r_t_set, visited_so_far, top, s_t_path);
-        }
-        else
-        {
-            recursive_dfs_with_triangle_inequality(g, r_t_set, visited_so_far, top, s_t_path, furthest_node_guess);
-            if (top == furthest_node_guess)
-            {
-                s_t_path.push_back(furthest_node_guess);
-            }
-        }
-    }
-    assert(*(s_t_path.begin()) == root_node);
-    return s_t_path;
-}
-
-penalty_t get_path_reward(const Path &p, const Rewards &rewards)
-{
-    penalty_t path_reward = 0;
-    for (Node _ : p)
-    {
-        path_reward += rewards[_];
-    }
-    return path_reward;
-}
-
-distance_t get_path_distance(const Path &p, const Matrix &distances, const Node &root_node)
-{
-    distance_t path_distance = 0;
-    Node previous_node = root_node;
-    for (Node n : p)
-    {
-        path_distance += distances[previous_node][n];
-        previous_node = n;
-    }
-    return path_distance;
-}
 
 // struct compareDistances {
 //     bool operator()(const distance_t& a, const distance_t& b) const {
@@ -492,7 +481,7 @@ Path get_best_path(
         }
     }
     assert(*(best_path.begin()) == root_node);
-    assert(get_path_distance(best_path, costs, root_node) <= distance_limit_D + DISTANCE_EPSILON);
+    assert(get_path_distance(best_path, costs) <= distance_limit_D + DISTANCE_EPSILON);
     return best_path;
     
 }
