@@ -332,6 +332,7 @@ Path get_best_path(
         current_path.clear();
 
         current_path.push_back(root_node);
+        current_path_reward += rewards[root_node];
 
         Node initial_node = *initial_node_iterator;
 
