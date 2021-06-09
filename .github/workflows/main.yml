@@ -30,10 +30,11 @@ jobs:
         password: ${{ secrets.GL_CR_DT }}
     - name: Make apps and publish containers
       run: |
-        docker build --build-arg REPO=$GITHUB_SERVER_URL/$GITHUB_REPOSITORY -t orienteering-app  --target orienteering-stage .
+        docker build --build-arg REPO=$GITHUB_SERVER_URL/$GITHUB_REPOSITORY -t rooted-orienteering-app  --target rooted-orienteering-stage .
+        docker build --build-arg REPO=$GITHUB_SERVER_URL/$GITHUB_REPOSITORY -t cycle-orienteering-app  --target cycle-orienteering-stage .
         docker build --build-arg REPO=$GITHUB_SERVER_URL/$GITHUB_REPOSITORY -t dvrp-app --target dvrp-stage .
 
-        for app in "orienteering-app" "dvrp-app"; do
+        for app in "rooted-orienteering-app" "cycle-orienteering-app" "dvrp-app"; do
           for tag in "$GITHUB_SHA" "latest"; do
             for repo in "dcvr-thesis"; do
               docker tag "$app" ghcr.io/ssinad/"$repo"/"$app":"$tag" && docker push ghcr.io/ssinad/"$repo"/"$app":"$tag"
