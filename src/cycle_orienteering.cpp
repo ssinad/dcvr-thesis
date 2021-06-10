@@ -342,7 +342,7 @@ Path get_best_path(
         current_path.push_back(initial_node);
         current_path_distance = costs[root_node][initial_node];
         // Node previous_node = initial_node;
-        current_path_reward = rewards[initial_node];
+        current_path_reward += rewards[initial_node];
         current_cycle = current_path;
         current_cycle.push_back(root_node);
         if (current_path_distance + costs[initial_node][root_node] <= distance_limit_D + DISTANCE_EPSILON && current_path_reward > best_cycle_reward){
