@@ -1,11 +1,17 @@
 #include "Path.h"
+#include <unordered_set>
 
 penalty_t get_path_reward(const Path &p, const Rewards &rewards)
 {
     penalty_t path_reward = 0;
-    for (Node _ : p)
+    std::unordered_set <Node> node_set;
+    for (Node n : p)
     {
-        path_reward += rewards[_];
+        node_set.insert(n);
+        // path_reward += rewards[_];
+    }
+    for (Node n: node_set){
+        path_reward += rewards[n];
     }
     return path_reward;
 }
