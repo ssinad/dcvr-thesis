@@ -345,7 +345,7 @@ Path get_best_path(
         current_path_reward += rewards[initial_node];
         current_cycle = current_path;
         current_cycle.push_back(root_node);
-        if (current_path_distance + costs[initial_node][root_node] <= distance_limit_D + DISTANCE_EPSILON && current_path_reward > best_cycle_reward){
+        if (current_path_distance <= distance_limit_D + DISTANCE_EPSILON && current_path_reward > best_cycle_reward){
             best_cycle = current_cycle;
             best_cycle_reward = current_path_reward;
         }
@@ -357,14 +357,14 @@ Path get_best_path(
             current_path_reward += rewards[last_node];
             current_cycle = current_path;
             current_cycle.push_back(root_node);
-            if (current_path_distance + costs[last_node][root_node] <= distance_limit_D + DISTANCE_EPSILON && current_path_reward > best_cycle_reward){
+            if (current_path_distance <= distance_limit_D + DISTANCE_EPSILON && current_path_reward > best_cycle_reward){
                 best_cycle = current_cycle;
                 best_cycle_reward = current_path_reward;
             }
         }
     }
     assert(*(best_cycle.begin()) == root_node && *(best_cycle.rbegin()) == root_node);
-    assert(get_path_distance(best_cycle, costs) <= distance_limit_D + DISTANCE_EPSILON);
+    // assert(get_path_distance(best_cycle, costs) <= distance_limit_D + DISTANCE_EPSILON);
     return best_cycle;
     
 }
