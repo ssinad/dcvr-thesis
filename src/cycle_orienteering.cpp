@@ -143,7 +143,7 @@ void binary_search_recursive(
     const Node &root_node,
     const Node &furthest_node_guess,
     distance_t distance_limit_D,
-    Path& best_path,
+    Path &best_path,
     penalty_t &best_bound,
     FeasiblePathExtractor get_feasible_path
     )
@@ -233,7 +233,7 @@ void binary_search(
     distance_t distance_limit_D,
     penalty_t &lambda_1,
     penalty_t &lambda_2,
-    Path& best_path,
+    Path &best_path,
     penalty_t &best_bound,
     FeasiblePathExtractor get_feasible_path
     )
@@ -313,16 +313,16 @@ Path get_best_path(
     distance_t distance_limit_D
     )
 {
-    Path best_cycle, p_i = p;
-    reward_t best_cycle_reward = -1;
+    Path best_path, p_i = p;
+    reward_t best_path_reward = -1;
 
     distance_t current_path_distance = 0;
     reward_t current_path_reward = 0;
 
-    Path current_path, current_cycle;
+    Path current_path;
     Path::iterator initial_node_iterator = p_i.begin();
     
-    if (std::next(p_i.begin()) == p_i.end()) // Path only has the root node
+    if (std::next(p_i.begin()) == p_i.end())
         return p_i;
     
 
@@ -331,8 +331,8 @@ Path get_best_path(
     {
         current_path.clear();
 
+        current_path_reward = rewards[root_node];
         current_path.push_back(root_node);
-        current_path_reward += rewards[root_node];
 
         Node initial_node = *initial_node_iterator;
 
@@ -341,33 +341,109 @@ Path get_best_path(
         // #endif
         current_path.push_back(initial_node);
         current_path_distance = costs[root_node][initial_node];
-        // Node previous_node = initial_node;
+        Node previous_node = initial_node;
         current_path_reward += rewards[initial_node];
-        current_cycle = current_path;
-        current_cycle.push_back(root_node);
-        if (current_path_distance <= distance_limit_D + DISTANCE_EPSILON && current_path_reward > best_cycle_reward){
-            best_cycle = current_cycle;
-            best_cycle_reward = current_path_reward;
-        }
-        for (auto last_node_iterator = ++initial_node_iterator; last_node_iterator != p_i. end(); ++last_node_iterator){
-            Node previous_node = *(current_path.rbegin());
-            Node last_node = *last_node_iterator;
-            current_path.push_back(last_node);
-            current_path_distance += costs[previous_node][last_node];
-            current_path_reward += rewards[last_node];
-            current_cycle = current_path;
-            current_cycle.push_back(root_node);
-            if (current_path_distance <= distance_limit_D + DISTANCE_EPSILON && current_path_reward > best_cycle_reward){
-                best_cycle = current_cycle;
-                best_cycle_reward = current_path_reward;
+        distance_t next_path_distance = current_path_distance;
+        // if (initial_node_iterator == p_i.end()) break;
+        
+        for (Path::iterator node_iterator = std::next(initial_node_iterator, 1); node_iterator != p_i.end(); ++node_iterator)
+        {
+            // #ifndef NDEBUG
+            // std::clog << *node_iterator << " ";
+            // #endif
+            assert(current_path_distance <= distance_limit_D + DISTANCE_EPSILON);
+            next_path_distance += costs[previous_node][*node_iterator];
+
+            if (next_path_distance > distance_limit_D + DISTANCE_EPSILON)
+            {
+                break;
             }
+            current_path.push_back(*node_iterator);
+            current_path_reward += rewards[*node_iterator];
+            current_path_distance = next_path_distance;
+            previous_node = *node_iterator;
+        }
+        
+        // #ifndef NDEBUG
+        // std::clog << std::endl;
+        // #endif
+        if (current_path_reward > best_path_reward)
+        {
+            best_path = current_path;
+            best_path_reward = current_path_reward;
         }
     }
-    assert(*(best_cycle.begin()) == root_node && *(best_cycle.rbegin()) == root_node);
-    // assert(get_path_distance(best_cycle, costs) <= distance_limit_D + DISTANCE_EPSILON);
-    return best_cycle;
+    assert(get_path_distance(best_path, costs) <= distance_limit_D + DISTANCE_EPSILON);
+    // std :: clog << get_path_distance(best_path, costs) << ", " << distance_limit_D << std::endl;
+    best_path.push_back(root_node);
+    assert(*(best_path.begin()) == root_node);
+    return best_path;
     
 }
+
+// Path get_best_path(
+//     const Path &p,
+//     const Matrix &costs,
+//     const Rewards &rewards,
+//     const Node &root_node,
+//     distance_t distance_limit_D
+//     )
+// {
+//     Path best_cycle, p_i = p;
+//     reward_t best_cycle_reward = -1;
+
+//     distance_t current_path_distance = 0;
+//     reward_t current_path_reward = 0;
+
+//     Path current_path, current_cycle;
+//     Path::iterator initial_node_iterator = p_i.begin();
+    
+//     if (std::next(p_i.begin()) == p_i.end()) // Path only has the root node
+//         return p_i;
+    
+
+//     // while (initial_node_iterator != p_i.end())
+//     for (initial_node_iterator++; initial_node_iterator != p_i.end(); ++initial_node_iterator)
+//     {
+//         current_path.clear();
+
+//         current_path.push_back(root_node);
+//         current_path_reward += rewards[root_node];
+
+//         Node initial_node = *initial_node_iterator;
+
+//         // #ifndef NDEBUG
+//         // std::clog << "Initial Node " << initial_node << " ";
+//         // #endif
+//         current_path.push_back(initial_node);
+//         current_path_distance = costs[root_node][initial_node];
+//         // Node previous_node = initial_node;
+//         current_path_reward += rewards[initial_node];
+//         current_cycle = current_path;
+//         current_cycle.push_back(root_node);
+//         if (current_path_distance <= distance_limit_D + DISTANCE_EPSILON && current_path_reward > best_cycle_reward){
+//             best_cycle = current_cycle;
+//             best_cycle_reward = current_path_reward;
+//         }
+//         for (auto last_node_iterator = ++initial_node_iterator; last_node_iterator != p_i. end(); ++last_node_iterator){
+//             Node previous_node = *(current_path.rbegin());
+//             Node last_node = *last_node_iterator;
+//             current_path.push_back(last_node);
+//             current_path_distance += costs[previous_node][last_node];
+//             current_path_reward += rewards[last_node];
+//             current_cycle = current_path;
+//             current_cycle.push_back(root_node);
+//             if (current_path_distance <= distance_limit_D + DISTANCE_EPSILON && current_path_reward > best_cycle_reward){
+//                 best_cycle = current_cycle;
+//                 best_cycle_reward = current_path_reward;
+//             }
+//         }
+//     }
+//     assert(*(best_cycle.begin()) == root_node && *(best_cycle.rbegin()) == root_node);
+//     // assert(get_path_distance(best_cycle, costs) <= distance_limit_D + DISTANCE_EPSILON);
+//     return best_cycle;
+    
+// }
 
 Path cycle_orienteering_with_guess(
     Vertices &vertices,
@@ -473,9 +549,11 @@ std::pair<Node, Path> cycle_orienteering(
         high_resolution_clock::time_point t1 = high_resolution_clock::now();
         Path new_tmp_1 = cycle_orienteering_with_guess(v_copy, root_node, node_map[furthest_node_guess], new_distances, new_rewards, distance_limit_D / 2, num_nodes, get_best_path, node_info);
         high_resolution_clock::time_point t2 = high_resolution_clock::now();
+        // assert(get_path_distance(new_tmp_1, new_distances) <= distance_limit_D + DISTANCE_EPSILON);
         upper_bound = node_info.upper_bound;
 
-        Path new_tmp_2 = cycle_orienteering_with_guess(v_copy, root_node, node_map[furthest_node_guess], new_distances, new_rewards, distance_limit_D - new_distances[root_node][furthest_node_guess], num_nodes, get_best_path, node_info);
+        Path new_tmp_2 = cycle_orienteering_with_guess(v_copy, root_node, node_map[furthest_node_guess], new_distances, new_rewards, distance_limit_D - distances[root_node][furthest_node_guess], num_nodes, get_best_path, node_info);
+        // assert(get_path_distance(new_tmp_2, new_distances) <= distance_limit_D + DISTANCE_EPSILON);
         if (upper_bound > node_info.upper_bound){
             upper_bound = node_info.upper_bound;
         }

@@ -8,7 +8,7 @@ WORKDIR /column-generation
 
 RUN ln -s /ibm ./ibm \
     && make DEBUG_FLAG=-DNDEBUG test_rooted_orienteering \
-    && make DEBUG_FLAG=-DNDEBUG test_cycle_orienteering \
+    && make  test_cycle_orienteering \
     && make DEBUG_FLAG=-DNDEBUG test_dcvr 
 
 
