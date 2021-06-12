@@ -183,6 +183,8 @@ void binary_search_recursive(
     Path tmp = get_path(a, root_node, furthest_node_guess, true);
     Path tmp_p = get_feasible_path(tmp, costs, penalties, root_node, distance_limit_D);
     if (std::isfinite(tmp_bound) && best_bound_info.upper_bound > tmp_bound){
+        best_bound_info.lambda = lambda;
+        best_bound_info.theta = theta;
         best_bound_info.upper_bound = tmp_bound;
         best_bound_info.arb_distance = edge_cost(a, costs);
         best_bound_info.arb_reward = total_reward(a, penalties);
@@ -252,9 +254,9 @@ void binary_search(
     {
         if (penalties[v] > REWARD_EPSILON)
         {
-            if (lambda_2 < costs[root_node][v] / penalties[v] + 1)
+            if (lambda_2 < 8 * costs[root_node][v] / penalties[v] + 1)
             {
-                lambda_2 = costs[root_node][v] / penalties[v] + 1;
+                lambda_2 = 8 * costs[root_node][v] / penalties[v] + 1;
             }
         }
     }
@@ -294,6 +296,8 @@ void binary_search(
     penalty_t tmp_bound = (distance_limit_D - theta_1) / lambda_1;
     if (std::isfinite(tmp_bound) && best_bound_info.upper_bound > tmp_bound)
     {
+        best_bound_info.lambda = lambda_1;
+        best_bound_info.theta = theta_1;
         best_bound_info.upper_bound = tmp_bound;
         best_bound_info.arb_distance = edge_cost(a1, costs);
         best_bound_info.arb_reward = total_reward(a1, penalties);
@@ -316,6 +320,8 @@ void binary_search(
     tmp_p = get_feasible_path(tmp, costs, penalties, root_node, distance_limit_D);
     if (std::isfinite(tmp_bound) && best_bound_info.upper_bound > tmp_bound)
     {
+        best_bound_info.lambda = lambda_2;
+        best_bound_info.theta = theta_2;
         best_bound_info.upper_bound = tmp_bound;
         best_bound_info.arb_distance = edge_cost(a2, costs);
         best_bound_info.arb_reward = total_reward(a2, penalties);

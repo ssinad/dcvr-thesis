@@ -40,7 +40,7 @@ int main(int argc, char ** argv)
                 bound = tmp.second.upper_bound;
                 best_bound_info = tmp.second;
             }
-            // std::clog << tmp.first << ": " << tmp.second.upper_bound << " ";
+            std::clog << tmp.first << ": " << tmp.second.upper_bound << " " << tmp.second.lambda << std::endl;
         }
         penalty_t reward = 0;
         for (auto tmp: best_path_info_map){
@@ -51,9 +51,8 @@ int main(int argc, char ** argv)
             // std::clog << tmp.first << ": " << tmp.second.upper_bound << " ";
         }
         assert(best_bound_info.upper_bound <= 4 * best_path_info.path_reward);
-        // std::clog << std::endl;
         penalty_t path_reward = get_path_reward(p.second, dr.get_penalties());
-        
+        std::clog << best_bound_info.lambda << " " << best_bound_info.theta << std::endl;
         std::cout << "\"path reward\": " << path_reward << " , " << std::endl;
         std::cout << "\"tree reward\": " << best_path_info.arb_reward << " ," << std::endl;
         std::cout << "\"reward residue\": " << path_reward - 1 << " ," << std::endl;
