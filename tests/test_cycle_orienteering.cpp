@@ -29,7 +29,7 @@ int main(int argc, char ** argv)
         std::cout << "\"path nodes\": [ ";
         for (Node n: p.second)
         {
-            std::cout << n << ", ";
+            std::cout << n << " , ";
         }
         std::cout << "] ," << std::endl;
         // std::clog <<"Upper bounds: ";
