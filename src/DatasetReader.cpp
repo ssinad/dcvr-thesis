@@ -13,7 +13,7 @@ void DatasetReader::read_file(std::string filename, bool read_rewards)
     file = &file_stream;
   }
   else{
-    std::cout << "Reading from standard input!" << std::endl;
+    std::clog << "Reading from standard input!" << std::endl;
   }
   *file >> num_nodes >> root_node;
 

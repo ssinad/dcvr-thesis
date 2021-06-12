@@ -542,7 +542,7 @@ std::pair<Node, Path> cycle_orienteering(
         #ifndef NDEBUG
         std::clog << "Current Node: " << furthest_node_guess << std::endl;
         #endif
-        if (furthest_node_guess == root_node || distances[root_node][furthest_node_guess] + DISTANCE_EPSILON > distance_limit_D / 2)
+        if (furthest_node_guess == root_node || distances[root_node][furthest_node_guess] > distance_limit_D / 2 + DISTANCE_EPSILON)
             continue;
         Arborescence a1, a2;
         // TODO why do I have number_of_nodes?
