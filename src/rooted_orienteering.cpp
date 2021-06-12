@@ -610,10 +610,10 @@ Path rooted_orienteering_with_guess(
     // std::clog << best_bound << std::endl;
     penalty_t upper_bound = R_t + best_bound;
     info.upper_bound = upper_bound;
-    info.a1_reward = total_reward(a1, rewards);
-    info.a1_cost = edge_cost(a1, distances);
-    info.a2_reward = total_reward(a2, rewards);
-    info.a2_cost = edge_cost(a2, distances);
+    // info.a1_reward = total_reward(a1, rewards);
+    // info.a1_cost = edge_cost(a1, distances);
+    // info.a2_reward = total_reward(a2, rewards);
+    // info.a2_cost = edge_cost(a2, distances);
 
     // Path tmp = get_best_path_between_the_two(a1, a2, distances, rewards, root_node, furthest_node_guess, distance_limit_D, get_best_path);
     

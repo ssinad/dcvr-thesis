@@ -184,13 +184,18 @@ void binary_search_recursive(
     Path tmp_p = get_feasible_path(tmp, costs, penalties, root_node, distance_limit_D);
     if (std::isfinite(tmp_bound) && best_bound_info.upper_bound > tmp_bound){
         best_bound_info.upper_bound = tmp_bound;
-        best_bound_info.arb = a;
-        best_bound_info.path = tmp_p;
+        best_bound_info.arb_distance = edge_cost(a, costs);
+        best_bound_info.arb_reward = total_reward(a, penalties);
+        best_bound_info.path_distance = get_path_distance(tmp_p, costs);
+        best_bound_info.path_reward = get_path_reward(tmp_p, penalties);
     }
     if (get_path_reward(tmp_p, penalties) > get_path_reward(best_path_info.path, penalties)){
-        best_path_info.path = tmp_p;
-        best_path_info.arb = a;
         best_path_info.upper_bound = tmp_bound;
+        best_path_info.arb_distance = edge_cost(a, costs);
+        best_path_info.arb_reward = total_reward(a, penalties);
+        best_path_info.path_distance = get_path_distance(tmp_p, costs);
+        best_path_info.path_reward = get_path_reward(tmp_p, penalties);
+        best_path_info.path = tmp_p;
     }
 
     distance_t tree_cost = edge_cost(a, costs);
@@ -287,15 +292,21 @@ void binary_search(
     Path tmp = get_path(a1, root_node, furthest_node_guess, true);
     Path tmp_p = get_feasible_path(tmp, costs, penalties, root_node, distance_limit_D);
     penalty_t tmp_bound = (distance_limit_D - theta_1) / lambda_1;
+    if (std::isfinite(tmp_bound) && best_bound_info.upper_bound > tmp_bound)
     {
         best_bound_info.upper_bound = tmp_bound;
-        best_bound_info.arb = a1;
-        best_bound_info.path = tmp_p;
+        best_bound_info.arb_distance = edge_cost(a1, costs);
+        best_bound_info.arb_reward = total_reward(a1, penalties);
+        best_bound_info.path_distance = get_path_distance(tmp_p, costs);
+        best_bound_info.path_reward = get_path_reward(tmp_p, penalties);
     }
     if (get_path_reward(tmp_p, penalties) > get_path_reward(best_path_info.path, penalties)){
-        best_path_info.path = tmp_p;
-        best_path_info.arb = a1;
         best_path_info.upper_bound = tmp_bound;
+        best_path_info.arb_distance = edge_cost(a1, costs);
+        best_path_info.arb_reward = total_reward(a1, penalties);
+        best_path_info.path_distance = get_path_distance(tmp_p, costs);
+        best_path_info.path_reward = get_path_reward(tmp_p, penalties);
+        best_path_info.path = tmp_p;
     }
 
 
@@ -303,15 +314,21 @@ void binary_search(
     tmp_bound = (distance_limit_D - theta_2) / lambda_2;
     tmp = get_path(a1, root_node, furthest_node_guess, true);
     tmp_p = get_feasible_path(tmp, costs, penalties, root_node, distance_limit_D);
-    if (std::isfinite(tmp_bound) && best_bound_info.upper_bound > tmp_bound){
+    if (std::isfinite(tmp_bound) && best_bound_info.upper_bound > tmp_bound)
+    {
         best_bound_info.upper_bound = tmp_bound;
-        best_bound_info.arb = a2;
-        best_bound_info.path = tmp_p;
+        best_bound_info.arb_distance = edge_cost(a2, costs);
+        best_bound_info.arb_reward = total_reward(a2, penalties);
+        best_bound_info.path_distance = get_path_distance(tmp_p, costs);
+        best_bound_info.path_reward = get_path_reward(tmp_p, penalties);
     }
     if (get_path_reward(tmp_p, penalties) > get_path_reward(best_path_info.path, penalties)){
-        best_path_info.path = tmp_p;
-        best_path_info.arb = a2;
         best_path_info.upper_bound = tmp_bound;
+        best_path_info.arb_distance = edge_cost(a2, costs);
+        best_path_info.arb_reward = total_reward(a2, penalties);
+        best_path_info.path_distance = get_path_distance(tmp_p, costs);
+        best_path_info.path_reward = get_path_reward(tmp_p, penalties);
+        best_path_info.path = tmp_p;
     }
 
 
@@ -470,7 +487,7 @@ Path cycle_orienteering_with_guess(
     int number_of_nodes,
     FeasiblePathExtractor get_feasible_path,
     OrienteeringInfo &best_path_info,
-    OrienteeringInfo &best_bound_info,
+    OrienteeringInfo &best_bound_info
     )
 {
     Arborescence a1, a2;
@@ -567,16 +584,17 @@ std::pair<Node, Path> cycle_orienteering(
         penalty_t upper_bound;
 
         high_resolution_clock::time_point t1 = high_resolution_clock::now();
-        Path new_tmp_1 = cycle_orienteering_with_guess(v_copy, root_node, node_map[furthest_node_guess], new_distances, new_rewards, distance_limit_D / 2, num_nodes, get_best_path, node_info);
-        high_resolution_clock::time_point t2 = high_resolution_clock::now();
+        Path new_tmp_1 = cycle_orienteering_with_guess(v_copy, root_node, node_map[furthest_node_guess], new_distances, new_rewards, distance_limit_D / 2, num_nodes, get_best_path, best_path_info, best_bound_info);
+        
         // assert(get_path_distance(new_tmp_1, new_distances) <= distance_limit_D + DISTANCE_EPSILON);
-        upper_bound = best_bound_info.best_bound_info;
+        // upper_bound = best_bound_info.upper_bound;
 
-        Path new_tmp_2 = cycle_orienteering_with_guess(v_copy, root_node, node_map[furthest_node_guess], new_distances, new_rewards, distance_limit_D - distances[root_node][furthest_node_guess], num_nodes, get_best_path, node_info);
+        Path new_tmp_2 = cycle_orienteering_with_guess(v_copy, root_node, node_map[furthest_node_guess], new_distances, new_rewards, distance_limit_D - distances[root_node][furthest_node_guess], num_nodes, get_best_path, best_path_info, best_bound_info);
+        high_resolution_clock::time_point t2 = high_resolution_clock::now();
         // assert(get_path_distance(new_tmp_2, new_distances) <= distance_limit_D + DISTANCE_EPSILON);
-        if (upper_bound > best_bound_info.upper_bound){
-            upper_bound = best_bound_info.upper_bound;
-        }
+        // if (upper_bound > best_bound_info.upper_bound){
+        //     upper_bound = best_bound_info.upper_bound;
+        // }
 
         duration<double> time_span = duration_cast<duration<double> >(t2 - t1);
         #ifndef NDEBUG
@@ -585,7 +603,7 @@ std::pair<Node, Path> cycle_orienteering(
         
 
         
-        best_bound_info.upper_bound = upper_bound;
+        // best_bound_info.upper_bound = upper_bound;
         best_bound_info.running_time = time_span;
         best_path_info.running_time = time_span;
         // node_info.upper_bound = upper_bound;

@@ -13,16 +13,17 @@ const double LAMBDA_EPSILON = 1e-6;
 
 struct OrienteeringInfo{
     duration<double> running_time;
-    penalty_t upper_bound;
+    penalty_t upper_bound=10000;
     distance_t arb_distance;
     reward_t arb_reward;
     distance_t path_distance;
     reward_t path_reward;
+    Path path;
     
-    reward_t a1_reward;
-    reward_t a2_reward;
-    distance_t a1_cost;
-    distance_t a2_cost;
+    // reward_t a1_reward;
+    // reward_t a2_reward;
+    // distance_t a1_cost;
+    // distance_t a2_cost;
 };
 
 // Path get_path(  
@@ -62,6 +63,7 @@ std::pair<Node, Path> cycle_orienteering(
                                     const Matrix &,
                                     const Rewards &,
                                     distance_t,
+                                    std::unordered_map<Node, OrienteeringInfo>&,
                                     std::unordered_map<Node, OrienteeringInfo>&
                                 );
 
