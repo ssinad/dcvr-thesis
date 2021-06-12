@@ -636,9 +636,9 @@ std::pair<Node, Path> rooted_orienteering(
     Node best_t = root_node;
     for (Node furthest_node_guess : vertices)
     {
-        #ifndef NDEBUG
-        std::clog << "Current Node: " << furthest_node_guess << std::endl;
-        #endif
+        // #ifndef NDEBUG
+        // std::clog << "Current Node: " << furthest_node_guess << std::endl;
+        // #endif
         if (furthest_node_guess == root_node || distances[root_node][furthest_node_guess] + DISTANCE_EPSILON > distance_limit_D)
             continue;
         Arborescence a1, a2;
@@ -674,18 +674,18 @@ std::pair<Node, Path> rooted_orienteering(
             }
         }
 
-        #ifndef NDEBUG
-            std::clog << "Running orienteering with guess: " << furthest_node_guess << std::endl;
-        #endif
+        // #ifndef NDEBUG
+        //     std::clog << "Running orienteering with guess: " << furthest_node_guess << std::endl;
+        // #endif
         OrienteeringInfo node_info;
         high_resolution_clock::time_point t1 = high_resolution_clock::now();
         Path new_tmp = rooted_orienteering_with_guess(v_copy, root_node, node_map[furthest_node_guess], new_distances, new_rewards, distance_limit_D, num_nodes, get_best_path, node_info);
         high_resolution_clock::time_point t2 = high_resolution_clock::now();
 
         duration<double> time_span = duration_cast<duration<double> >(t2 - t1);
-        #ifndef NDEBUG
-            std::clog << time_span.count() * 1000.0 << " ms"<< std::endl;
-        #endif
+        // #ifndef NDEBUG
+        //     std::clog << time_span.count() * 1000.0 << " ms"<< std::endl;
+        // #endif
         
 
         node_info.running_time = time_span;
@@ -693,28 +693,28 @@ std::pair<Node, Path> rooted_orienteering(
         info[furthest_node_guess] = node_info;
 
         Path tmp;
-        #ifndef NDEBUG
-        std::clog << rewards.size() << std::endl;
-        #endif
+        // #ifndef NDEBUG
+        // std::clog << rewards.size() << std::endl;
+        // #endif
 
-        #ifndef NDEBUG
-            for (Node n: node_list){
-                std::clog << n << " ";
-            }
-            std::clog << std::endl;
-        #endif
+        // #ifndef NDEBUG
+        //     for (Node n: node_list){
+        //         std::clog << n << " ";
+        //     }
+        //     std::clog << std::endl;
+        // #endif
         for (Node _ : new_tmp)
         {
-            #ifndef NDEBUG
-            std::clog << _ << " "; 
-            #endif
+            // #ifndef NDEBUG
+            // std::clog << _ << " "; 
+            // #endif
             
             // std::cout <<node_list[_] << " ";
             tmp.push_back(node_list[_]);
         }
-        #ifndef NDEBUG
-            std::clog << std::endl;
-        #endif
+        // #ifndef NDEBUG
+        //     std::clog << std::endl;
+        // #endif
         // exit(1);
         
         // Mapping complete

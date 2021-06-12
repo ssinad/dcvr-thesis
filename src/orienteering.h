@@ -17,7 +17,7 @@ struct OrienteeringInfo{
     distance_t arb_distance;
     reward_t arb_reward;
     distance_t path_distance;
-    reward_t path_reward;
+    reward_t path_reward=0;
     Path path;
     
     // reward_t a1_reward;

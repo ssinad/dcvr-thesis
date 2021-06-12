@@ -7,9 +7,10 @@ COPY . /column-generation
 WORKDIR /column-generation
 
 RUN ln -s /ibm ./ibm \
-    && make DEBUG_FLAG=-DNDEBUG test_rooted_orienteering \
-    && make DEBUG_FLAG=-DNDEBUG test_cycle_orienteering \
-    && make DEBUG_FLAG=-DNDEBUG test_dcvr 
+    && make test_rooted_orienteering \
+    && make test_cycle_orienteering \
+    && make test_dcvr
+    # && make DEBUG_FLAG=-DNDEBUG test_dcvr 
 
 
 FROM debian:buster-20210111-slim AS rooted-orienteering-stage
@@ -40,4 +41,4 @@ ENTRYPOINT [ "./dcvr" ]
 
 FROM builder AS testing-stage
 
-RUN make clean && make run_tests
+RUN make run_tests

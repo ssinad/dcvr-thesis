@@ -539,9 +539,9 @@ std::pair<Node, Path> cycle_orienteering(
     Node best_t = root_node;
     for (Node furthest_node_guess : vertices)
     {
-        #ifndef NDEBUG
-        std::clog << "Current Node: " << furthest_node_guess << std::endl;
-        #endif
+        // #ifndef NDEBUG
+        // std::clog << "Current Node: " << furthest_node_guess << std::endl;
+        // #endif
         if (furthest_node_guess == root_node || distances[root_node][furthest_node_guess] > distance_limit_D / 2 + DISTANCE_EPSILON)
             continue;
         Arborescence a1, a2;
@@ -577,9 +577,9 @@ std::pair<Node, Path> cycle_orienteering(
             }
         }
 
-        #ifndef NDEBUG
-            std::clog << "Running orienteering with guess: " << furthest_node_guess << std::endl;
-        #endif
+        // #ifndef NDEBUG
+        //     std::clog << "Running orienteering with guess: " << furthest_node_guess << std::endl;
+        // #endif
         OrienteeringInfo best_path_info, best_bound_info;
         penalty_t upper_bound;
 
@@ -597,9 +597,9 @@ std::pair<Node, Path> cycle_orienteering(
         // }
 
         duration<double> time_span = duration_cast<duration<double> >(t2 - t1);
-        #ifndef NDEBUG
-            std::clog << time_span.count() * 1000.0 << " ms"<< std::endl;
-        #endif
+        // #ifndef NDEBUG
+        //     std::clog << time_span.count() * 1000.0 << " ms"<< std::endl;
+        // #endif
         
 
         
@@ -612,16 +612,16 @@ std::pair<Node, Path> cycle_orienteering(
         best_path_info_map[furthest_node_guess] = best_path_info;
 
         Path tmp_1, tmp_2;
-        #ifndef NDEBUG
-        std::clog << rewards.size() << std::endl;
-        #endif
+        // #ifndef NDEBUG
+        // std::clog << rewards.size() << std::endl;
+        // #endif
 
-        #ifndef NDEBUG
-            for (Node n: node_list){
-                std::clog << n << " ";
-            }
-            std::clog << std::endl;
-        #endif
+        // #ifndef NDEBUG
+        //     for (Node n: node_list){
+        //         std::clog << n << " ";
+        //     }
+        //     std::clog << std::endl;
+        // #endif
         for (Node _ : new_tmp_1)
         {
             tmp_1.push_back(node_list[_]);
@@ -630,9 +630,9 @@ std::pair<Node, Path> cycle_orienteering(
         {
             tmp_2.push_back(node_list[_]);
         }
-        #ifndef NDEBUG
-            std::clog << std::endl;
-        #endif
+        // #ifndef NDEBUG
+        //     std::clog << std::endl;
+        // #endif
         // exit(1);
         
         // Mapping complete
