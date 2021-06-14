@@ -342,7 +342,7 @@ void binary_search(
     }
     else
     {
-        best_bound_info.upper_bound = 0;
+        // std::clog << costs[root_node][furthest_node_guess] << "," << edge_cost(a2, costs) << ", " << distance_limit_D << std::endl;
     }
     assert(a1.find(furthest_node_guess) != a1.end() && a2.find(furthest_node_guess) != a2.end());
     // assert whether t is in a1 and a2
@@ -521,6 +521,12 @@ Path cycle_orienteering_with_guess(
     // std::clog << best_bound << std::endl;
     best_bound_info.upper_bound = 2 * (rewards_sum + best_bound_info.upper_bound);
     best_path_info.upper_bound = 2 * (rewards_sum + best_path_info.upper_bound);
+    if (best_bound_info.upper_bound > rewards_sum){
+        best_bound_info.upper_bound = rewards_sum;
+    }
+    if (best_path_info.upper_bound > rewards_sum){
+        best_path_info.upper_bound = rewards_sum;
+    }
     // penalty_t upper_bound = 2 * (rewards_sum + best_bound);
     // info.upper_bound = upper_bound;
     // info.a1_reward = total_reward(a1, rewards);
@@ -595,12 +601,12 @@ std::pair<Node, Path> cycle_orienteering(
         penalty_t upper_bound;
 
         high_resolution_clock::time_point t1 = high_resolution_clock::now();
-        Path new_tmp_1 = cycle_orienteering_with_guess(v_copy, root_node, node_map[furthest_node_guess], new_distances, new_rewards, distance_limit_D / 2, num_nodes, get_best_path, best_path_info, best_bound_info);
+        Path new_tmp_1 = cycle_orienteering_with_guess(v_copy, node_map[root_node], node_map[furthest_node_guess], new_distances, new_rewards, distance_limit_D / 2, num_nodes, get_best_path, best_path_info, best_bound_info);
         
         // assert(get_path_distance(new_tmp_1, new_distances) <= distance_limit_D + DISTANCE_EPSILON);
         // upper_bound = best_bound_info.upper_bound;
 
-        Path new_tmp_2 = cycle_orienteering_with_guess(v_copy, root_node, node_map[furthest_node_guess], new_distances, new_rewards, distance_limit_D - distances[root_node][furthest_node_guess], num_nodes, get_best_path, best_path_info, best_bound_info);
+        Path new_tmp_2 = cycle_orienteering_with_guess(v_copy, node_map[root_node], node_map[furthest_node_guess], new_distances, new_rewards, distance_limit_D - distances[root_node][furthest_node_guess], num_nodes, get_best_path, best_path_info, best_bound_info);
         high_resolution_clock::time_point t2 = high_resolution_clock::now();
         // assert(get_path_distance(new_tmp_2, new_distances) <= distance_limit_D + DISTANCE_EPSILON);
         // if (upper_bound > best_bound_info.upper_bound){
