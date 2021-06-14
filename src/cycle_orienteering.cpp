@@ -254,9 +254,9 @@ void binary_search(
     {
         if (penalties[v] > REWARD_EPSILON)
         {
-            if (lambda_2 < 8 * costs[root_node][v] / penalties[v] + 1)
+            if (lambda_2 < costs[root_node][v] / penalties[v] + 1)
             {
-                lambda_2 = 8 * costs[root_node][v] / penalties[v] + 1;
+                lambda_2 = costs[root_node][v] / penalties[v] + 1;
             }
         }
     }
@@ -339,6 +339,10 @@ void binary_search(
 
     if (edge_cost(a2, costs) > distance_limit_D + DISTANCE_EPSILON){
         binary_search_recursive(a1, a2, vertices, costs, lambda_1, lambda_2, penalties, num_nodes, root_node, furthest_node_guess, distance_limit_D, best_path_info, best_bound_info, get_feasible_path);
+    }
+    else
+    {
+        best_bound_info.upper_bound = 0;
     }
     assert(a1.find(furthest_node_guess) != a1.end() && a2.find(furthest_node_guess) != a2.end());
     // assert whether t is in a1 and a2
