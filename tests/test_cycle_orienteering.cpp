@@ -40,7 +40,7 @@ int main(int argc, char ** argv)
                 bound = tmp.second.upper_bound;
                 best_bound_info = tmp.second;
             }
-            std::clog << tmp.first << ": " << tmp.second.upper_bound << " " << tmp.second.lambda << std::endl;
+            // std::clog << tmp.first << ": " << tmp.second.upper_bound << " " << tmp.second.lambda << std::endl;
         }
         penalty_t reward = 0;
         for (auto tmp: best_path_info_map){
