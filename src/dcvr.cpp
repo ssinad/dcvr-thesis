@@ -119,7 +119,7 @@ std::pair<bool, Path> path_generation_orienteering(
     const Node &root_node
     )
 {
-    std::unordered_map<Node, OrienteeringInfo> info;
+    std::unordered_map<Node, BestPathInfo> info;
     auto start_orienteering = clock();
     auto tmp_p = rooted_orienteering(vertices, root_node, distances, rewards, distance_limit_D, info);
     auto end_orienteering = clock();

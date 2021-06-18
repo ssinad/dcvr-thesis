@@ -21,7 +21,8 @@ int main(int argc, char ** argv)
             }
         }
         dr.read_file(filename, true);
-        std::unordered_map<Node, OrienteeringInfo> best_path_info_map, best_bound_info_map;
+        std::unordered_map<Node, BestPathInfo> best_path_info_map;
+        std::unordered_map<Node, BoundInfo> best_bound_info_map;
         std::cout << "{" << std::endl;
         std::cout << "\"number of nodes\": " << dr.get_vertices().size() << " , " << std::endl;
         std::cout << "\"distance bound\": " << distance_limit << " , " << std::endl;
@@ -34,7 +35,8 @@ int main(int argc, char ** argv)
         std::cout << "] ," << std::endl;
         // std::clog <<"Upper bounds: ";
         penalty_t bound = 0;
-        OrienteeringInfo best_bound_info, best_path_info;
+        BoundInfo best_bound_info;
+        BestPathInfo best_path_info;
         for (auto tmp: best_bound_info_map){
             if (bound < tmp.second.upper_bound){
                 bound = tmp.second.upper_bound;

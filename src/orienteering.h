@@ -5,13 +5,14 @@
 #include "Vertices.h"
 #include "Penalties.h"
 #include "Path.h"
+#include <map>
 #include <chrono>
 
 using namespace std::chrono;
 
 const double LAMBDA_EPSILON = 1e-6;
 
-struct OrienteeringInfo{
+struct BestPathInfo{
     duration<double> running_time;
     penalty_t upper_bound = 0;
     penalty_t lambda;
@@ -21,12 +22,24 @@ struct OrienteeringInfo{
     distance_t path_distance;
     reward_t path_reward = 0;
     Path path;
-    
     // reward_t a1_reward;
     // reward_t a2_reward;
     // distance_t a1_cost;
     // distance_t a2_cost;
 };
+
+struct BoundInfo{
+    duration<double> running_time;
+    penalty_t upper_bound = 0;
+    penalty_t lambda;
+    penalty_t theta;
+    distance_t arb_distance;
+    reward_t arb_reward;
+    distance_t path_distance;
+    reward_t path_reward = 0;
+};
+
+using LambdaMapping = std::map<penalty_t, BoundInfo>;
 
 // Path get_path(  
 //                 const Arborescence &arb_T,
@@ -56,7 +69,7 @@ std::pair<Node, Path> rooted_orienteering(
                                     const Matrix &,
                                     const Rewards &,
                                     distance_t,
-                                    std::unordered_map<Node, OrienteeringInfo>&
+                                    std::unordered_map<Node, BestPathInfo>&
                                 );
 
 std::pair<Node, Path> cycle_orienteering(
@@ -65,8 +78,8 @@ std::pair<Node, Path> cycle_orienteering(
                                     const Matrix &,
                                     const Rewards &,
                                     distance_t,
-                                    std::unordered_map<Node, OrienteeringInfo>&,
-                                    std::unordered_map<Node, OrienteeringInfo>&
+                                    std::unordered_map<Node, BestPathInfo>&,
+                                    std::unordered_map<Node, BoundInfo>&
                                 );
 
 

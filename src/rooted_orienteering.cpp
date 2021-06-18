@@ -588,7 +588,7 @@ Path rooted_orienteering_with_guess(
     distance_t distance_limit_D,
     int number_of_nodes,
     FeasiblePathExtractor get_feasible_path,
-    OrienteeringInfo &info
+    BestPathInfo &info
     )
 {
     Arborescence a1, a2;
@@ -627,7 +627,7 @@ std::pair<Node, Path> rooted_orienteering(
     const Matrix &distances,
     const Rewards &rewards,
     distance_t distance_limit_D, 
-    std::unordered_map<Node, OrienteeringInfo> &info
+    std::unordered_map<Node, BestPathInfo> &info
     )
 {
     penalty_t best_path_reward = -1, upper_bound;
@@ -677,7 +677,7 @@ std::pair<Node, Path> rooted_orienteering(
         // #ifndef NDEBUG
         //     std::clog << "Running orienteering with guess: " << furthest_node_guess << std::endl;
         // #endif
-        OrienteeringInfo node_info;
+        BestPathInfo node_info;
         high_resolution_clock::time_point t1 = high_resolution_clock::now();
         Path new_tmp = rooted_orienteering_with_guess(v_copy, root_node, node_map[furthest_node_guess], new_distances, new_rewards, distance_limit_D, num_nodes, get_best_path, node_info);
         high_resolution_clock::time_point t2 = high_resolution_clock::now();
