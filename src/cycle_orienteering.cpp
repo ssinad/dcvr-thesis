@@ -566,6 +566,8 @@ std::pair<Node, Path> cycle_orienteering(
         // #endif
         
         LambdaMapping tmp_bound_1, tmp_bound_2;
+        tmp_bound_1.clear();
+        tmp_bound_2.clear();
         BestPathInfo best_path_info;
         BoundInfo best_bound_info;
         penalty_t upper_bound = sum_rewards;
@@ -580,7 +582,8 @@ std::pair<Node, Path> cycle_orienteering(
         
         for (auto kv: tmp_bound_1){
             penalty_t lambda = kv.first;
-            upper_bound = std::min(upper_bound, 2 * (sum_rewards + (distance_limit_D / 2 - kv.second.theta) / lambda));
+            // upper_bound = std::min(upper_bound, 2 * (sum_rewards + (distance_limit_D / 2 - kv.second.theta) / lambda));
+            upper_bound = std::min(upper_bound, 2 * (sum_rewards + (distance_limit_D - distances[root_node][furthest_node_guess] - kv.second.theta) / lambda));
             upper_bound = std::min(upper_bound, sum_rewards + (distance_limit_D - kv.second.theta) / lambda);
         }
 
