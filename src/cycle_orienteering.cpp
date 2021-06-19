@@ -419,69 +419,6 @@ Path get_best_path(
     
 }
 
-// Path get_best_path(
-//     const Path &p,
-//     const Matrix &costs,
-//     const Rewards &rewards,
-//     const Node &root_node,
-//     distance_t distance_limit_D
-//     )
-// {
-//     Path best_cycle, p_i = p;
-//     reward_t best_cycle_reward = -1;
-
-//     distance_t current_path_distance = 0;
-//     reward_t current_path_reward = 0;
-
-//     Path current_path, current_cycle;
-//     Path::iterator initial_node_iterator = p_i.begin();
-    
-//     if (std::next(p_i.begin()) == p_i.end()) // Path only has the root node
-//         return p_i;
-    
-
-//     // while (initial_node_iterator != p_i.end())
-//     for (initial_node_iterator++; initial_node_iterator != p_i.end(); ++initial_node_iterator)
-//     {
-//         current_path.clear();
-
-//         current_path.push_back(root_node);
-//         current_path_reward += rewards[root_node];
-
-//         Node initial_node = *initial_node_iterator;
-
-//         // #ifndef NDEBUG
-//         // std::clog << "Initial Node " << initial_node << " ";
-//         // #endif
-//         current_path.push_back(initial_node);
-//         current_path_distance = costs[root_node][initial_node];
-//         // Node previous_node = initial_node;
-//         current_path_reward += rewards[initial_node];
-//         current_cycle = current_path;
-//         current_cycle.push_back(root_node);
-//         if (current_path_distance <= distance_limit_D + DISTANCE_EPSILON && current_path_reward > best_cycle_reward){
-//             best_cycle = current_cycle;
-//             best_cycle_reward = current_path_reward;
-//         }
-//         for (auto last_node_iterator = ++initial_node_iterator; last_node_iterator != p_i. end(); ++last_node_iterator){
-//             Node previous_node = *(current_path.rbegin());
-//             Node last_node = *last_node_iterator;
-//             current_path.push_back(last_node);
-//             current_path_distance += costs[previous_node][last_node];
-//             current_path_reward += rewards[last_node];
-//             current_cycle = current_path;
-//             current_cycle.push_back(root_node);
-//             if (current_path_distance <= distance_limit_D + DISTANCE_EPSILON && current_path_reward > best_cycle_reward){
-//                 best_cycle = current_cycle;
-//                 best_cycle_reward = current_path_reward;
-//             }
-//         }
-//     }
-//     assert(*(best_cycle.begin()) == root_node && *(best_cycle.rbegin()) == root_node);
-//     // assert(get_path_distance(best_cycle, costs) <= distance_limit_D + DISTANCE_EPSILON);
-//     return best_cycle;
-    
-// }
 
 Path cycle_orienteering_with_guess(
     Vertices &vertices,
