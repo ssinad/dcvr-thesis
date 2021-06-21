@@ -60,6 +60,8 @@ rooted_orienteering.o: $(CPPSRC)/rooted_orienteering.cpp
 	g++ $(CCOBJ) -o rooted_orienteering.o $(CPPSRC)/rooted_orienteering.cpp
 cycle_orienteering.o: $(CPPSRC)/cycle_orienteering.cpp
 	g++ $(CCOBJ) -o cycle_orienteering.o $(CPPSRC)/cycle_orienteering.cpp
+p2p_orienteering.o: $(CPPSRC)/p2p_orienteering.cpp
+	g++ $(CCOBJ) -o p2p_orienteering.o $(CPPSRC)/p2p_orienteering.cpp
 dcvr_dry_run: $(CPPSRC)/dcvr.cpp
 	g++ $(CCOBJ) -DIL_STD -I $(CPLEXINCDIR) -I $(CONCERTINCDIR) $(CPPSRC)/dcvr.cpp
 iterPCA_dry_run: $(CPPSRC)/iterPCA.cpp

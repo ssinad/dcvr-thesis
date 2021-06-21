@@ -521,7 +521,7 @@ std::pair<Node, Path> cycle_orienteering(
         for (auto& kv: tmp_bound_1){
             penalty_t lambda = kv.first;
             // upper_bound = std::min(upper_bound, 2 * (sum_rewards + (distance_limit_D / 2 - kv.second.theta) / lambda));
-            upper_bound = std::min(upper_bound, 2 * (sum_rewards + (distance_limit_D - distances[root_node][furthest_node_guess] - kv.second.theta) / lambda));
+            upper_bound = std::min(upper_bound, 2 * (sum_rewards + (distance_limit_D - distances[root_node][furthest_node_guess] - kv.second.theta) / lambda) - rewards[furthest_node_guess] );
             upper_bound = std::min(upper_bound, sum_rewards + (distance_limit_D - kv.second.theta) / lambda);
             std::clog << lambda << " : " << kv.second.theta << " ," << std::endl;
         }
@@ -529,7 +529,7 @@ std::pair<Node, Path> cycle_orienteering(
 
         for (auto& kv: tmp_bound_2){
             penalty_t lambda = kv.first;
-            upper_bound = std::min(upper_bound, 2 * (sum_rewards + (distance_limit_D - distances[root_node][furthest_node_guess] - kv.second.theta) / lambda));
+            upper_bound = std::min(upper_bound, 2 * (sum_rewards + (distance_limit_D - distances[root_node][furthest_node_guess] - kv.second.theta) / lambda) - rewards[furthest_node_guess]);
             upper_bound = std::min(upper_bound, sum_rewards + (distance_limit_D - kv.second.theta) / lambda);
             std::clog << lambda << " : " << kv.second.theta << " ," << std::endl;
         }
