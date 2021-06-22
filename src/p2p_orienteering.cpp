@@ -186,7 +186,7 @@ void binary_search_recursive(
     Arborescence a = iterPCA_with_check(v1, c1, p1, theta, num_nodes - 1, root_node);
     Path tmp = get_path(a, root_node, furthest_node_guess, true);
     Path reverse_tmp;
-    reverse_tmp.clear()
+    reverse_tmp.clear();
     if (root_node != finish_node){
         for (Node n: tmp){
             reverse_tmp.push_front(n);
@@ -260,7 +260,7 @@ void binary_search(
     penalty_t &lambda_2,
     BestPathInfo &best_path_info,
     LambdaMapping &best_bound_info,
-    FeasiblePathExtractor,
+    FeasiblePathExtractor get_feasible_path,
     const Node &start_node,
     const Node &finish_node
     )
@@ -309,7 +309,7 @@ void binary_search(
     a1 = iterPCA_with_check(v1, c1, p1, theta_1, num_nodes - 1, root_node);
     Path tmp = get_path(a1, root_node, furthest_node_guess, true);
     Path reverse_tmp;
-    reverse_tmp.clear()
+    reverse_tmp.clear();
     if (root_node != finish_node){
         for (Node n: tmp){
             reverse_tmp.push_front(n);
@@ -341,7 +341,7 @@ void binary_search(
     // tmp_bound = theta_2 / lambda_2;
     tmp.clear();
     tmp = get_path(a1, root_node, furthest_node_guess, true);
-    reverse_tmp.clear()
+    reverse_tmp.clear();
     if (root_node != finish_node){
         for (Node n: tmp){
             reverse_tmp.push_front(n);
