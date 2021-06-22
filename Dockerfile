@@ -9,6 +9,7 @@ WORKDIR /column-generation
 RUN ln -s /ibm ./ibm \
     && make test_rooted_orienteering \
     && make test_cycle_orienteering \
+    && make test_p2p_orienteering \
     && make test_dcvr
     # && make DEBUG_FLAG=-DNDEBUG test_dcvr 
 
@@ -24,6 +25,14 @@ ENTRYPOINT [ "./orienteering" ]
 FROM debian:buster-20210111-slim AS cycle-orienteering-stage
 
 COPY --from=builder /column-generation/tests/test_cycle_orienteering.out ./orienteering
+
+LABEL org.opencontainers.image.source ${REPO}
+
+ENTRYPOINT [ "./orienteering" ]
+
+FROM debian:buster-20210111-slim AS p2p-orienteering-stage
+
+COPY --from=builder /column-generation/tests/test_p2p_orienteering.out ./orienteering
 
 LABEL org.opencontainers.image.source ${REPO}
 

@@ -18,6 +18,7 @@ using FeasiblePathExtractor = Path (&)(
     const Node &
     );
 
+distance_t limit_D; // Not recommended
 
 distance_t edge_cost(const Arborescence &arb_T, const Matrix &costs)
 {
@@ -185,6 +186,7 @@ void binary_search_recursive(
     Arborescence a = iterPCA_with_check(v1, c1, p1, theta, num_nodes - 1, root_node);
     Path tmp = get_path(a, root_node, furthest_node_guess, true);
     Path reverse_tmp;
+    reverse_tmp.clear()
     if (root_node != finish_node){
         for (Node n: tmp){
             reverse_tmp.push_front(n);
@@ -193,7 +195,7 @@ void binary_search_recursive(
     else{
         reverse_tmp = tmp;
     }
-    Path tmp_p = get_feasible_path(reverse_tmp, costs, penalties, distance_limit_D, start_node, finish_node);
+    Path tmp_p = get_feasible_path(reverse_tmp, costs, penalties, limit_D, start_node, finish_node);
     
     BoundInfo tmp_bound_info;
     tmp_bound_info.arb_distance = edge_cost(a, costs);
@@ -258,7 +260,7 @@ void binary_search(
     penalty_t &lambda_2,
     BestPathInfo &best_path_info,
     LambdaMapping &best_bound_info,
-    FeasiblePathExtractor get_feasible_path,
+    FeasiblePathExtractor,
     const Node &start_node,
     const Node &finish_node
     )
@@ -306,8 +308,17 @@ void binary_search(
     BoundInfo tmp_bound_info_1, tmp_bound_info_2;
     a1 = iterPCA_with_check(v1, c1, p1, theta_1, num_nodes - 1, root_node);
     Path tmp = get_path(a1, root_node, furthest_node_guess, true);
-    Path tmp_p = get_feasible_path(tmp, costs, penalties, distance_limit_D, start_node, finish_node);
-    // penalty_t tmp_bound =  theta_1 / lambda_1;
+    Path reverse_tmp;
+    reverse_tmp.clear()
+    if (root_node != finish_node){
+        for (Node n: tmp){
+            reverse_tmp.push_front(n);
+        }
+    }
+    else{
+        reverse_tmp = tmp;
+    }
+    Path tmp_p = get_feasible_path(reverse_tmp, costs, penalties, limit_D, start_node, finish_node);
     
     tmp_bound_info_1.arb_distance = edge_cost(a1, costs);
     tmp_bound_info_1.arb_reward = total_reward(a1, penalties);
@@ -328,8 +339,18 @@ void binary_search(
 
     a2 = iterPCA_with_check(v2, c2, p2, theta_2, num_nodes - 1, root_node);
     // tmp_bound = theta_2 / lambda_2;
+    tmp.clear();
     tmp = get_path(a1, root_node, furthest_node_guess, true);
-    tmp_p = get_feasible_path(tmp, costs, penalties, distance_limit_D, start_node, finish_node);
+    reverse_tmp.clear()
+    if (root_node != finish_node){
+        for (Node n: tmp){
+            reverse_tmp.push_front(n);
+        }
+    }
+    else{
+        reverse_tmp = tmp;
+    }
+    tmp_p = get_feasible_path(reverse_tmp, costs, penalties, limit_D, start_node, finish_node);
 
     tmp_bound_info_2.arb_distance = edge_cost(a2, costs);
     tmp_bound_info_2.arb_reward = total_reward(a2, penalties);
@@ -373,59 +394,67 @@ Path get_best_path(
     reward_t current_path_reward = 0;
 
     Path current_path;
-    Path::iterator initial_node_iterator = p_i.begin();
+    Path::iterator initial_node_iterator = p_i.begin(), last_node_iterator, node_iterator;
     
     if (std::next(p_i.begin()) == p_i.end())
         return p_i;
     
+    for (initial_node_iterator = p_i.begin(); initial_node_iterator != --(p_i.end()); initial_node_iterator++){
+        for (last_node_iterator = std::next(initial_node_iterator); last_node_iterator != p_i.end(); last_node_iterator++){
+            distance_t current_path_distance = 0;
+            reward_t current_path_reward = 0;
+            for (node_iterator = initial_node_iterator; node_iterator <= last_node_iterator; node_iterator++){
 
-    // while (initial_node_iterator != p_i.end())
-    for (initial_node_iterator++; initial_node_iterator != p_i.end(); ++initial_node_iterator)
-    {
-        current_path.clear();
-
-        current_path_reward = rewards[root_node];
-        current_path.push_back(root_node);
-
-        Node initial_node = *initial_node_iterator;
-
-        // #ifndef NDEBUG
-        // std::clog << "Initial Node " << initial_node << " ";
-        // #endif
-        current_path.push_back(initial_node);
-        current_path_distance = costs[root_node][initial_node];
-        Node previous_node = initial_node;
-        current_path_reward += rewards[initial_node];
-        distance_t next_path_distance = current_path_distance;
-        // if (initial_node_iterator == p_i.end()) break;
-        
-        for (Path::iterator node_iterator = std::next(initial_node_iterator, 1); node_iterator != p_i.end(); ++node_iterator)
-        {
-            // #ifndef NDEBUG
-            // std::clog << *node_iterator << " ";
-            // #endif
-            assert(current_path_distance <= distance_limit_D + DISTANCE_EPSILON);
-            next_path_distance += costs[previous_node][*node_iterator];
-
-            if (next_path_distance > distance_limit_D + DISTANCE_EPSILON)
-            {
-                break;
             }
-            current_path.push_back(*node_iterator);
-            current_path_reward += rewards[*node_iterator];
-            current_path_distance = next_path_distance;
-            previous_node = *node_iterator;
-        }
-        
-        // #ifndef NDEBUG
-        // std::clog << std::endl;
-        // #endif
-        if (current_path_reward > best_path_reward)
-        {
-            best_path = current_path;
-            best_path_reward = current_path_reward;
         }
     }
+    // while (initial_node_iterator != p_i.end())
+    // for (initial_node_iterator++; initial_node_iterator != p_i.end(); ++initial_node_iterator)
+    // {
+    //     current_path.clear();
+
+    //     current_path_reward = rewards[root_node];
+    //     current_path.push_back(root_node);
+
+    //     Node initial_node = *initial_node_iterator;
+
+    //     // #ifndef NDEBUG
+    //     // std::clog << "Initial Node " << initial_node << " ";
+    //     // #endif
+    //     current_path.push_back(initial_node);
+    //     current_path_distance = costs[root_node][initial_node];
+    //     Node previous_node = initial_node;
+    //     current_path_reward += rewards[initial_node];
+    //     distance_t next_path_distance = current_path_distance;
+    //     // if (initial_node_iterator == p_i.end()) break;
+        
+    //     for (Path::iterator node_iterator = std::next(initial_node_iterator, 1); node_iterator != p_i.end(); ++node_iterator)
+    //     {
+    //         // #ifndef NDEBUG
+    //         // std::clog << *node_iterator << " ";
+    //         // #endif
+    //         assert(current_path_distance <= distance_limit_D + DISTANCE_EPSILON);
+    //         next_path_distance += costs[previous_node][*node_iterator];
+
+    //         if (next_path_distance > distance_limit_D + DISTANCE_EPSILON)
+    //         {
+    //             break;
+    //         }
+    //         current_path.push_back(*node_iterator);
+    //         current_path_reward += rewards[*node_iterator];
+    //         current_path_distance = next_path_distance;
+    //         previous_node = *node_iterator;
+    //     }
+        
+    //     // #ifndef NDEBUG
+    //     // std::clog << std::endl;
+    //     // #endif
+    //     if (current_path_reward > best_path_reward)
+    //     {
+    //         best_path = current_path;
+    //         best_path_reward = current_path_reward;
+    //     }
+    // }
     assert(get_path_distance(best_path, costs) <= distance_limit_D + DISTANCE_EPSILON);
     // std :: clog << get_path_distance(best_path, costs) << ", " << distance_limit_D << std::endl;
     best_path.push_back(root_node);
@@ -470,6 +499,7 @@ std::pair<Node, Path> p2p_orienteering(
     std::unordered_map<Node, BoundInfo> &best_bound_info_map
     )
 {
+    limit_D = distance_limit_D;
     penalty_t best_path_reward = -1, upper_bound;
     // penalty_t best_upper;
     Path best_path;
