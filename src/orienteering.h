@@ -82,5 +82,15 @@ std::pair<Node, Path> cycle_orienteering(
                                     std::unordered_map<Node, BoundInfo>&
                                 );
 
+std::pair<Node, Path> p2p_orienteering(
+    const Vertices &vertices,
+    const Node &start_node,
+    const Node &finish_node,
+    const Matrix &distances,
+    const Rewards &rewards,
+    distance_t distance_limit_D, 
+    std::unordered_map<Node, BestPathInfo> &best_path_info_map,
+    std::unordered_map<Node, BoundInfo> &best_bound_info_map
+    );
 
 #endif

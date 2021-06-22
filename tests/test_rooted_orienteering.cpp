@@ -19,7 +19,7 @@ int main(int argc, char ** argv)
                 distance_limit = tmp;
             }
         }
-        dr.read_file(filename, true);
+        dr.read_file(filename, Dataset_type::ORIENTEERING);
         std::unordered_map<Node, BestPathInfo> info;
         std::cout << "Number of nodes: " << dr.get_vertices().size() << std::endl;
         auto p = rooted_orienteering(dr.get_vertices(), dr.get_root_node(), dr.get_matrix(), dr.get_penalties(), distance_limit, info);

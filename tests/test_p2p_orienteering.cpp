@@ -20,13 +20,16 @@ int main(int argc, char ** argv)
                 distance_limit = tmp;
             }
         }
-        dr.read_file(filename, true);
+        // dr.read_file(filename, true);
+        int number_of_nodes;
+        Node start_node, finish_node;
+        dr.read_file(filename, Dataset_type::P2P);
         std::unordered_map<Node, BestPathInfo> best_path_info_map;
         std::unordered_map<Node, BoundInfo> best_bound_info_map;
         std::cout << "{" << std::endl;
-        std::cout << "\"number of nodes\": " << dr.get_vertices().size() << " , " << std::endl;
+        std::cout << "\"number of nodes\": " << number_of_nodes << " , " << std::endl;
         std::cout << "\"distance bound\": " << distance_limit << " , " << std::endl;
-        auto p = cycle_orienteering(dr.get_vertices(), dr.get_root_node(), dr.get_matrix(), dr.get_penalties(), distance_limit, best_path_info_map, best_bound_info_map);
+        auto p = p2p_orienteering(dr.get_vertices(), dr.get_start_node(), dr.get_finish_node(), dr.get_matrix(), dr.get_penalties(), distance_limit, best_path_info_map, best_bound_info_map);
         std::cout << "\"path nodes\": [ ";
         for (Node n: p.second)
         {

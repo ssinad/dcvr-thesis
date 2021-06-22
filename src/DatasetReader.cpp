@@ -4,7 +4,7 @@
 
 // using namespace std;
 
-void DatasetReader::read_file(std::string filename, bool read_rewards)
+void DatasetReader::read_file(std::string filename, Dataset_type dataset_type)
 {
   std::istream* file = &std::cin;
   std::ifstream file_stream;
@@ -16,6 +16,10 @@ void DatasetReader::read_file(std::string filename, bool read_rewards)
     std::clog << "Reading from standard input!" << std::endl;
   }
   *file >> num_nodes >> root_node;
+  if (dataset_type == Dataset_type::P2P){
+    start_node = root_node;
+    *file >> finish_node;
+  }
 
   distances = Matrix(num_nodes, std::vector<distance_t>(num_nodes));
   rewards = Rewards(num_nodes);
@@ -26,7 +30,7 @@ void DatasetReader::read_file(std::string filename, bool read_rewards)
       *file >> distances[row][col];
     }
   }
-  if (read_rewards)
+  if (dataset_type != Dataset_type::DVRP)
   {
     for (int col = 0; col < num_nodes; col++)
     {
@@ -62,4 +66,14 @@ Vertices DatasetReader::get_vertices()
 Node DatasetReader::get_root_node()
 {
   return root_node;
+}
+
+Node DatasetReader::get_start_node()
+{
+  return start_node;
+}
+
+Node DatasetReader::get_finish_node()
+{
+  return finish_node;
 }

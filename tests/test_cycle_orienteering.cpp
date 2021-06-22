@@ -20,7 +20,7 @@ int main(int argc, char ** argv)
                 distance_limit = tmp;
             }
         }
-        dr.read_file(filename, true);
+        dr.read_file(filename, Dataset_type::ORIENTEERING);
         std::unordered_map<Node, BestPathInfo> best_path_info_map;
         std::unordered_map<Node, BoundInfo> best_bound_info_map;
         std::cout << "{" << std::endl;

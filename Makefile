@@ -79,7 +79,7 @@ run_tests: test_all
 	$(TESTS)/test_dcvr.out -D 4 < datasets/small-sample.txt
 
 
-test_all: test_iterPCA test_rooted_orienteering test_cycle_orienteering test_dcvr
+test_all: test_iterPCA test_rooted_orienteering test_cycle_orienteering test_dcvr test_p2p_orienteering
 
 test_iterPCA: iterPCA.o PcaReader.o $(TESTS)/test_iterPCA.cpp
 	g++ $(CCFLAGS) -o $(TESTS)/test_iterPCA.out $(TESTS)/test_iterPCA.cpp iterPCA.o PcaReader.o
@@ -92,6 +92,8 @@ test_rooted_orienteering: iterPCA.o rooted_orienteering.o DatasetReader.o heuris
 	g++ $(CCFLAGS) -o $(TESTS)/test_rooted_orienteering.out $(TESTS)/test_rooted_orienteering.cpp rooted_orienteering.o iterPCA.o  DatasetReader.o heuristics.o Path.o
 test_cycle_orienteering: iterPCA.o cycle_orienteering.o DatasetReader.o heuristics.o Path.o $(TESTS)/test_cycle_orienteering.cpp
 	g++ $(CCFLAGS) -o $(TESTS)/test_cycle_orienteering.out $(TESTS)/test_cycle_orienteering.cpp  cycle_orienteering.o iterPCA.o  DatasetReader.o heuristics.o Path.o
+test_p2p_orienteering: iterPCA.o p2p_orienteering.o DatasetReader.o heuristics.o Path.o $(TESTS)/test_p2p_orienteering.cpp
+	g++ $(CCFLAGS) -o $(TESTS)/test_p2p_orienteering.out $(TESTS)/test_p2p_orienteering.cpp  p2p_orienteering.o iterPCA.o  DatasetReader.o heuristics.o Path.o
 test_dcvr: dcvr.o rooted_orienteering.o iterPCA.o heuristics.o $(TESTS)/test_dcvr.cpp DatasetReader.o Path.o
 	g++ $(CCFLAGS) -DIL_STD $(CCLNDIRS) -o $(TESTS)/test_dcvr.out $(TESTS)/test_dcvr.cpp dcvr.o rooted_orienteering.o iterPCA.o DatasetReader.o heuristics.o Path.o $(CCLNFLAGS)
 clean:
