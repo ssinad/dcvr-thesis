@@ -393,13 +393,40 @@ Path get_best_path(
     if (std::next(p_i.begin()) == p_i.end())
         return p_i;
     
+    if (*(p_i.begin()) == start_node){
+        p_i.pop_front();
+    }
+
+    if (*(p_i.rbegin()) == finish_node){
+        p_i.pop_back();
+    }
+    
     distance_t current_path_distance = 0;
     reward_t current_path_reward = 0;
     Node previous_node = start_node;
 
     Path current_path;
-    Path::iterator initial_node_iterator = p_i.begin(), final_node_iterator, node_iterator;
-    
+    Path::iterator initial_node_iterator = p_i.begin(), node_iterator;
+    for (initial_node_iterator = p_i.begin(); initial_node_iterator != p_i.end(); initial_node_iterator++){
+        current_path.clear();
+        current_path_distance = 0;
+        current_path_reward = rewards[start_node] + rewards[finish_node];
+        previous_node = start_node;
+        for (node_iterator = initial_node_iterator; node_iterator != p_i.end(); ++node_iterator){
+            Node current_node = *node_iterator;
+            current_path_distance += costs[previous_node][current_node];
+            current_path_reward += rewards[current_node];
+            if (current_path_distance + costs[current_node][finish_node] > DISTANCE_EPSILON + distance_limit_D) continue;
+            current_path.push_back(current_node);
+            if (current_path_reward > best_path_reward){
+                best_path = current_path;
+                best_path_reward = current_path_reward;
+            }
+            previous_node = current_node;
+        }
+    }
+    best_path.push_front(start_node);
+    best_path.push_back(finish_node);
     
     assert(get_path_distance(best_path, costs) <= distance_limit_D + DISTANCE_EPSILON);
     // std :: clog << get_path_distance(best_path, costs) << ", " << distance_limit_D << std::endl;
@@ -465,9 +492,14 @@ std::pair<Node, Path> p2p_orienteering(
         std::vector<Node> node_list;
         // node_map maps original nodes to new ones
         std::unordered_map<Node, Node> node_map;
+        v_copy.clear();
         v_copy.insert(start_node);
+        v_copy.insert(finish_node);
+        node_list.clear();
         node_list.push_back(start_node);
-        node_map[start_node] = start_node;
+        node_map[start_node] = node_list.size() - 1;
+        node_list.push_back(finish_node);
+        node_map[finish_node] = node_list.size() - 1;
         for (Node _ : vertices)
         {
             if (start_node != _ && finish_node != _ && distances[start_node][_] + distances[_][finish_node] <= distances[start_node][furthest_node_guess] + distances[furthest_node_guess][finish_node])
