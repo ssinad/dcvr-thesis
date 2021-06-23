@@ -2,6 +2,8 @@
 #include <fstream>
 #include <iostream>
 
+Node root_node = 0;
+
 PcaReader::PcaReader(std::string file_name)
 {
     std::ifstream input_file;

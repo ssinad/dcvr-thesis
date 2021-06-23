@@ -389,68 +389,23 @@ Path get_best_path(
 {
     Path best_path, p_i = p;
     reward_t best_path_reward = -1;
-
-    distance_t current_path_distance = 0;
-    reward_t current_path_reward = 0;
-
-    Path current_path;
-    Path::iterator initial_node_iterator = p_i.begin(), last_node_iterator, node_iterator;
     
     if (std::next(p_i.begin()) == p_i.end())
         return p_i;
     
+    distance_t current_path_distance = 0;
+    reward_t current_path_reward = 0;
+    Node previous_node = start_node;
+
+    Path current_path;
+    Path::iterator initial_node_iterator = p_i.begin(), final_node_iterator, node_iterator;
     
-    while (initial_node_iterator != p_i.end())
-    for (initial_node_iterator++; initial_node_iterator != p_i.end(); ++initial_node_iterator)
-    {
-        current_path.clear();
-
-        current_path_reward = rewards[root_node];
-        current_path.push_back(root_node);
-
-        Node initial_node = *initial_node_iterator;
-
-        // #ifndef NDEBUG
-        // std::clog << "Initial Node " << initial_node << " ";
-        // #endif
-        current_path.push_back(initial_node);
-        current_path_distance = costs[root_node][initial_node];
-        Node previous_node = initial_node;
-        current_path_reward += rewards[initial_node];
-        distance_t next_path_distance = current_path_distance;
-        // if (initial_node_iterator == p_i.end()) break;
-        
-        for (Path::iterator node_iterator = std::next(initial_node_iterator, 1); node_iterator != p_i.end(); ++node_iterator)
-        {
-            // #ifndef NDEBUG
-            // std::clog << *node_iterator << " ";
-            // #endif
-            assert(current_path_distance <= distance_limit_D + DISTANCE_EPSILON);
-            next_path_distance += costs[previous_node][*node_iterator];
-
-            if (next_path_distance > distance_limit_D + DISTANCE_EPSILON)
-            {
-                break;
-            }
-            current_path.push_back(*node_iterator);
-            current_path_reward += rewards[*node_iterator];
-            current_path_distance = next_path_distance;
-            previous_node = *node_iterator;
-        }
-        
-        // #ifndef NDEBUG
-        // std::clog << std::endl;
-        // #endif
-        if (current_path_reward > best_path_reward)
-        {
-            best_path = current_path;
-            best_path_reward = current_path_reward;
-        }
-    }
+    
     assert(get_path_distance(best_path, costs) <= distance_limit_D + DISTANCE_EPSILON);
     // std :: clog << get_path_distance(best_path, costs) << ", " << distance_limit_D << std::endl;
-    best_path.push_back(root_node);
-    assert(*(best_path.begin()) == root_node);
+    // best_path.push_back(root_node);
+    assert(*(best_path.begin()) == start_node);
+    assert(*(best_path.rbegin()) == finish_node);
     return best_path;
     
 }
@@ -495,13 +450,13 @@ std::pair<Node, Path> p2p_orienteering(
     penalty_t best_path_reward = -1, upper_bound;
     // penalty_t best_upper;
     Path best_path;
-    Node best_t = root_node;
+    Node best_t = start_node;
     for (Node furthest_node_guess : vertices)
     {
         // #ifndef NDEBUG
         // std::clog << "Current Node: " << furthest_node_guess << std::endl;
         // #endif
-        if (furthest_node_guess == root_node || distances[start_node][furthest_node_guess] + distances[furthest_node_guess][finish_node] > distance_limit_D + DISTANCE_EPSILON)
+        if (furthest_node_guess == start_node || furthest_node_guess == finish_node || distances[start_node][furthest_node_guess] + distances[furthest_node_guess][finish_node] > distance_limit_D + DISTANCE_EPSILON)
             continue;
         Arborescence a1, a2;
         // TODO why do I have number_of_nodes?
@@ -510,12 +465,12 @@ std::pair<Node, Path> p2p_orienteering(
         std::vector<Node> node_list;
         // node_map maps original nodes to new ones
         std::unordered_map<Node, Node> node_map;
-        v_copy.insert(root_node);
-        node_list.push_back(root_node);
-        node_map[root_node] = root_node;
+        v_copy.insert(start_node);
+        node_list.push_back(start_node);
+        node_map[start_node] = start_node;
         for (Node _ : vertices)
         {
-            if (root_node != _ && distances[root_node][_] <= distances[root_node][furthest_node_guess])
+            if (start_node != _ && finish_node != _ && distances[start_node][_] + distances[_][finish_node] <= distances[start_node][furthest_node_guess] + distances[furthest_node_guess][finish_node])
             {
                 // v_copy.insert(_);
                 node_list.push_back(_);
@@ -553,7 +508,7 @@ std::pair<Node, Path> p2p_orienteering(
         Path new_tmp_1 = p2p_orienteering_with_guess(v_copy, node_map[start_node], node_map[furthest_node_guess], new_distances, new_rewards, distance_limit_D - distances[furthest_node_guess][finish_node], num_nodes, get_best_path, best_path_info, tmp_bound_1, node_map[start_node], node_map[finish_node]);
 
 
-        Path new_tmp_2 = p2p_orienteering_with_guess(v_copy, node_map[finish_node], node_map[furthest_node_guess], new_distances, new_rewards, distance_limit_D - distances[root_node][furthest_node_guess], num_nodes, get_best_path, best_path_info, tmp_bound_2, node_map[start_node], node_map[finish_node]);
+        Path new_tmp_2 = p2p_orienteering_with_guess(v_copy, node_map[finish_node], node_map[furthest_node_guess], new_distances, new_rewards, distance_limit_D - distances[start_node][furthest_node_guess], num_nodes, get_best_path, best_path_info, tmp_bound_2, node_map[start_node], node_map[finish_node]);
         
         high_resolution_clock::time_point t2 = high_resolution_clock::now();
         
@@ -561,7 +516,7 @@ std::pair<Node, Path> p2p_orienteering(
         for (auto& kv: tmp_bound_1){
             penalty_t lambda = kv.first;
             // upper_bound = std::min(upper_bound, 2 * (sum_rewards + (distance_limit_D / 2 - kv.second.theta) / lambda));
-            upper_bound = std::min(upper_bound, 2 * (sum_rewards + (distance_limit_D - distances[root_node][furthest_node_guess] - kv.second.theta) / lambda));
+            // upper_bound = std::min(upper_bound, 2 * (sum_rewards + (distance_limit_D - distances[root_node][furthest_node_guess] - kv.second.theta) / lambda));
             upper_bound = std::min(upper_bound, sum_rewards + (distance_limit_D - kv.second.theta) / lambda);
             std::clog << lambda << " : " << kv.second.theta << " ," << std::endl;
         }
@@ -569,7 +524,7 @@ std::pair<Node, Path> p2p_orienteering(
 
         for (auto& kv: tmp_bound_2){
             penalty_t lambda = kv.first;
-            upper_bound = std::min(upper_bound, 2 * (sum_rewards + (distance_limit_D - distances[root_node][furthest_node_guess] - kv.second.theta) / lambda));
+            // upper_bound = std::min(upper_bound, 2 * (sum_rewards + (distance_limit_D - distances[root_node][furthest_node_guess] - kv.second.theta) / lambda));
             upper_bound = std::min(upper_bound, sum_rewards + (distance_limit_D - kv.second.theta) / lambda);
             std::clog << lambda << " : " << kv.second.theta << " ," << std::endl;
         }

@@ -4,6 +4,7 @@
 
 int main(int argc, char const *argv[])
 {
+    Node root_node = 0;
     std::string test("tests/");
     if (argc == 1)
     {
