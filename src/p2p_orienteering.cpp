@@ -399,7 +399,6 @@ Path get_best_path(
     if (*(p_i.begin()) == start_node){
         p_i.pop_front();
     }
-    
 
     if (*(p_i.rbegin()) == finish_node){
         p_i.pop_back();
