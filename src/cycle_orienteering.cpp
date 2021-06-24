@@ -314,7 +314,7 @@ void binary_search(
 
     a2 = iterPCA_with_check(v2, c2, p2, theta_2, num_nodes - 1, root_node);
     // tmp_bound = theta_2 / lambda_2;
-    tmp = get_path(a1, root_node, furthest_node_guess, true);
+    tmp = get_path(a2, root_node, furthest_node_guess, true);
     tmp_p = get_feasible_path(tmp, costs, penalties, root_node, distance_limit_D);
 
     tmp_bound_info_2.arb_distance = edge_cost(a2, costs);

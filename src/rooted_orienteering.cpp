@@ -293,7 +293,7 @@ void binary_search(
     if (std::isfinite(tmp_bound) && best_bound > tmp_bound){
         best_bound = tmp_bound;
     }
-    tmp = get_path(a1, root_node, furthest_node_guess, true);
+    tmp = get_path(a2, root_node, furthest_node_guess, true);
     tmp_p = get_feasible_path(tmp, costs, penalties, furthest_node_guess, distance_limit_D);
     if (get_path_reward(tmp_p, penalties) > get_path_reward(best_path, penalties)){
         best_path = tmp_p;

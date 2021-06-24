@@ -18,7 +18,7 @@ using FeasiblePathExtractor = Path (&)(
     const Node &
     );
 
-distance_t limit_D; // Not recommended
+static distance_t limit_D; // Not recommended
 
 distance_t edge_cost(const Arborescence &arb_T, const Matrix &costs)
 {
@@ -308,6 +308,10 @@ void binary_search(
     BoundInfo tmp_bound_info_1, tmp_bound_info_2;
     a1 = iterPCA_with_check(v1, c1, p1, theta_1, num_nodes - 1, root_node);
     Path tmp = get_path(a1, root_node, furthest_node_guess, true);
+    for (Node n: tmp){
+        std::clog << n << " ";
+    }
+    std::clog << std::endl;
     Path reverse_tmp;
     reverse_tmp.clear();
     if (root_node == finish_node){
@@ -340,7 +344,11 @@ void binary_search(
     a2 = iterPCA_with_check(v2, c2, p2, theta_2, num_nodes - 1, root_node);
     // tmp_bound = theta_2 / lambda_2;
     tmp.clear();
-    tmp = get_path(a1, root_node, furthest_node_guess, true);
+    tmp = get_path(a2, root_node, furthest_node_guess, true);
+    for (Node n: tmp){
+        std::clog << n << " ";
+    }
+    std::clog << std::endl;
     reverse_tmp.clear();
     if (root_node == finish_node){
         for (Node n: tmp){
@@ -389,6 +397,11 @@ Path get_best_path(
 {
     Path best_path, p_i = p;
     reward_t best_path_reward = -1;
+
+    for (Node n: p_i){
+        std::clog << n << " ";
+    }
+    std::clog << std::endl;
     
     if (std::next(p_i.begin()) == p_i.end())
         return p_i;
@@ -497,16 +510,18 @@ std::pair<Node, Path> p2p_orienteering(
         // node_map maps original nodes to new ones
         std::unordered_map<Node, Node> node_map;
         v_copy.clear();
-        v_copy.insert(start_node);
-        v_copy.insert(finish_node);
+        // v_copy.insert(start_node);
+        // v_copy.insert(finish_node);
         node_list.clear();
         node_list.push_back(start_node);
         node_map[start_node] = node_list.size() - 1;
+        v_copy.insert(node_list.size() - 1);
         node_list.push_back(finish_node);
         node_map[finish_node] = node_list.size() - 1;
+        v_copy.insert(node_list.size() - 1);
         for (Node _ : vertices)
         {
-            if (start_node != _ && finish_node != _ && distances[start_node][_] + distances[_][finish_node] <= distances[start_node][furthest_node_guess] + distances[furthest_node_guess][finish_node])
+            if (start_node != _ && finish_node != _ && distances[start_node][_] + distances[_][finish_node] <= distances[start_node][furthest_node_guess] + distances[furthest_node_guess][finish_node] + DISTANCE_EPSILON)
             {
                 // v_copy.insert(_);
                 node_list.push_back(_);
