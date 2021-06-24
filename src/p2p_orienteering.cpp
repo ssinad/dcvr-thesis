@@ -187,7 +187,7 @@ void binary_search_recursive(
     Path tmp = get_path(a, root_node, furthest_node_guess, true);
     Path reverse_tmp;
     reverse_tmp.clear();
-    if (root_node != finish_node){
+    if (root_node == finish_node){
         for (Node n: tmp){
             reverse_tmp.push_front(n);
         }
@@ -310,7 +310,7 @@ void binary_search(
     Path tmp = get_path(a1, root_node, furthest_node_guess, true);
     Path reverse_tmp;
     reverse_tmp.clear();
-    if (root_node != finish_node){
+    if (root_node == finish_node){
         for (Node n: tmp){
             reverse_tmp.push_front(n);
         }
@@ -342,7 +342,7 @@ void binary_search(
     tmp.clear();
     tmp = get_path(a1, root_node, furthest_node_guess, true);
     reverse_tmp.clear();
-    if (root_node != finish_node){
+    if (root_node == finish_node){
         for (Node n: tmp){
             reverse_tmp.push_front(n);
         }
@@ -393,9 +393,13 @@ Path get_best_path(
     if (std::next(p_i.begin()) == p_i.end())
         return p_i;
     
+    assert (*(p_i.begin()) != finish_node);
+    assert (*(p_i.rbegin()) != start_node);
+    
     if (*(p_i.begin()) == start_node){
         p_i.pop_front();
     }
+    
 
     if (*(p_i.rbegin()) == finish_node){
         p_i.pop_back();
@@ -416,11 +420,12 @@ Path get_best_path(
             Node current_node = *node_iterator;
             current_path_distance += costs[previous_node][current_node];
             current_path_reward += rewards[current_node];
-            if (current_path_distance + costs[current_node][finish_node] > DISTANCE_EPSILON + distance_limit_D) continue;
             current_path.push_back(current_node);
-            if (current_path_reward > best_path_reward){
-                best_path = current_path;
-                best_path_reward = current_path_reward;
+            if (current_path_distance + costs[current_node][finish_node] <= DISTANCE_EPSILON + distance_limit_D){
+                if (current_path_reward > best_path_reward){
+                    best_path = current_path;
+                    best_path_reward = current_path_reward;
+                }
             }
             previous_node = current_node;
         }
