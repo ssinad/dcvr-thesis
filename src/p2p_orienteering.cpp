@@ -308,10 +308,10 @@ void binary_search(
     BoundInfo tmp_bound_info_1, tmp_bound_info_2;
     a1 = iterPCA_with_check(v1, c1, p1, theta_1, num_nodes - 1, root_node);
     Path tmp = get_path(a1, root_node, furthest_node_guess, true);
-    for (Node n: tmp){
-        std::clog << n << " ";
-    }
-    std::clog << std::endl;
+    // for (Node n: tmp){
+    //     std::clog << n << " ";
+    // }
+    // std::clog << std::endl;
     Path reverse_tmp;
     reverse_tmp.clear();
     if (root_node == finish_node){
@@ -345,10 +345,10 @@ void binary_search(
     // tmp_bound = theta_2 / lambda_2;
     tmp.clear();
     tmp = get_path(a2, root_node, furthest_node_guess, true);
-    for (Node n: tmp){
-        std::clog << n << " ";
-    }
-    std::clog << std::endl;
+    // for (Node n: tmp){
+    //     std::clog << n << " ";
+    // }
+    // std::clog << std::endl;
     reverse_tmp.clear();
     if (root_node == finish_node){
         for (Node n: tmp){
@@ -553,7 +553,7 @@ std::pair<Node, Path> p2p_orienteering(
         tmp_bound_2.clear();
         BestPathInfo best_path_info;
         BoundInfo best_bound_info;
-        penalty_t upper_bound = sum_rewards;
+        penalty_t upper_bound = sum_rewards, partial_upper_bound_1 = sum_rewards, partial_upper_bound_2 = sum_rewards;
 
         high_resolution_clock::time_point t1 = high_resolution_clock::now();
         Path new_tmp_1 = p2p_orienteering_with_guess(v_copy, node_map[start_node], node_map[furthest_node_guess], new_distances, new_rewards, distance_limit_D - distances[furthest_node_guess][finish_node], num_nodes, get_best_path, best_path_info, tmp_bound_1, node_map[start_node], node_map[finish_node]);
@@ -568,6 +568,7 @@ std::pair<Node, Path> p2p_orienteering(
             penalty_t lambda = kv.first;
             // upper_bound = std::min(upper_bound, 2 * (sum_rewards + (distance_limit_D / 2 - kv.second.theta) / lambda));
             // upper_bound = std::min(upper_bound, 2 * (sum_rewards + (distance_limit_D - distances[root_node][furthest_node_guess] - kv.second.theta) / lambda));
+            partial_upper_bound_1 = std::min(partial_upper_bound_1, sum_rewards + (distance_limit_D - distances[furthest_node_guess][finish_node] - kv.second.theta) / lambda);
             upper_bound = std::min(upper_bound, sum_rewards + (distance_limit_D - kv.second.theta) / lambda);
             std::clog << lambda << " : " << kv.second.theta << " ," << std::endl;
         }
@@ -576,10 +577,12 @@ std::pair<Node, Path> p2p_orienteering(
         for (auto& kv: tmp_bound_2){
             penalty_t lambda = kv.first;
             // upper_bound = std::min(upper_bound, 2 * (sum_rewards + (distance_limit_D - distances[root_node][furthest_node_guess] - kv.second.theta) / lambda));
+            partial_upper_bound_2 = std::min(partial_upper_bound_2, sum_rewards + (distance_limit_D - distances[start_node][furthest_node_guess] - kv.second.theta) / lambda);
             upper_bound = std::min(upper_bound, sum_rewards + (distance_limit_D - kv.second.theta) / lambda);
             std::clog << lambda << " : " << kv.second.theta << " ," << std::endl;
         }
         std::clog << "}" << std::endl;
+        upper_bound = std::min(upper_bound, partial_upper_bound_1 + partial_upper_bound_2);
 
         duration<double> time_span = duration_cast<duration<double> >(t2 - t1);
         // #ifndef NDEBUG
