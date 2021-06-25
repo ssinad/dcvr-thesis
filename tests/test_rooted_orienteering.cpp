@@ -23,12 +23,12 @@ int main(int argc, char ** argv)
         std::unordered_map<Node, BestPathInfo> info;
         std::cout << "Number of nodes: " << dr.get_vertices().size() << std::endl;
         auto p = rooted_orienteering(dr.get_vertices(), dr.get_root_node(), dr.get_matrix(), dr.get_penalties(), distance_limit, info);
-        std::cout << "Nodes: " << std::endl;
+        std::cout << "path nodes: [ ";
         for (Node n: p.second)
         {
-            std::cout << n << " ";
+            std::cout << n << " , ";
         }
-        std::cout << std::endl;
+        std::cout << "]" << std::endl;
         penalty_t bound = 0;
         for (auto tmp: info){
             if (bound < tmp.second.upper_bound){
