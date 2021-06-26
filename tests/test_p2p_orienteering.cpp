@@ -59,9 +59,11 @@ int main(int argc, char ** argv)
         penalty_t path_reward = get_path_reward(p.second, dr.get_penalties());
         // std::clog << best_bound_info.lambda << " " << best_bound_info.theta << std::endl;
         std::cout << "\"path reward\": " << path_reward << " , " << std::endl;
+        std::cout << "\"r-t reward\": " << best_path_info.r_t_path_reward << " ," << std::endl;
         std::cout << "\"tree reward\": " << best_path_info.arb_reward << " ," << std::endl;
         std::cout << "\"reward residue\": " << path_reward - 1 << " ," << std::endl;
         std::cout << "\"path distance\": " << get_path_distance(p.second, dr.get_matrix()) << " , " << std::endl;
+        std::cout << "\"r-t distance\": " << best_path_info.r_t_path_distance << " ," << std::endl;
         std::cout << "\"tree distance\": " << best_path_info.arb_distance << " ," << std::endl;
         std::cout << "\"upper bound\": " << best_bound_info.upper_bound << " ," << std::endl;
         std::cout << "} ," << std::endl;

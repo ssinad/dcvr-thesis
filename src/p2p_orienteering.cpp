@@ -86,21 +86,24 @@ void recursive_dfs_with_triangle_inequality(
     }
 }
 
-Path get_path(const Arborescence &arb_T, const Node &root_node, const Node &furthest_node_guess, bool triangle_inequality)
+Path get_path(const Arborescence &arb_T, const Node &root_node, const Node &furthest_node_guess, bool triangle_inequality, Path &r_t_path)
 {
     std::stack<Node> r_t_nodes;
     std::unordered_set<Node> r_t_set;
     Node tmp = furthest_node_guess;
     Path s_t_path;
     Graph g;
+    r_t_path.clear();
     while (tmp != root_node)
     {
         r_t_nodes.push(tmp);
         r_t_set.insert(tmp);
         tmp = arb_T.at(tmp);
+        r_t_path.push_front(tmp);
     }
     r_t_nodes.push(root_node);
     r_t_set.insert(root_node);
+    r_t_path.push_front(root_node);
     
     // Turn arborescence into a graph
     for (std::pair<Node, Node> kv : arb_T)
@@ -182,9 +185,10 @@ void binary_search_recursive(
     p1[furthest_node_guess] = 1 + costs[root_node][furthest_node_guess];
     assert( costs[root_node][furthest_node_guess] <= distance_limit_D + DISTANCE_EPSILON);
     penalty_t theta = 0; //, theta_1, theta_2;
+    Path r_t_path;
 
     Arborescence a = iterPCA_with_check(v1, c1, p1, theta, num_nodes - 1, root_node);
-    Path tmp = get_path(a, root_node, furthest_node_guess, true);
+    Path tmp = get_path(a, root_node, furthest_node_guess, true, r_t_path);
     Path reverse_tmp;
     reverse_tmp.clear();
     if (root_node == finish_node){
@@ -211,6 +215,8 @@ void binary_search_recursive(
         best_path_info.arb_reward = total_reward(a, penalties);
         best_path_info.path_distance = get_path_distance(tmp_p, costs);
         best_path_info.path_reward = get_path_reward(tmp_p, penalties);
+        best_path_info.r_t_path_reward = get_path_reward(r_t_path, penalties);
+        best_path_info.r_t_path_distance = get_path_distance(r_t_path, costs);
         best_path_info.path = tmp_p;
     }
 
@@ -306,8 +312,9 @@ void binary_search(
 
     
     BoundInfo tmp_bound_info_1, tmp_bound_info_2;
+    Path r_t_path;
     a1 = iterPCA_with_check(v1, c1, p1, theta_1, num_nodes - 1, root_node);
-    Path tmp = get_path(a1, root_node, furthest_node_guess, true);
+    Path tmp = get_path(a1, root_node, furthest_node_guess, true, r_t_path);
     // for (Node n: tmp){
     //     std::clog << n << " ";
     // }
@@ -337,6 +344,8 @@ void binary_search(
         best_path_info.arb_reward = total_reward(a1, penalties);
         best_path_info.path_distance = get_path_distance(tmp_p, costs);
         best_path_info.path_reward = get_path_reward(tmp_p, penalties);
+        best_path_info.r_t_path_reward = get_path_reward(r_t_path, penalties);
+        best_path_info.r_t_path_distance = get_path_distance(r_t_path, costs);
         best_path_info.path = tmp_p;
     }
 
@@ -344,7 +353,7 @@ void binary_search(
     a2 = iterPCA_with_check(v2, c2, p2, theta_2, num_nodes - 1, root_node);
     // tmp_bound = theta_2 / lambda_2;
     tmp.clear();
-    tmp = get_path(a2, root_node, furthest_node_guess, true);
+    tmp = get_path(a2, root_node, furthest_node_guess, true, r_t_path);
     // for (Node n: tmp){
     //     std::clog << n << " ";
     // }
@@ -372,6 +381,8 @@ void binary_search(
         best_path_info.arb_reward = total_reward(a2, penalties);
         best_path_info.path_distance = get_path_distance(tmp_p, costs);
         best_path_info.path_reward = get_path_reward(tmp_p, penalties);
+        best_path_info.r_t_path_reward = get_path_reward(r_t_path, penalties);
+        best_path_info.r_t_path_distance = get_path_distance(r_t_path, costs);
         best_path_info.path = tmp_p;
     }
 

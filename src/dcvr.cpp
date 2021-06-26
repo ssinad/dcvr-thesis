@@ -119,9 +119,10 @@ std::pair<bool, Path> path_generation_orienteering(
     const Node &root_node
     )
 {
-    std::unordered_map<Node, BestPathInfo> info;
+    std::unordered_map<Node, BestPathInfo> best_path_info_map;
+    std::unordered_map<Node, BoundInfo> best_bound_info_map;
     auto start_orienteering = clock();
-    auto tmp_p = rooted_orienteering(vertices, root_node, distances, rewards, distance_limit_D, info);
+    auto tmp_p = rooted_orienteering(vertices, root_node, distances, rewards, distance_limit_D, best_path_info_map, best_bound_info_map);
     auto end_orienteering = clock();
     
     auto orienteering_duration = 1000.0 * (end_orienteering - start_orienteering) / CLOCKS_PER_SEC;
@@ -129,7 +130,7 @@ std::pair<bool, Path> path_generation_orienteering(
     Path p = post_process(tmp_p.second, rewards, distances, root_node, distance_limit_D);
     std::clog << "Upper Bounds:" << std::endl;
     best_upper = 0;
-    for (auto &kv : info)
+    for (auto &kv : best_bound_info_map)
     {
         std::clog << kv.second.upper_bound << ", ";
         if (isfinite(kv.second.upper_bound) && kv.second.upper_bound > best_upper)

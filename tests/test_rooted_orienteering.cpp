@@ -20,9 +20,10 @@ int main(int argc, char ** argv)
             }
         }
         dr.read_file(filename, Dataset_type::ORIENTEERING);
-        std::unordered_map<Node, BestPathInfo> info;
+        std::unordered_map<Node, BestPathInfo> best_path_info_map;
+        std::unordered_map<Node, BoundInfo> best_bound_info_map;
         std::cout << "Number of nodes: " << dr.get_vertices().size() << std::endl;
-        auto p = rooted_orienteering(dr.get_vertices(), dr.get_root_node(), dr.get_matrix(), dr.get_penalties(), distance_limit, info);
+        auto p = rooted_orienteering(dr.get_vertices(), dr.get_root_node(), dr.get_matrix(), dr.get_penalties(), distance_limit, best_path_info_map, best_bound_info_map);
         std::cout << "path nodes: [ ";
         for (Node n: p.second)
         {
@@ -30,7 +31,7 @@ int main(int argc, char ** argv)
         }
         std::cout << "]" << std::endl;
         penalty_t bound = 0;
-        for (auto tmp: info){
+        for (auto tmp: best_bound_info_map){
             if (bound < tmp.second.upper_bound){
                 bound = tmp.second.upper_bound;
             }

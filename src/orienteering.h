@@ -19,7 +19,9 @@ struct BestPathInfo{
     penalty_t theta;
     distance_t arb_distance;
     reward_t arb_reward;
+    reward_t r_t_path_reward;
     distance_t path_distance;
+    distance_t r_t_path_distance;
     reward_t path_reward = 0;
     Path path;
     // reward_t a1_reward;
@@ -69,7 +71,8 @@ std::pair<Node, Path> rooted_orienteering(
                                     const Matrix &,
                                     const Rewards &,
                                     distance_t,
-                                    std::unordered_map<Node, BestPathInfo>&
+                                    std::unordered_map<Node, BestPathInfo>&,
+                                    std::unordered_map<Node, BoundInfo>&
                                 );
 
 std::pair<Node, Path> cycle_orienteering(
