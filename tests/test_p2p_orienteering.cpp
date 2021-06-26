@@ -66,7 +66,7 @@ int main(int argc, char ** argv)
         std::cout << "\"r-t distance\": " << best_path_info.r_t_path_distance << " ," << std::endl;
         std::cout << "\"tree distance\": " << best_path_info.arb_distance << " ," << std::endl;
         std::cout << "\"upper bound\": " << best_bound_info.upper_bound << " ," << std::endl;
-        std::cout << "} ," << std::endl;
+        std::cout << "} " << std::endl;
         return EXIT_SUCCESS;
     }
     return 0;
