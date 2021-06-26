@@ -98,8 +98,8 @@ Path get_path(const Arborescence &arb_T, const Node &root_node, const Node &furt
     {
         r_t_nodes.push(tmp);
         r_t_set.insert(tmp);
-        tmp = arb_T.at(tmp);
         r_t_path.push_front(tmp);
+        tmp = arb_T.at(tmp);
     }
     r_t_nodes.push(root_node);
     r_t_set.insert(root_node);
