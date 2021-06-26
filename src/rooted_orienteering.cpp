@@ -303,7 +303,7 @@ void binary_search(
     // best_bound = (distance_limit_D - theta_1) / lambda_1;
     
     Path tmp = get_path(a1, root_node, furthest_node_guess, true, r_t_path);
-    Path tmp_p = get_feasible_path(tmp, costs, penalties, furthest_node_guess, distance_limit_D);
+    Path tmp_p = get_feasible_path(tmp, costs, penalties, root_node, distance_limit_D);
     tmp_bound_info_1.arb_distance = edge_cost(a1, costs);
     tmp_bound_info_1.arb_reward = total_reward(a1, penalties);
     tmp_bound_info_1.path_distance = get_path_distance(tmp_p, costs);
@@ -325,7 +325,7 @@ void binary_search(
     a2 = iterPCA_with_check(v2, c2, p2, theta_2, num_nodes - 1, root_node);
     
     tmp = get_path(a2, root_node, furthest_node_guess, true, r_t_path);
-    tmp_p = get_feasible_path(tmp, costs, penalties, furthest_node_guess, distance_limit_D);
+    tmp_p = get_feasible_path(tmp, costs, penalties, root_node, distance_limit_D);
     tmp_bound_info_2.arb_distance = edge_cost(a2, costs);
     tmp_bound_info_2.arb_reward = total_reward(a2, penalties);
     tmp_bound_info_2.path_distance = get_path_distance(tmp_p, costs);
@@ -531,6 +531,7 @@ Path get_best_path(
             best_path_reward = current_path_reward;
         }
     }
+    std::clog << "Root node is "<< root_node << std::endl;
     assert(*(best_path.begin()) == root_node);
     assert(get_path_distance(best_path, costs) <= distance_limit_D + DISTANCE_EPSILON);
     return best_path;
@@ -665,6 +666,7 @@ std::pair<Node, Path> rooted_orienteering(
     std::unordered_map<Node, BoundInfo> &best_bound_info_map
     )
 {
+    // std::clog << "Root node is " << root_node << std::endl;
     penalty_t best_path_reward = -1, upper_bound;
     // penalty_t best_upper;
     Path best_path;
@@ -683,12 +685,15 @@ std::pair<Node, Path> rooted_orienteering(
         std::vector<Node> node_list;
         // node_map maps original nodes to new ones
         std::unordered_map<Node, Node> node_map;
-        v_copy.insert(root_node);
+        // v_copy.insert(root_node);
+        node_list.clear();
+        node_map.clear();
         node_list.push_back(root_node);
-        node_map[root_node] = root_node;
+        v_copy.insert(node_list.size() - 1);
+        node_map[root_node] = node_list.size() - 1;
         for (Node _ : vertices)
         {
-            if (root_node != _ && distances[root_node][_] <= distances[root_node][furthest_node_guess])
+            if (root_node != _ && distances[root_node][_] <= distances[root_node][furthest_node_guess] + DISTANCE_EPSILON)
             {
                 // v_copy.insert(_);
                 node_list.push_back(_);
@@ -780,6 +785,5 @@ std::pair<Node, Path> rooted_orienteering(
             best_t = furthest_node_guess;
         }
     }
-    
     return std::pair<Node, Path>(best_t, best_path);
 }
