@@ -47,7 +47,7 @@ CCOBJ = $(CCFLAGS) -c
 Path.o: $(CPPSRC)/Path.cpp
 	g++ -c $(CCFLAGS)  -o Path.o $(CPPSRC)/Path.cpp
 dcvr.o: $(CPPSRC)/dcvr.cpp
-	g++ $(CCOBJ) -DIL_STD -I $(CPLEXINCDIR) -I $(CONCERTINCDIR) -Wno-ignored-attributes -o dcvr.o $(CPPSRC)/dcvr.cpp
+	g++ $(CCOBJ) -DIL_STD -I $(CPLEXINCDIR) -I $(CONCERTINCDIR) -Wno-overflow -Wno-ignored-attributes -o dcvr.o $(CPPSRC)/dcvr.cpp
 iterPCA.o: $(CPPSRC)/iterPCA.cpp
 	g++ $(CCOBJ) -o iterPCA.o $(CPPSRC)/iterPCA.cpp
 heuristics.o: $(CPPSRC)/heuristics.cpp
@@ -63,7 +63,7 @@ cycle_orienteering.o: $(CPPSRC)/cycle_orienteering.cpp
 p2p_orienteering.o: $(CPPSRC)/p2p_orienteering.cpp
 	g++ $(CCOBJ) -o p2p_orienteering.o $(CPPSRC)/p2p_orienteering.cpp
 dcvr_dry_run: $(CPPSRC)/dcvr.cpp
-	g++ $(CCOBJ) -DIL_STD -I $(CPLEXINCDIR) -I $(CONCERTINCDIR) -Wno-ignored-attributes $(CPPSRC)/dcvr.cpp
+	g++ $(CCOBJ) -DIL_STD -I $(CPLEXINCDIR) -I $(CONCERTINCDIR) -Wno-overflow -Wno-ignored-attributes $(CPPSRC)/dcvr.cpp
 iterPCA_dry_run: $(CPPSRC)/iterPCA.cpp
 	g++ $(CCOBJ) $(CPPSRC)/iterPCA.cpp
 
@@ -96,6 +96,6 @@ test_cycle_orienteering: iterPCA.o cycle_orienteering.o DatasetReader.o heuristi
 test_p2p_orienteering: iterPCA.o p2p_orienteering.o DatasetReader.o heuristics.o Path.o $(TESTS)/test_p2p_orienteering.cpp
 	g++ $(CCFLAGS) -o $(TESTS)/test_p2p_orienteering.out $(TESTS)/test_p2p_orienteering.cpp  p2p_orienteering.o iterPCA.o  DatasetReader.o heuristics.o Path.o
 test_dcvr: dcvr.o rooted_orienteering.o iterPCA.o heuristics.o $(TESTS)/test_dcvr.cpp DatasetReader.o Path.o
-	g++ $(CCFLAGS) -DIL_STD $(CCLNDIRS) -Wno-ignored-attributes -o $(TESTS)/test_dcvr.out $(TESTS)/test_dcvr.cpp dcvr.o rooted_orienteering.o iterPCA.o DatasetReader.o heuristics.o Path.o $(CCLNFLAGS)
+	g++ $(CCFLAGS) -DIL_STD $(CCLNDIRS) -Wno-overflow -Wno-ignored-attributes -o $(TESTS)/test_dcvr.out $(TESTS)/test_dcvr.cpp dcvr.o rooted_orienteering.o iterPCA.o DatasetReader.o heuristics.o Path.o $(CCLNFLAGS)
 clean:
 	rm -rf *.o $(TESTS)/*.dSYM $(TESTS)/*.out *.out *.dSYM **.log **.json
