@@ -531,7 +531,7 @@ Path get_best_path(
             best_path_reward = current_path_reward;
         }
     }
-    std::clog << "Root node is "<< root_node << std::endl;
+    // std::clog << "Root node is "<< root_node << std::endl;
     assert(*(best_path.begin()) == root_node);
     assert(get_path_distance(best_path, costs) <= distance_limit_D + DISTANCE_EPSILON);
     return best_path;

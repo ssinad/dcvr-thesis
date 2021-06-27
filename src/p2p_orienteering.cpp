@@ -409,10 +409,10 @@ Path get_best_path(
     Path best_path, p_i = p;
     reward_t best_path_reward = -1;
 
-    for (Node n: p_i){
-        std::clog << n << " ";
-    }
-    std::clog << std::endl;
+    // for (Node n: p_i){
+    //     std::clog << n << " ";
+    // }
+    // std::clog << std::endl;
     
     if (std::next(p_i.begin()) == p_i.end())
         return p_i;
