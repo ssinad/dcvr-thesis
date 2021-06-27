@@ -96,6 +96,6 @@ test_cycle_orienteering: iterPCA.o cycle_orienteering.o DatasetReader.o heuristi
 test_p2p_orienteering: iterPCA.o p2p_orienteering.o DatasetReader.o heuristics.o Path.o $(TESTS)/test_p2p_orienteering.cpp
 	g++ $(CCFLAGS) -o $(TESTS)/test_p2p_orienteering.out $(TESTS)/test_p2p_orienteering.cpp  p2p_orienteering.o iterPCA.o  DatasetReader.o heuristics.o Path.o
 test_dcvr: dcvr.o rooted_orienteering.o iterPCA.o heuristics.o $(TESTS)/test_dcvr.cpp DatasetReader.o Path.o
-	g++ $(CCFLAGS) -DIL_STD $(CCLNDIRS) -Wno-overflow -Wno-ignored-attributes -o $(TESTS)/test_dcvr.out $(TESTS)/test_dcvr.cpp dcvr.o rooted_orienteering.o iterPCA.o DatasetReader.o heuristics.o Path.o $(CCLNFLAGS)
+	g++ $(CCFLAGS) -DIL_STD $(CCLNDIRS) -o $(TESTS)/test_dcvr.out $(TESTS)/test_dcvr.cpp dcvr.o rooted_orienteering.o iterPCA.o DatasetReader.o heuristics.o Path.o $(CCLNFLAGS)
 clean:
 	rm -rf *.o $(TESTS)/*.dSYM $(TESTS)/*.out *.out *.dSYM **.log **.json
