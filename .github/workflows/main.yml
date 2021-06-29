@@ -3,6 +3,9 @@ name: Build images
 on:
   push:
     branches: [ main ]
+    paths-ignore:
+      - 'datasets/**'
+      - README.md
 
 jobs:
   build:
