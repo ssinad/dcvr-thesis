@@ -518,7 +518,7 @@ std::pair<Node, Path> cycle_orienteering(
         tmp_bound_2.clear();
         BestPathInfo best_path_info;
         BoundInfo best_bound_info;
-        penalty_t upper_bound = sum_rewards;
+        penalty_t upper_bound = sum_rewards, tmp;
 
         high_resolution_clock::time_point t1 = high_resolution_clock::now();
         Path new_tmp_1 = cycle_orienteering_with_guess(v_copy, node_map[root_node], node_map[furthest_node_guess], new_distances, new_rewards, distance_limit_D / 2, num_nodes, get_best_path, best_path_info, tmp_bound_1);
@@ -531,17 +531,43 @@ std::pair<Node, Path> cycle_orienteering(
         std::clog << "{" << std::endl;
         for (auto& kv: tmp_bound_1){
             penalty_t lambda = kv.first;
-            upper_bound = std::min(upper_bound, 2 * (sum_rewards + (distance_limit_D / 2 - kv.second.theta) / lambda));
-            upper_bound = std::min(upper_bound, 2 * (sum_rewards + (distance_limit_D - distances[root_node][furthest_node_guess] - kv.second.theta) / lambda) - rewards[furthest_node_guess] );
-            upper_bound = std::min(upper_bound, sum_rewards + (distance_limit_D - kv.second.theta) / lambda);
+            tmp = 2 * (sum_rewards + (distance_limit_D / 2 - kv.second.theta) / lambda);
+            if (upper_bound > tmp){
+                best_bound_info.lambda = lambda;
+                best_bound_info.theta = kv.second.theta;
+                upper_bound = tmp;
+            }
+            
+            tmp = 2 * (sum_rewards + (distance_limit_D - distances[root_node][furthest_node_guess] - kv.second.theta) / lambda) - rewards[furthest_node_guess];
+            if (upper_bound > tmp){
+                best_bound_info.lambda = lambda;
+                best_bound_info.theta = kv.second.theta;
+                upper_bound = tmp;
+            }
+            tmp = sum_rewards + (distance_limit_D - kv.second.theta) / lambda;
+            if (upper_bound > tmp){
+                best_bound_info.lambda = lambda;
+                best_bound_info.theta = kv.second.theta;
+                upper_bound = tmp;
+            }
             std::clog << lambda << " : " << kv.second.theta << " ," << std::endl;
         }
         std::clog << "}," << std::endl << "{" << std::endl;
 
         for (auto& kv: tmp_bound_2){
             penalty_t lambda = kv.first;
-            upper_bound = std::min(upper_bound, 2 * (sum_rewards + (distance_limit_D - distances[root_node][furthest_node_guess] - kv.second.theta) / lambda) - rewards[furthest_node_guess]);
-            upper_bound = std::min(upper_bound, sum_rewards + (distance_limit_D - kv.second.theta) / lambda);
+            tmp = 2 * (sum_rewards + (distance_limit_D - distances[root_node][furthest_node_guess] - kv.second.theta) / lambda) - rewards[furthest_node_guess];
+            if (upper_bound > tmp){
+                best_bound_info.lambda = lambda;
+                best_bound_info.theta = kv.second.theta;
+                upper_bound = tmp;
+            }
+            tmp = sum_rewards + (distance_limit_D - kv.second.theta) / lambda;
+            if (upper_bound > tmp){
+                best_bound_info.lambda = lambda;
+                best_bound_info.theta = kv.second.theta;
+                upper_bound = tmp;
+            }
             std::clog << lambda << " : " << kv.second.theta << " ," << std::endl;
         }
         std::clog << "}" << std::endl;

@@ -732,7 +732,12 @@ std::pair<Node, Path> rooted_orienteering(
         high_resolution_clock::time_point t2 = high_resolution_clock::now();
         for (auto& kv: tmp_bound){
             penalty_t lambda = kv.first;
-            upper_bound = std::min(upper_bound, sum_rewards + (distance_limit_D - kv.second.theta) / lambda);
+            penalty_t bound = sum_rewards + (distance_limit_D - kv.second.theta) / lambda;
+            if (upper_bound > bound){
+                best_bound_info.lambda = lambda;
+                best_bound_info.theta = kv.second.theta;
+                upper_bound = bound;
+            }
             std::clog << lambda << " : " << kv.second.theta << " ," << std::endl;
         }
         std::clog << "}," << std::endl << "{" << std::endl;
