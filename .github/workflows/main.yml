@@ -5,8 +5,8 @@ on:
     branches: [ main ]
     paths-ignore:
       - 'datasets/**'
-      - !datasets/small-sample.txt
-      - !datasets/Tsiligirides/tsiligirides_problem_2.txt
+      - '!datasets/small-sample.txt'
+      - '!datasets/Tsiligirides/tsiligirides_problem_2.txt'
       - README.md
 
 jobs:
