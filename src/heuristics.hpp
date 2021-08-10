@@ -11,5 +11,8 @@ Path post_process(Path &path, const Rewards &rewards, const Matrix &distances, c
 std::pair<bool, Path> path_generation_heuristic_1(const Vertices &vertices, const Rewards &rewards, const Matrix &distances, const distance_t distance_limit_D, const Node &root_node);
 std::pair<bool, Path> path_generation_heuristic_2(const Vertices &vertices, const Rewards &rewards, const Matrix &distances, const distance_t distance_limit_D, const Node &root_node);
 std::pair<bool, Path> path_generation_heuristic_3(const Vertices &vertices, const Rewards &rewards, const Matrix &distances, const distance_t distance_limit_D, const Node &root_node);
+std::pair<bool, Path> cycle_generation_heuristic_1(const Vertices &vertices, const Rewards &rewards, const Matrix &distances, const distance_t distance_limit_D, const Node &root_node);
+std::pair<bool, Path> cycle_generation_heuristic_2(const Vertices &vertices, const Rewards &rewards, const Matrix &distances, const distance_t distance_limit_D, const Node &root_node);
+std::pair<bool, Path> cycle_generation_heuristic_3(const Vertices &vertices, const Rewards &rewards, const Matrix &distances, const distance_t distance_limit_D, const Node &root_node);
 
 #endif
