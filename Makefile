@@ -50,8 +50,8 @@ dcvr.o: $(CPPSRC)/dcvr.cpp
 	g++ $(CCOBJ) -DIL_STD -I $(CPLEXINCDIR) -I $(CONCERTINCDIR) -Wno-overflow -Wno-ignored-attributes -o dcvr.o $(CPPSRC)/dcvr.cpp
 iterPCA.o: $(CPPSRC)/iterPCA.cpp
 	g++ $(CCOBJ) -o iterPCA.o $(CPPSRC)/iterPCA.cpp
-heuristics.o: $(CPPSRC)/heuristics.cpp
-	g++ $(CCOBJ) -o heuristics.o $(CPPSRC)/heuristics.cpp
+heuristics.o: $(CPPSRC)/heuristics.cpp $(CPPSRC)/cycle_heuristics.cpp
+	g++ $(CCOBJ) -o heuristics.o $(CPPSRC)/heuristics.cpp $(CPPSRC)/cycle_heuristics.cpp
 PcaReader.o: $(CPPSRC)/PcaReader.cpp
 	g++ $(CCOBJ) -o PcaReader.o $(CPPSRC)/PcaReader.cpp
 DatasetReader.o: $(CPPSRC)/DatasetReader.cpp
