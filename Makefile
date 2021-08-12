@@ -80,6 +80,7 @@ run_tests: test_all
 	$(TESTS)/test_cycle_orienteering.out -D 4 < datasets/small-sample.txt
 	$(TESTS)/test_p2p_orienteering.out -D 15 < datasets/Tsiligirides/tsiligirides_problem_2.txt
 	$(TESTS)/test_dcvr.out -D 4 < datasets/small-sample.txt
+	$(TESTS)/test_cycle_dcvr.out -D 4 < datasets/small-sample.txt
 
 
 test_all: test_iterPCA test_rooted_orienteering test_cycle_orienteering test_dcvr test_cycle_dcvr test_p2p_orienteering
@@ -100,6 +101,6 @@ test_p2p_orienteering: iterPCA.o p2p_orienteering.o DatasetReader.o heuristics.o
 test_dcvr: dcvr.o rooted_orienteering.o iterPCA.o heuristics.o $(TESTS)/test_dcvr.cpp DatasetReader.o Path.o
 	g++ $(CCFLAGS) -DIL_STD $(CCLNDIRS) -o $(TESTS)/test_dcvr.out $(TESTS)/test_dcvr.cpp dcvr.o rooted_orienteering.o iterPCA.o DatasetReader.o heuristics.o Path.o $(CCLNFLAGS)
 test_cycle_dcvr: cycle_dcvr.o cycle_orienteering.o iterPCA.o heuristics.o $(TESTS)/test_cycle_dcvr.cpp DatasetReader.o Path.o
-	g++ $(CCFLAGS) -DIL_STD $(CCLNDIRS) -o $(TESTS)/test_cycle_dcvr.out $(TESTS)/test_cycle_dcvr.cpp cycle_dcvr.o rooted_orienteering.o iterPCA.o DatasetReader.o heuristics.o Path.o $(CCLNFLAGS)
+	g++ $(CCFLAGS) -DIL_STD $(CCLNDIRS) -o $(TESTS)/test_cycle_dcvr.out $(TESTS)/test_cycle_dcvr.cpp cycle_dcvr.o cycle_orienteering.o iterPCA.o DatasetReader.o heuristics.o Path.o $(CCLNFLAGS)
 clean:
 	rm -rf *.o $(TESTS)/*.dSYM $(TESTS)/*.out *.out *.dSYM **.log **.json
