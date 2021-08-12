@@ -30,7 +30,7 @@ std::pair<bool, Path> cycle_generation_orienteering(
     
     auto orienteering_duration = 1000.0 * (end_orienteering - start_orienteering) / CLOCKS_PER_SEC;
     std::clog << "Orienteering runtime: " << orienteering_duration << " ms" << std::endl;
-    Path p = post_process(tmp_p.second, rewards, distances, root_node, distance_limit_D);
+    Path p = cycle_post_process(tmp_p.second, rewards, distances, root_node, distance_limit_D);
     std::clog << "Upper Bounds:" << std::endl;
     best_upper = 0;
     for (auto &kv : best_bound_info_map)
@@ -73,7 +73,7 @@ std::unordered_map<int, PathWrapper> cycle_dcvr_fractional(
     int path_cnt = 0;
     for (Node v : vertices)
     {
-        if (distances[root_node][path_cnt] - distance_limit_D > DISTANCE_EPSILON)
+        if (distances[root_node][path_cnt] + distances[path_cnt][root_node] - distance_limit_D > DISTANCE_EPSILON)
         {
             env.out() << "No solution possible" << endl;
             return paths; // No solutions
