@@ -2,6 +2,7 @@
 #include <algorithm>
 #include "heuristics.hpp"
 #include "orienteering.h"
+#include <cassert>
 
 
 std::vector<Node> my_argsort(const Rewards &rewards)
@@ -177,6 +178,7 @@ std::pair<bool, Path> path_generation_heuristic_3(const Vertices &vertices, cons
 
 Path cycle_post_process(Path &path, const Rewards &rewards, const Matrix &distances, const Node &root_node, const distance_t distance_limit_D)
 {
+    assert(path.size() > 1 && path.front() == root_node && path.back() == root_node);
     std::vector<Node> args = my_argsort(rewards);
     std::unordered_set<Node> path_nodes;
     for (Node j : path)
@@ -187,7 +189,7 @@ Path cycle_post_process(Path &path, const Rewards &rewards, const Matrix &distan
     distance_t path_distance = get_path_distance(path, distances);
 
     Path new_path = path;
-    new_path.pop_back();
+    // new_path.pop_back();
     for (Node i : args)
     {
         if (path_nodes.find(i) != path_nodes.end())
@@ -214,6 +216,8 @@ Path cycle_post_process(Path &path, const Rewards &rewards, const Matrix &distan
             ++current_node_iterator;
         }
     }
+    
+    assert(new_path.size() > 1 && new_path.front() == root_node && new_path.back() == root_node);
     return new_path;
 }
 

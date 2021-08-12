@@ -145,6 +145,7 @@ std::unordered_map<int, PathWrapper> cycle_dcvr_fractional(
                 }
             }
         }
+        assert(p.size() > 1 && p.back() == root_node && p.front() == root_node);
 
         // TODO check path distance
 

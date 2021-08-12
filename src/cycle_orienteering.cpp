@@ -371,8 +371,8 @@ Path get_best_path(
     Path current_path;
     Path::iterator initial_node_iterator = p_i.begin();
     
-    if (std::next(p_i.begin()) == p_i.end())
-        return p_i;
+    // if (std::next(p_i.begin()) == p_i.end())
+    //     return p_i;
     
 
     // while (initial_node_iterator != p_i.end())
@@ -425,7 +425,7 @@ Path get_best_path(
     assert(get_path_distance(best_path, costs) <= distance_limit_D + DISTANCE_EPSILON);
     // std :: clog << get_path_distance(best_path, costs) << ", " << distance_limit_D << std::endl;
     best_path.push_back(root_node);
-    assert(*(best_path.begin()) == root_node);
+    assert(best_path.size() > 1 && best_path.front() == root_node && best_path.back() == root_node);
     return best_path;
     
 }
