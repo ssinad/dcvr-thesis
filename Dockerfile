@@ -10,7 +10,8 @@ RUN ln -s /ibm ./ibm \
     && make test_rooted_orienteering \
     && make test_cycle_orienteering \
     && make test_p2p_orienteering \
-    && make test_dcvr
+    && make test_dcvr \
+    && make test_cycle_dcvr
     # && make DEBUG_FLAG=-DNDEBUG test_dcvr 
 
 
@@ -47,6 +48,13 @@ LABEL org.opencontainers.image.source ${REPO}
 
 ENTRYPOINT [ "./dcvr" ]
 
+FROM debian:buster-20210111-slim AS cycle-dvrp-stage
+
+COPY --from=builder /column-generation/tests/test_cycle_dcvr.out ./dcvr
+
+LABEL org.opencontainers.image.source ${REPO}
+
+ENTRYPOINT [ "./dcvr" ]
 
 FROM builder AS testing-stage
 
