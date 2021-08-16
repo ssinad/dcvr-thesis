@@ -1,5 +1,5 @@
-#ifndef __DCVR__
-#define __DCVR__
+#ifndef __CYCLE_DCVR__
+#define __CYCLE_DCVR__
 #include <unordered_map>
 // #include <ilcplex/ilocplex.h>
 #include "Matrix.h"
