@@ -7,6 +7,7 @@
 #include <map>
 #include <iostream>
 #include <cmath>
+#include <algorithm>
 
 using FeasiblePathExtractor = Path (&)(
     const Path &,
@@ -83,21 +84,24 @@ void recursive_dfs_with_triangle_inequality(
     }
 }
 
-Path get_path(const Arborescence &arb_T, const Node &root_node, const Node &furthest_node_guess, bool triangle_inequality)
+Path get_path(const Arborescence &arb_T, const Node &root_node, const Node &furthest_node_guess, bool triangle_inequality, Path &r_t_path)
 {
     std::stack<Node> r_t_nodes;
     std::unordered_set<Node> r_t_set;
     Node tmp = furthest_node_guess;
     Path s_t_path;
     Graph g;
+    r_t_path.clear();
     while (tmp != root_node)
     {
         r_t_nodes.push(tmp);
         r_t_set.insert(tmp);
+        r_t_path.push_front(tmp);
         tmp = arb_T.at(tmp);
     }
     r_t_nodes.push(root_node);
     r_t_set.insert(root_node);
+    r_t_path.push_front(root_node);
     
     // Turn arborescence into a graph
     for (std::pair<Node, Node> kv : arb_T)
@@ -143,8 +147,8 @@ void binary_search_recursive(
     const Node &root_node,
     const Node &furthest_node_guess,
     distance_t distance_limit_D,
-    Path& best_path,
-    penalty_t &best_bound,
+    BestPathInfo &best_path_info,
+    LambdaMapping &best_bound_info,
     FeasiblePathExtractor get_feasible_path
     )
 {
@@ -177,16 +181,32 @@ void binary_search_recursive(
     p1[furthest_node_guess] = 1 + costs[root_node][furthest_node_guess];
     assert( costs[root_node][furthest_node_guess] <= distance_limit_D + DISTANCE_EPSILON);
     penalty_t theta = 0; //, theta_1, theta_2;
+    Path r_t_path;
 
     Arborescence a = iterPCA_with_check(v1, c1, p1, theta, num_nodes - 1, root_node);
-    penalty_t tmp_bound = (distance_limit_D - theta) / lambda;
-    if (std::isfinite(tmp_bound) && best_bound > tmp_bound){
-        best_bound = tmp_bound;
-    }
-    Path tmp = get_path(a, root_node, furthest_node_guess, true);
+    // penalty_t tmp_bound = (distance_limit_D - theta) / lambda;
+    // if (std::isfinite(tmp_bound) && best_bound > tmp_bound){
+    //     best_bound = tmp_bound;
+    // }
+    Path tmp = get_path(a, root_node, furthest_node_guess, true, r_t_path);
     Path tmp_p = get_feasible_path(tmp, costs, penalties, root_node, distance_limit_D);
-    if (get_path_reward(tmp_p, penalties) > get_path_reward(best_path, penalties)){
-        best_path = tmp_p;
+    BoundInfo tmp_bound_info;
+    tmp_bound_info.arb_distance = edge_cost(a, costs);
+    tmp_bound_info.arb_reward = total_reward(a, penalties);
+    tmp_bound_info.path_distance = get_path_distance(tmp_p, costs);
+    tmp_bound_info.path_reward = get_path_reward(tmp_p, penalties);
+    tmp_bound_info.theta = theta;
+    best_bound_info[lambda] = tmp_bound_info;
+
+    if (get_path_reward(tmp_p, penalties) > get_path_reward(best_path_info.path, penalties)){
+        // best_path_info.upper_bound = tmp_bound_info;
+        best_path_info.arb_distance = edge_cost(a, costs);
+        best_path_info.arb_reward = total_reward(a, penalties);
+        best_path_info.path_distance = get_path_distance(tmp_p, costs);
+        best_path_info.path_reward = get_path_reward(tmp_p, penalties);
+        best_path_info.r_t_path_reward = get_path_reward(r_t_path, penalties);
+        best_path_info.r_t_path_distance = get_path_distance(r_t_path, costs);
+        best_path_info.path = tmp_p;
     }
 
     distance_t tree_cost = edge_cost(a, costs);
@@ -207,7 +227,7 @@ void binary_search_recursive(
             // theta_2 = theta;
             lambda_2 = lambda;
             // TODO Should this be the original penalties, costs, vertices?
-            binary_search_recursive(a1, a2, vertices, costs, lambda_1, lambda_2, penalties, num_nodes, root_node, furthest_node_guess, distance_limit_D, best_path, best_bound, get_feasible_path);
+            binary_search_recursive(a1, a2, vertices, costs, lambda_1, lambda_2, penalties, num_nodes, root_node, furthest_node_guess, distance_limit_D, best_path_info, best_bound_info, get_feasible_path);
             return;
         }
         else
@@ -215,7 +235,7 @@ void binary_search_recursive(
             a1 = a;
             // theta_1 = theta;
             lambda_1 = lambda;
-            binary_search_recursive(a1, a2, vertices, costs, lambda_1, lambda_2, penalties, num_nodes, root_node, furthest_node_guess, distance_limit_D, best_path, best_bound, get_feasible_path);
+            binary_search_recursive(a1, a2, vertices, costs, lambda_1, lambda_2, penalties, num_nodes, root_node, furthest_node_guess, distance_limit_D, best_path_info, best_bound_info, get_feasible_path);
             return;
         }
     }
@@ -233,8 +253,8 @@ void binary_search(
     distance_t distance_limit_D,
     penalty_t &lambda_1,
     penalty_t &lambda_2,
-    Path& best_path,
-    penalty_t &best_bound,
+    BestPathInfo &best_path_info,
+    LambdaMapping &best_bound_info,
     FeasiblePathExtractor get_feasible_path
     )
 {
@@ -276,31 +296,61 @@ void binary_search(
     p1[furthest_node_guess] = 1 + costs[root_node][furthest_node_guess];
     p2[furthest_node_guess] = 1 + costs[root_node][furthest_node_guess];
     penalty_t theta_1 = 0, theta_2 = 0;
+    Path r_t_path;
 
-    
-
+    BoundInfo tmp_bound_info_1, tmp_bound_info_2;
     a1 = iterPCA_with_check(v1, c1, p1, theta_1, num_nodes - 1, root_node);
-    best_bound = (distance_limit_D - theta_1) / lambda_1;
+    // best_bound = (distance_limit_D - theta_1) / lambda_1;
     
-    Path tmp = get_path(a1, root_node, furthest_node_guess, true);
-    Path tmp_p = get_feasible_path(tmp, costs, penalties, furthest_node_guess, distance_limit_D);
-    if (get_path_reward(tmp_p, penalties) > get_path_reward(best_path, penalties)){
-        best_path = tmp_p;
+    Path tmp = get_path(a1, root_node, furthest_node_guess, true, r_t_path);
+    Path tmp_p = get_feasible_path(tmp, costs, penalties, root_node, distance_limit_D);
+    tmp_bound_info_1.arb_distance = edge_cost(a1, costs);
+    tmp_bound_info_1.arb_reward = total_reward(a1, penalties);
+    tmp_bound_info_1.path_distance = get_path_distance(tmp_p, costs);
+    tmp_bound_info_1.path_reward = get_path_reward(tmp_p, penalties);
+    tmp_bound_info_1.theta = theta_1;
+    best_bound_info[lambda_1] = tmp_bound_info_1;
+
+    if (get_path_reward(tmp_p, penalties) > get_path_reward(best_path_info.path, penalties)){
+        // best_path_info.upper_bound = tmp_bound;
+        best_path_info.arb_distance = edge_cost(a1, costs);
+        best_path_info.arb_reward = total_reward(a1, penalties);
+        best_path_info.path_distance = get_path_distance(tmp_p, costs);
+        best_path_info.path_reward = get_path_reward(tmp_p, penalties);
+        best_path_info.r_t_path_reward = get_path_reward(r_t_path, penalties);
+        best_path_info.r_t_path_distance = get_path_distance(r_t_path, costs);
+        best_path_info.path = tmp_p;
     }
 
     a2 = iterPCA_with_check(v2, c2, p2, theta_2, num_nodes - 1, root_node);
-    penalty_t tmp_bound = (distance_limit_D - theta_2) / lambda_2;
-    if (std::isfinite(tmp_bound) && best_bound > tmp_bound){
-        best_bound = tmp_bound;
-    }
-    tmp = get_path(a1, root_node, furthest_node_guess, true);
-    tmp_p = get_feasible_path(tmp, costs, penalties, furthest_node_guess, distance_limit_D);
-    if (get_path_reward(tmp_p, penalties) > get_path_reward(best_path, penalties)){
-        best_path = tmp_p;
-    }
+    
+    tmp = get_path(a2, root_node, furthest_node_guess, true, r_t_path);
+    tmp_p = get_feasible_path(tmp, costs, penalties, root_node, distance_limit_D);
+    tmp_bound_info_2.arb_distance = edge_cost(a2, costs);
+    tmp_bound_info_2.arb_reward = total_reward(a2, penalties);
+    tmp_bound_info_2.path_distance = get_path_distance(tmp_p, costs);
+    tmp_bound_info_2.path_reward = get_path_reward(tmp_p, penalties);
+    tmp_bound_info_2.theta = theta_2;
+    best_bound_info[lambda_2] = tmp_bound_info_2;
+    if (get_path_reward(tmp_p, penalties) > get_path_reward(best_path_info.path, penalties)){
+        // best_path_info.upper_bound = tmp_bound;
+        best_path_info.arb_distance = edge_cost(a2, costs);
+        best_path_info.arb_reward = total_reward(a2, penalties);
+        best_path_info.path_distance = get_path_distance(tmp_p, costs);
+        best_path_info.path_reward = get_path_reward(tmp_p, penalties);
+        best_path_info.r_t_path_reward = get_path_reward(r_t_path, penalties);
+        best_path_info.r_t_path_distance = get_path_distance(r_t_path, costs);
+        best_path_info.path = tmp_p;
+    } 
 
 
-    binary_search_recursive(a1, a2, vertices, costs, lambda_1, lambda_2, penalties, num_nodes, root_node, furthest_node_guess, distance_limit_D, best_path, best_bound, get_feasible_path);
+    if (edge_cost(a2, costs) > distance_limit_D + DISTANCE_EPSILON){
+        binary_search_recursive(a1, a2, vertices, costs, lambda_1, lambda_2, penalties, num_nodes, root_node, furthest_node_guess, distance_limit_D, best_path_info, best_bound_info, get_feasible_path);
+    }
+    else
+    {
+        // std::clog << costs[root_node][furthest_node_guess] << "," << edge_cost(a2, costs) << ", " << distance_limit_D << std::endl;
+    }
     assert(a1.find(furthest_node_guess) != a1.end() && a2.find(furthest_node_guess) != a2.end());
     // assert whether t is in a1 and a2
 }
@@ -441,6 +491,7 @@ Path get_best_path(
         current_path.clear();
 
         current_path.push_back(root_node);
+        current_path_reward = rewards[root_node];
 
         Node initial_node = *initial_node_iterator;
 
@@ -450,7 +501,7 @@ Path get_best_path(
         current_path.push_back(initial_node);
         current_path_distance = costs[root_node][initial_node];
         Node previous_node = initial_node;
-        current_path_reward = rewards[initial_node];
+        current_path_reward += rewards[initial_node];
         distance_t next_path_distance = current_path_distance;
         if (initial_node_iterator != p_i.end())
         {
@@ -480,6 +531,7 @@ Path get_best_path(
             best_path_reward = current_path_reward;
         }
     }
+    // std::clog << "Root node is "<< root_node << std::endl;
     assert(*(best_path.begin()) == root_node);
     assert(get_path_distance(best_path, costs) <= distance_limit_D + DISTANCE_EPSILON);
     return best_path;
@@ -547,8 +599,9 @@ Path get_best_path_between_the_two(
     FeasiblePathExtractor get_feasible_path
     )
 {
-    Path p1 = get_path(a1, root_node, furthest_node_guess, true);
-    Path p2 = get_path(a2, root_node, furthest_node_guess, true);
+    Path r_t_path;
+    Path p1 = get_path(a1, root_node, furthest_node_guess, true, r_t_path);
+    Path p2 = get_path(a2, root_node, furthest_node_guess, true, r_t_path);
     // Replace cut_path with get_best_path
 
     Path best_path = get_feasible_path(p1, costs, rewards, root_node, distance_limit_D);
@@ -588,36 +641,18 @@ Path rooted_orienteering_with_guess(
     distance_t distance_limit_D,
     int number_of_nodes,
     FeasiblePathExtractor get_feasible_path,
-    BestPathInfo &info
+    BestPathInfo &best_path_info,
+    LambdaMapping &best_bound_info
     )
 {
     Arborescence a1, a2;
     penalty_t lambda_1, lambda_2;
-    penalty_t R_t = 0;
-    for (Node n : vertices)
-    {
-        if (n != root_node)
-        {
-            R_t += rewards[n];
-        }
-    }
 
-    penalty_t theta_1, theta_2;
-    Path best_path;
-    penalty_t best_bound = 0;
-    binary_search(a1, a2, vertices, distances, rewards, number_of_nodes, root_node, furthest_node_guess, distance_limit_D, lambda_1, lambda_2, best_path, best_bound, get_feasible_path);
-    // penalty_t alpha = (distance_limit_D - edge_cost(a2, distances)) / (edge_cost(a1, distances) - edge_cost(a2, distances));
-    // std::clog << best_bound << std::endl;
-    penalty_t upper_bound = R_t + best_bound;
-    info.upper_bound = upper_bound;
-    // info.a1_reward = total_reward(a1, rewards);
-    // info.a1_cost = edge_cost(a1, distances);
-    // info.a2_reward = total_reward(a2, rewards);
-    // info.a2_cost = edge_cost(a2, distances);
-
-    // Path tmp = get_best_path_between_the_two(a1, a2, distances, rewards, root_node, furthest_node_guess, distance_limit_D, get_best_path);
+    binary_search(a1, a2, vertices, distances, rewards, number_of_nodes, root_node, furthest_node_guess, distance_limit_D, lambda_1, lambda_2, best_path_info, best_bound_info, get_feasible_path);
     
-    return best_path;
+    
+    
+    return best_path_info.path;
 }
 
 // TODO this function may be parallelized
@@ -627,9 +662,11 @@ std::pair<Node, Path> rooted_orienteering(
     const Matrix &distances,
     const Rewards &rewards,
     distance_t distance_limit_D, 
-    std::unordered_map<Node, BestPathInfo> &info
+    std::unordered_map<Node, BestPathInfo> &best_path_info_map,
+    std::unordered_map<Node, BoundInfo> &best_bound_info_map
     )
 {
+    // std::clog << "Root node is " << root_node << std::endl;
     penalty_t best_path_reward = -1, upper_bound;
     // penalty_t best_upper;
     Path best_path;
@@ -648,12 +685,15 @@ std::pair<Node, Path> rooted_orienteering(
         std::vector<Node> node_list;
         // node_map maps original nodes to new ones
         std::unordered_map<Node, Node> node_map;
-        v_copy.insert(root_node);
+        // v_copy.insert(root_node);
+        node_list.clear();
+        node_map.clear();
         node_list.push_back(root_node);
-        node_map[root_node] = root_node;
+        v_copy.insert(node_list.size() - 1);
+        node_map[root_node] = node_list.size() - 1;
         for (Node _ : vertices)
         {
-            if (root_node != _ && distances[root_node][_] <= distances[root_node][furthest_node_guess])
+            if (root_node != _ && distances[root_node][_] <= distances[root_node][furthest_node_guess] + DISTANCE_EPSILON)
             {
                 // v_copy.insert(_);
                 node_list.push_back(_);
@@ -665,9 +705,11 @@ std::pair<Node, Path> rooted_orienteering(
         int num_nodes = node_list.size();
         Matrix new_distances = Matrix(num_nodes, std::vector<distance_t>(num_nodes, 0));
         Penalties new_rewards = Rewards(num_nodes);
+        penalty_t sum_rewards = 0;
         for (int i = 0; i < num_nodes; ++i)
         {
             new_rewards[i] = rewards[node_list[i]];
+            sum_rewards += new_rewards[i];
             for (int j = 0; j < num_nodes; ++j)
             {
                 new_distances[i][j] = distances[node_list[i]][node_list[j]];
@@ -677,10 +719,28 @@ std::pair<Node, Path> rooted_orienteering(
         // #ifndef NDEBUG
         //     std::clog << "Running orienteering with guess: " << furthest_node_guess << std::endl;
         // #endif
-        BestPathInfo node_info;
+        LambdaMapping tmp_bound;
+        tmp_bound.clear();
+        // tmp_bound_2.clear();
+        BestPathInfo best_path_info;
+        BoundInfo best_bound_info;
+        penalty_t upper_bound = sum_rewards;
+
         high_resolution_clock::time_point t1 = high_resolution_clock::now();
-        Path new_tmp = rooted_orienteering_with_guess(v_copy, root_node, node_map[furthest_node_guess], new_distances, new_rewards, distance_limit_D, num_nodes, get_best_path, node_info);
+        Path new_tmp = rooted_orienteering_with_guess(v_copy, node_map[root_node], node_map[furthest_node_guess], new_distances, new_rewards, distance_limit_D, num_nodes, get_best_path, best_path_info, tmp_bound);
+        
         high_resolution_clock::time_point t2 = high_resolution_clock::now();
+        for (auto& kv: tmp_bound){
+            penalty_t lambda = kv.first;
+            penalty_t bound = sum_rewards + (distance_limit_D - kv.second.theta) / lambda;
+            if (upper_bound > bound){
+                best_bound_info.lambda = lambda;
+                best_bound_info.theta = kv.second.theta;
+                upper_bound = bound;
+            }
+            std::clog << lambda << " : " << kv.second.theta << " ," << std::endl;
+        }
+        std::clog << "}," << std::endl << "{" << std::endl;
 
         duration<double> time_span = duration_cast<duration<double> >(t2 - t1);
         // #ifndef NDEBUG
@@ -688,9 +748,12 @@ std::pair<Node, Path> rooted_orienteering(
         // #endif
         
 
-        node_info.running_time = time_span;
+        best_bound_info.upper_bound = upper_bound;
+        best_bound_info.running_time = time_span;
+        best_path_info.running_time = time_span;
+        best_bound_info_map[furthest_node_guess] = best_bound_info;
+        best_path_info_map[furthest_node_guess] = best_path_info;
         // node_info.upper_bound = upper_bound;
-        info[furthest_node_guess] = node_info;
 
         Path tmp;
         // #ifndef NDEBUG
@@ -727,6 +790,5 @@ std::pair<Node, Path> rooted_orienteering(
             best_t = furthest_node_guess;
         }
     }
-    
     return std::pair<Node, Path>(best_t, best_path);
 }

@@ -26,7 +26,12 @@ int main(int argc, char ** argv)
         std::cout << "{" << std::endl;
         std::cout << "\"number of nodes\": " << dr.get_vertices().size() << " , " << std::endl;
         std::cout << "\"distance bound\": " << distance_limit << " , " << std::endl;
+
+        high_resolution_clock::time_point t1 = high_resolution_clock::now();
         auto p = cycle_orienteering(dr.get_vertices(), dr.get_root_node(), dr.get_matrix(), dr.get_penalties(), distance_limit, best_path_info_map, best_bound_info_map);
+        high_resolution_clock::time_point t2 = high_resolution_clock::now();
+        duration<double> time_span = duration_cast<duration<double> >(t2 - t1);
+
         std::cout << "\"path nodes\": [ ";
         for (Node n: p.second)
         {
@@ -56,12 +61,15 @@ int main(int argc, char ** argv)
         penalty_t path_reward = get_path_reward(p.second, dr.get_penalties());
         // std::clog << best_bound_info.lambda << " " << best_bound_info.theta << std::endl;
         std::cout << "\"path reward\": " << path_reward << " , " << std::endl;
+        std::cout << "\"r-t reward\": " << best_path_info.r_t_path_reward << " ," << std::endl;
         std::cout << "\"tree reward\": " << best_path_info.arb_reward << " ," << std::endl;
         std::cout << "\"reward residue\": " << path_reward - 1 << " ," << std::endl;
         std::cout << "\"path distance\": " << get_path_distance(p.second, dr.get_matrix()) << " , " << std::endl;
+        std::cout << "\"r-t distance\": " << best_path_info.r_t_path_distance << " ," << std::endl;
         std::cout << "\"tree distance\": " << best_path_info.arb_distance << " ," << std::endl;
         std::cout << "\"upper bound\": " << best_bound_info.upper_bound << " ," << std::endl;
-        std::cout << "} ," << std::endl;
+        std::cout << "\"running time\": " << time_span.count() << " ," << std::endl;
+        std::cout << "} " << std::endl;
         return EXIT_SUCCESS;
     }
     return 0;
