@@ -51,7 +51,7 @@ std::unordered_map<int, PathWrapper> cycle_dcvr_fractional(
     distance_t distance_limit_D
     )
 {
-    // Assert all clients are from D distance fromm root
+    // Assert all clients are from D distance from root
     std::unordered_map<int, PathWrapper> paths;
     IloEnv env;
     IloModel model(env);
